@@ -15,8 +15,9 @@ jobs:
       - name: Create backup zip
         run: zip -r relume-backup.zip ./docs ./scripts ./api ./frontend
 
-      - name: Upload artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: relume-backup
-          path: relume-backup.zip
+      - name: Deploy to Azure Web App
+  uses: azure/webapps-deploy@v2
+  with:
+    app-name: relume-api
+    package: relume-api.zip
+    publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE }}
