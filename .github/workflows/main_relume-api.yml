@@ -2,14 +2,18 @@ name: Deploy Relume API
 
 on:
   push:
-    branches: [ main ]
+    branches:
+      - main
+
+permissions:
+  contents: read
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repository
+      - name: Checkout
         uses: actions/checkout@v4
 
       - name: Setup Python
@@ -19,8 +23,6 @@ jobs:
 
       - name: Install dependencies
         run: |
-          cd $GITHUB_WORKSPACE
-          ls -la
           pip install -r requirements.txt
 
       - name: Make startup executable
@@ -30,12 +32,12 @@ jobs:
         run: |
           mkdir package
           cp -r api requirements.txt startup.sh package/
-          cd package && zip -r ../relume-api.zip .
+          cd package
+          zip -r ../relume-api.zip .
 
-     - name: Deploy to Azure Web App
-  uses: azure/webapps-deploy@v2
-  with:
-    app-name: relume-api
-    package: relume-api.zip
-    publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE }}
-
+      - name: Deploy to Azure Web App
+        uses: azure/webapps-deploy@v2
+        with:
+          app-name: relume-api
+          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE }}
+          package: relume-api.zip
