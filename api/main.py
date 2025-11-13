@@ -68,7 +68,7 @@ async def narrate(data: dict = Body(...)):
         prompt = f"Crie uma narrativa curta e emocional em português sobre uma lembrança que envolve: {tags}."
 
         response = openai.ChatCompletion.create(
-    engine=os.environ["OPENAI_DEPLOYMENT"],
+    engine="gpt-35-turbo"
     messages=[{"role": "user", "content": prompt}],
     max_tokens=120
 )
