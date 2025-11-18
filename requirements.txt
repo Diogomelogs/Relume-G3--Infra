@@ -17,3 +17,5 @@ openai==0.28.1
 # (Opcional, mas útil para compatibilidade)
 pydantic==2.8.2
 typing-extensions==4.12.2
+
+pymongo[srv]>=4.6.0
