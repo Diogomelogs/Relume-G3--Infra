@@ -6,6 +6,7 @@ from datetime import datetime
 
 from fastapi import FastAPI, UploadFile, File, Body, HTTPException
 from fastapi.responses import JSONResponse
+from fastapi.middleware.cors import CORSMiddleware  # <--- ADICIONADO
 from azure.storage.blob import BlobClient
 import openai
 from pymongo import MongoClient
@@ -31,6 +32,22 @@ MONGO_URI = os.environ.get("MONGO_URI")  # string de conexão do MongoDB Atlas
 # FastAPI
 # ==========================
 app = FastAPI(title="Relume API", version="0.3.0")
+
+# ==========================
+# CORS (liberar chamadas do front)
+# ==========================
+origins = [
+    "http://localhost:3000",
+    "https://relume-api-ajeyfjcgbwhubdec.centralus-01.azurewebsites.net",
+]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 # ==========================
 # Azure OpenAI
