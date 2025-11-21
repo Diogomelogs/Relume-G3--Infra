@@ -32,7 +32,7 @@ MONGO_URI = os.environ.get("MONGO_URI")  # string de conexão do MongoDB Atlas
 # ==========================
 # FastAPI
 # ==========================
-app = FastAPI(title="Relume API", version="0.4.0")
+app = FastAPI(title="Relluna API", version="0.4.0")
 
 # ==========================
 # CORS (liberar chamadas do front)
