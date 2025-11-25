@@ -22,7 +22,3 @@ pymongo[srv]>=4.6.0
 
 passlib[bcrypt]==1.7.4
 python-jose[cryptography]==3.3.0
-
-JWT_SECRET_KEY=relluna-super-segredo-2025-diogo-24021987
-JWT_ALGORITHM=HS256
-JWT_EXPIRES_MINUTES=1440
