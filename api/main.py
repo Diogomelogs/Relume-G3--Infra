@@ -11,7 +11,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from azure.storage.blob import BlobClient
 import openai
 from pymongo import MongoClient
-from auth import router as auth_router
+from .auth import router as auth_router
 
 # ==========================
 # Configurações do ambiente
