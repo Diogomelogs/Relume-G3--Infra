@@ -19,3 +19,6 @@ pydantic==2.8.2
 typing-extensions==4.12.2
 
 pymongo[srv]>=4.6.0
+
+passlib[bcrypt]==1.7.4
+python-jose[cryptography]==3.3.0
