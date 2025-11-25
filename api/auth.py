@@ -1,4 +1,3 @@
-# auth.py
 from datetime import datetime, timedelta
 import os
 from typing import Optional
@@ -11,19 +10,23 @@ from pydantic import BaseModel, EmailStr
 from pymongo import MongoClient
 from pymongo.errors import DuplicateKeyError
 
+# ======= MONGO SETUP =======
 MONGO_URI = os.environ.get("MONGO_URI")
 if not MONGO_URI:
     raise RuntimeError("MONGO_URI not configured")
 
 mongo_client = MongoClient(MONGO_URI)
-# ATENÇÃO: use o MESMO NOME de banco do restante da API:
-db = mongo_client["relume"]  # ajuste aqui se o seu nome for outro
+
+# ATENÇÃO:
+# Troque "relume" pelo nome EXATO do seu banco NO MESMO FORMATO DO main.py
+db = mongo_client["relume"]  
 users_coll = db["users"]
 
-# Criar índice único de email (se ainda não existir)
+# Índice de email único
 users_coll.create_index("email", unique=True)
 
-JWT_SECRET_KEY = os.environ.get("JWT_SECRET_KEY", "change-me")
+# ======= JWT CONFIG =======
+JWT_SECRET_KEY = os.environ.get("JWT_SECRET_KEY", "relluna-secret")
 JWT_ALGORITHM = os.environ.get("JWT_ALGORITHM", "HS256")
 JWT_EXPIRES_MINUTES = int(os.environ.get("JWT_EXPIRES_MINUTES", "1440"))
 
@@ -32,16 +35,12 @@ oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/auth/login")
 
 router = APIRouter()
 
-# ======== MODELOS Pydantic =========
+# ======= MODELOS =======
 
 class UserCreate(BaseModel):
     email: EmailStr
     password: str
     name: Optional[str] = None
-
-class UserLogin(BaseModel):
-    email: EmailStr
-    password: str
 
 class UserOut(BaseModel):
     id: str
@@ -52,20 +51,19 @@ class Token(BaseModel):
     access_token: str
     token_type: str = "bearer"
 
-# ======== FUNÇÕES AUXILIARES =========
+# ======= FUNÇÕES AUXILIARES =======
 
 def get_password_hash(password: str) -> str:
     return pwd_context.hash(password)
 
-def verify_password(plain_password: str, hashed_password: str) -> bool:
-    return pwd_context.verify(plain_password, hashed_password)
+def verify_password(plain: str, hashed: str) -> bool:
+    return pwd_context.verify(plain, hashed)
 
-def create_access_token(data: dict, expires_minutes: int = JWT_EXPIRES_MINUTES) -> str:
+def create_access_token(data: dict) -> str:
     to_encode = data.copy()
-    expire = datetime.utcnow() + timedelta(minutes=expires_minutes)
+    expire = datetime.utcnow() + timedelta(minutes=JWT_EXPIRES_MINUTES)
     to_encode.update({"exp": expire})
-    encoded_jwt = jwt.encode(to_encode, JWT_SECRET_KEY, algorithm=JWT_ALGORITHM)
-    return encoded_jwt
+    return jwt.encode(to_encode, JWT_SECRET_KEY, algorithm=JWT_ALGORITHM)
 
 def get_user_by_email(email: str) -> Optional[dict]:
     return users_coll.find_one({"email": email})
@@ -74,34 +72,35 @@ def get_user_by_id(user_id: str) -> Optional[dict]:
     from bson import ObjectId
     try:
         oid = ObjectId(user_id)
-    except Exception:
+    except:
         return None
     return users_coll.find_one({"_id": oid})
 
-# ======== DEPENDÊNCIA: USUÁRIO LOGADO =========
+# ======= AUTENTICAÇÃO DEPENDENCY =======
 
 def get_current_user(token: str = Depends(oauth2_scheme)) -> dict:
     credentials_exception = HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED,
-        detail="Não foi possível validar as credenciais",
+        detail="Credenciais inválidas",
         headers={"WWW-Authenticate": "Bearer"},
     )
+
     try:
         payload = jwt.decode(token, JWT_SECRET_KEY, algorithms=[JWT_ALGORITHM])
-        user_id: str = payload.get("sub")
+        user_id = payload.get("sub")
         if user_id is None:
             raise credentials_exception
     except JWTError:
         raise credentials_exception
 
     user = get_user_by_id(user_id)
-    if user is None:
+    if not user:
         raise credentials_exception
 
     user["id"] = str(user["_id"])
     return user
 
-# ======== ENDPOINT: REGISTER =========
+# ======= ENDPOINT: REGISTER =======
 
 @router.post("/register", response_model=UserOut, status_code=201)
 def register(user_in: UserCreate):
@@ -109,22 +108,27 @@ def register(user_in: UserCreate):
     if existing:
         raise HTTPException(status_code=400, detail="Email já cadastrado")
 
-    hashed = get_password_hash(user_in.password)
+    hashed_pw = get_password_hash(user_in.password)
+
     doc = {
         "email": user_in.email,
-        "password_hash": hashed,
+        "password_hash": hashed_pw,
         "name": user_in.name,
-        "created_at": datetime.utcnow(),
+        "created_at": datetime.utcnow()
     }
+
     try:
         result = users_coll.insert_one(doc)
     except DuplicateKeyError:
         raise HTTPException(status_code=400, detail="Email já cadastrado")
 
-    doc["id"] = str(result.inserted_id)
-    return UserOut(id=doc["id"], email=doc["email"], name=doc["name"])
+    return UserOut(
+        id=str(result.inserted_id),
+        email=doc["email"],
+        name=doc["name"]
+    )
 
-# ======== ENDPOINT: LOGIN =========
+# ======= ENDPOINT: LOGIN =======
 
 @router.post("/login", response_model=Token)
 def login(form_data: OAuth2PasswordRequestForm = Depends()):
@@ -136,6 +140,6 @@ def login(form_data: OAuth2PasswordRequestForm = Depends()):
         raise HTTPException(status_code=400, detail="Email ou senha inválidos")
 
     user_id = str(user["_id"])
-    access_token = create_access_token(data={"sub": user_id})
+    token = create_access_token({"sub": user_id})
 
-    return Token(access_token=access_token)
+    return Token(access_token=token)
