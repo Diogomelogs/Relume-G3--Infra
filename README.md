@@ -17,7 +17,7 @@ Criar linhas do tempo narrativas
 
 Compartilhar acervos, histórias e reluminações
 
-Este repositório documenta a infraestrutura G3, que estabelece a base técnica do projeto para operação real em ambiente cloud, com arquitetura mínima, enxuta e totalmente funcional.
+Este repositório documenta a infraestrutura G4, que estabelece a base técnica do projeto para operação real em ambiente cloud, com arquitetura mínima, enxuta e totalmente funcional.
 
 Objetivo da Infraestrutura
 
