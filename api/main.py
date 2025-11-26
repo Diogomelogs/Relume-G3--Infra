@@ -3,11 +3,10 @@ import uuid
 import requests
 import hashlib
 from datetime import datetime
-from typing import List, Optional, Tuple, Dict, Any
 
 from fastapi import FastAPI, UploadFile, File, Body, HTTPException
 from fastapi.responses import JSONResponse
-from fastapi.middleware.cors import CORSMiddleware
+from fastapi.middleware.cors import CORSMiddleware  # <--- ADICIONADO
 from azure.storage.blob import BlobClient
 import openai
 from pymongo import MongoClient
@@ -32,14 +31,14 @@ MONGO_URI = os.environ.get("MONGO_URI")  # string de conexão do MongoDB Atlas
 # ==========================
 # FastAPI
 # ==========================
-app = FastAPI(title="Relume API", version="0.4.0")
+app = FastAPI(title="Relume API", version="0.3.0")
 
 # ==========================
 # CORS (liberar chamadas do front)
 # ==========================
 origins = [
     "http://localhost:3000",
-    # adicione aqui o domínio do front em produção quando existir
+    "https://relume-api-ajeyfjcgbwhubdec.centralus-01.azurewebsites.net",
 ]
 
 app.add_middleware(
@@ -69,6 +68,7 @@ if MONGO_URI:
     db = mongo_client["relume"]
     timeline_coll = db["timeline_items"]
 
+
 # ==========================
 # Funções auxiliares
 # ==========================
@@ -76,27 +76,8 @@ def _normalize_logical_id(filename: str) -> str:
     name, _ = os.path.splitext(filename)
     logical = name.strip().lower()
 
-    for ch in [
-        " ",
-        ":",
-        ";",
-        ",",
-        ".",
-        "/",
-        "\\",
-        "|",
-        "@",
-        "#",
-        "$",
-        "%",
-        "&",
-        "?",
-        "!",
-        "(",
-        ")",
-        "[",
-        "]",
-    ]:
+    for ch in [" ", ":", ";", ",", ".", "/", "\\", "|", "@", "#", "$", "%", "&",
+               "?", "!", "(", ")", "[", "]"]:
         logical = logical.replace(ch, "_")
 
     while "__" in logical:
@@ -108,90 +89,6 @@ def _normalize_logical_id(filename: str) -> str:
         logical = str(uuid.uuid4())
 
     return logical
-
-
-def analyze_image_with_vision(image_bytes: bytes) -> Dict[str, Any]:
-    """
-    Chama a Azure Vision API com binário e retorna o JSON bruto
-    ou um dicionário com 'error' em caso de falha.
-    """
-    if not VISION_ENDPOINT or not VISION_KEY:
-        return {
-            "error": "VISION_ENDPOINT or VISION_API_KEY not configured",
-            "status": 500,
-        }
-
-    analyze_url = (
-        f"{VISION_ENDPOINT}/vision/v3.2/analyze"
-        "?visualFeatures=Description,Tags,Faces"
-    )
-
-    headers = {
-        "Ocp-Apim-Subscription-Key": VISION_KEY,
-        "Content-Type": "application/octet-stream",
-    }
-
-    try:
-        resp = requests.post(
-            analyze_url,
-            headers=headers,
-            data=image_bytes,
-            timeout=25,
-        )
-    except Exception as exc:
-        return {
-            "error": f"vision_request_exception: {exc}",
-            "status": 500,
-        }
-
-    if not resp.ok:
-        return {
-            "error": "vision_http_error",
-            "status": resp.status_code,
-            "body": resp.text,
-        }
-
-    try:
-        return resp.json()
-    except ValueError:
-        return {
-            "error": "vision_invalid_json",
-            "status": 500,
-            "body": resp.text[:500],
-        }
-
-
-def extract_caption_and_tags(vision: Dict[str, Any]) -> Tuple[Optional[str], List[str]]:
-    """
-    Extrai caption principal e lista de tags do JSON de Vision.
-    Não aplica fallback; isso é feito na camada de persistência.
-    """
-    if not isinstance(vision, dict) or vision.get("error"):
-        return None, []
-
-    caption_text: Optional[str] = None
-    description = vision.get("description") or {}
-    captions = description.get("captions") or []
-
-    if isinstance(captions, list) and captions:
-        first_caption = captions[0] or {}
-        if isinstance(first_caption, dict):
-            caption_text = first_caption.get("text")
-
-    tags_raw = vision.get("tags") or []
-    tags: List[str] = []
-
-    if isinstance(tags_raw, list):
-        for t in tags_raw:
-            if isinstance(t, dict) and "name" in t:
-                tags.append(str(t["name"]))
-            elif isinstance(t, str):
-                tags.append(t)
-
-    # remove duplicados e vazios
-    tags = [t for t in dict.fromkeys(tags) if t]
-
-    return caption_text, tags
 
 
 # ==========================
@@ -225,7 +122,7 @@ async def upload(file: UploadFile = File(...)):
     5. Envia ao Blob (container privado)
     6. Grava metadados
     7. Envia conteúdo binário à Vision API
-    8. Retorna dados para uso em /process
+    8. Retorna dados para possível uso em /process
     """
 
     # 1) Lê arquivo
@@ -239,7 +136,7 @@ async def upload(file: UploadFile = File(...)):
 
     # 4) Versionamento lógico com timestamp UTC
     version_str = datetime.utcnow().strftime("%Y%m%dT%H%M%SZ")
-
+    
     # 5) Caminho no Blob
     blob_name = f"{logical_id}/v{version_str}/{file.filename}"
 
@@ -269,7 +166,25 @@ async def upload(file: UploadFile = File(...)):
         pass
 
     # 7) Vision API com BINÁRIO
-    vision = analyze_image_with_vision(data)
+    analyze_url = (
+        f"{VISION_ENDPOINT}/vision/v3.2/analyze"
+        "?visualFeatures=Description,Tags,Faces"
+    )
+
+    headers = {
+        "Ocp-Apim-Subscription-Key": VISION_KEY,
+        "Content-Type": "application/octet-stream",
+    }
+
+    vision = {}
+    try:
+        r = requests.post(analyze_url, headers=headers, data=data, timeout=25)
+        if r.ok:
+            vision = r.json()
+        else:
+            vision = {"error": r.text, "status": r.status_code}
+    except Exception as ex:
+        vision = {"error": str(ex)}
 
     # 8) Resposta
     return JSONResponse(
@@ -297,19 +212,20 @@ async def process_media(payload: dict = Body(...)):
       "hash_sha256": "...",
       "logical_id": "img_5285",
       "version": "20251117T201038Z",
-      "vision": { ...json da Vision... }
+      "vision": {
+        "tags": [...],
+        "description": {...},
+        "faces": [...]
+      }
     }
 
-    Grava um documento em timeline_items, incluindo:
-    - caption (derivada da Vision, com fallback "Sem descrição")
-    - tags (lista de strings derivadas da Vision)
-    - campos brutos de visão (vision, vision_description, vision_tags, vision_faces)
+    Grava um documento em timeline_items.
     """
 
     if timeline_coll is None:
         raise HTTPException(
             status_code=500,
-            detail="MongoDB não configurado. Defina MONGO_URI no App Service.",
+            detail="MongoDB não configurado. Defina MONGO_URI no App Service."
         )
 
     user_id = payload.get("user_id")
@@ -317,25 +233,26 @@ async def process_media(payload: dict = Body(...)):
     file_hash = payload.get("hash_sha256")
     logical_id = payload.get("logical_id")
     version = payload.get("version")
-    vision = payload.get("vision") or {}
+    vision = payload.get("vision", {}) or {}
 
     if not user_id or not blob_url:
         raise HTTPException(
             status_code=400,
-            detail="Campos 'user_id' e 'blob' são obrigatórios.",
+            detail="Campos 'user_id' e 'blob' são obrigatórios."
         )
 
-    # extrai caption e tags a partir da Vision
-    caption, tags = extract_caption_and_tags(vision)
+    tags = vision.get("tags", [])
+    description = vision.get("description", {})
+    faces = vision.get("faces", [])
 
-    # fallbacks
-    if not caption:
-        caption = "Sem descrição"
-    if tags is None:
-        tags = []
-
-    description = vision.get("description") or {}
-    faces = vision.get("faces") or []
+    # extrai caption principal, se existir
+    main_caption = None
+    try:
+        captions = description.get("captions", [])
+        if captions:
+            main_caption = captions[0].get("text")
+    except Exception:
+        main_caption = None
 
     doc = {
         "user_id": user_id,
@@ -343,15 +260,10 @@ async def process_media(payload: dict = Body(...)):
         "hash_sha256": file_hash,
         "logical_id": logical_id,
         "version": version,
-        # campos usados diretamente pelo front
-        "caption": caption,
-        "tags": tags,
-        # campos de visão detalhados (para debug / reprocessamento)
-        "vision": vision,
         "vision_tags": tags,
         "vision_description": description,
         "vision_faces": faces,
-        "main_caption": caption,
+        "main_caption": main_caption,
         "created_at": datetime.utcnow(),
     }
 
@@ -362,9 +274,6 @@ async def process_media(payload: dict = Body(...)):
         "id": str(result.inserted_id),
         "user_id": user_id,
         "blob_url": blob_url,
-        "caption": caption,
-        "tags": tags,
-        "created_at": doc["created_at"].isoformat() + "Z",
     }
 
 
@@ -382,35 +291,18 @@ def get_timeline(user_id: str):
     if timeline_coll is None:
         raise HTTPException(
             status_code=500,
-            detail="MongoDB não configurado. Defina MONGO_URI no App Service.",
+            detail="MongoDB não configurado. Defina MONGO_URI no App Service."
         )
 
-    items = list(timeline_coll.find({"user_id": user_id}).sort("created_at", -1))
+    items = list(
+        timeline_coll.find({"user_id": user_id}).sort("created_at", -1)
+    )
 
     for item in items:
-        # converte ObjectId para string
         item["_id"] = str(item["_id"])
-
         # converte datetime para string ISO
         if isinstance(item.get("created_at"), datetime):
             item["created_at"] = item["created_at"].isoformat() + "Z"
-
-        # compatibilidade: garantir sempre caption e tags superficiais
-        if not item.get("caption"):
-            item["caption"] = (
-                item.get("main_caption") or "Sem descrição"
-            )
-
-        if not item.get("tags"):
-            vt = item.get("vision_tags") or []
-            tags: List[str] = []
-            if isinstance(vt, list):
-                for t in vt:
-                    if isinstance(t, dict) and "name" in t:
-                        tags.append(str(t["name"]))
-                    elif isinstance(t, str):
-                        tags.append(t)
-            item["tags"] = [t for t in dict.fromkeys(tags) if t]
 
     return items
 
@@ -425,7 +317,7 @@ async def narrate(data: dict = Body(...)):
         if not isinstance(tags_list, list):
             raise HTTPException(
                 status_code=400,
-                detail="Campo 'tags' deve ser uma lista de strings.",
+                detail="Campo 'tags' deve ser uma lista de strings."
             )
 
         tags = ", ".join(tags_list) if tags_list else "memórias pessoais"
