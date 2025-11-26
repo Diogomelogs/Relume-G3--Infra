@@ -11,9 +11,6 @@ from azure.storage.blob import BlobClient
 import openai
 from pymongo import MongoClient
 
-# IMPORTA O ROUTER DE AUTENTICAÇÃO
-from .auth import router as auth_router
-
 # ==========================
 # Configurações do ambiente
 # ==========================
@@ -35,9 +32,6 @@ MONGO_URI = os.environ.get("MONGO_URI")  # string de conexão do MongoDB Atlas
 # FastAPI
 # ==========================
 app = FastAPI(title="Relume API", version="0.4.0")
-
-# REGISTRA ROTAS DE AUTENTICAÇÃO
-app.include_router(auth_router, prefix="/auth", tags=["auth"])
 
 # ==========================
 # CORS (liberar chamadas do front)
