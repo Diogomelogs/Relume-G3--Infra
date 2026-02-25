@@ -7,6 +7,7 @@ from relluna.core.document_memory import (
     ConfidenceState,
 )
 from relluna.services.deterministic_extractors.basic import extract_basic
+from relluna.core.governance.events import make_processing_event
 from relluna.services.context_inference.basic import infer_layer3
 from relluna.core.normalization import normalize_to_layer4
 from relluna.services.derivatives.layer5 import apply_layer5
@@ -18,6 +19,9 @@ def run_basic_pipeline(dm: DocumentMemory) -> DocumentMemory:
     # Layer2 — determinístico
     # -------------------------
     dm = extract_basic(dm)
+    dm.layer0.processingevents.append(
+    make_processing_event("extract_basic", "deterministic_extractors.basic")
+)
 
     if dm.layer2 is None:
         return dm
@@ -49,6 +53,10 @@ def run_basic_pipeline(dm: DocumentMemory) -> DocumentMemory:
     # -------------------------
     dm = infer_layer3(dm)
 
+    dm.layer0.processingevents.append(
+        make_processing_event("infer_layer3", "taxonomy_rules")
+        )
+
     if dm.layer3 is None:
         dm.layer3 = Layer3EvidenceBaseModel()
 
@@ -56,6 +64,10 @@ def run_basic_pipeline(dm: DocumentMemory) -> DocumentMemory:
     # Layer4 — normalização semântica
     # -------------------------
     dm = normalize_to_layer4(dm)
+
+    dm.layer0.processingevents.append(
+        make_processing_event("normalize_layer4", "normalization")
+        )
 
     if dm.layer4 is None:
         dm.layer4 = Layer4SemanticNormalization(
