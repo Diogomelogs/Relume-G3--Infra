@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Relluna Pipeline Tester</title>
+    <style>
+        body { font-family: system-ui, sans-serif; margin: 40px; max-width: 1200px; }
+        .upload-zone { 
+            border: 3px dashed #ccc; 
+            padding: 40px; 
+            text-align: center; 
+            border-radius: 8px;
+            margin-bottom: 30px;
+            background: #fafafa;
+            transition: all 0.3s;
+        }
+        .upload-zone:hover { border-color: #007bff; background: #f0f8ff; }
+        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 20px; }
+        .layer-box { 
+            border: 1px solid #ddd; 
+            border-radius: 8px; 
+            padding: 15px; 
+            background: white;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .layer-box h3 { margin-top: 0; color: #333; border-bottom: 2px solid #007bff; padding-bottom: 8px; }
+        .status { display: inline-block; padding: 4px 8px; border-radius: 4px; font-size: 12px; font-weight: bold; }
+        .status-ok { background: #d4edda; color: #155724; }
+        .status-pending { background: #fff3cd; color: #856404; }
+        .status-error { background: #f8d7da; color: #721c24; }
+        pre { 
+            background: #f8f9fa; 
+            padding: 10px; 
+            overflow-x: auto; 
+            font-size: 12px;
+            border-radius: 4px;
+            max-height: 300px;
+            border: 1px solid #e9ecef;
+        }
+        .metadata { font-size: 13px; color: #666; margin-bottom: 10px; }
+        .error-box { background: #f8d7da; border: 1px solid #f5c6cb; padding: 10px; border-radius: 4px; color: #721c24; }
+        button { 
+            background: #007bff; 
+            color: white; 
+            border: none; 
+            padding: 12px 24px; 
+            border-radius: 4px; 
+            cursor: pointer;
+            font-size: 16px;
+        }
+        button:hover { background: #0056b3; }
+        input[type="file"] { margin-bottom: 15px; }
+    </style>
+</head>
+<body>
+
+<h1>🧪 Relluna Pipeline Tester</h1>
+
+<form action="/test-ui/upload" method="post" enctype="multipart/form-data" class="upload-zone">
+    <h3>📁 Upload de Documento</h3>
+    <input type="file" name="file" accept=".pdf,.jpg,.jpeg,.png,.mp4,.mov,.mp3,.wav,.m4a" required>
+    <br><br>
+    <button type="submit">Processar Pipeline</button>
+    <p style="font-size: 12px; color: #666; margin-top: 10px;">
+        Suporta: PDF, Imagens (JPG/PNG), Vídeos (MP4/MOV), Áudio (MP3/WAV/M4A)
+    </p>
+</form>
+
+{% if result %}
+
+<div style="margin-bottom: 20px;">
+    <strong>Document ID:</strong> {{ result.layer0.documentid }}<br>
+    <strong>Timestamp:</strong> {{ result.layer0.ingestiontimestamp }}<br>
+    <span class="status status-ok">✓ Processamento Concluído</span>
+</div>
+
+<div class="grid">
+
+    <!-- Layer 0 -->
+    <div class="layer-box">
+        <h3>L0 - Custódia</h3>
+        <div class="metadata">
+            ID: {{ result.layer0.documentid }}<br>
+            Timestamp: {{ result.layer0.ingestiontimestamp.strftime('%Y-%m-%d %H:%M:%S') if result.layer0.ingestiontimestamp else '-' }}
+        </div>
+        <pre>{{ result.layer0.model_dump_json(indent=2) }}</pre>
+    </div>
+
+    <!-- Layer 1 -->
+    <div class="layer-box">
+        <h3>L1 - Artefatos</h3>
+        {% if result.layer1 %}
+        <span class="status status-ok">✓ OK</span>
+        <div class="metadata">
+            Tipo: {{ result.layer1.midia }}<br>
+            Path: {{ result.layer1.path }}
+        </div>
+        {% else %}
+        <span class="status status-pending">○ Pendente</span>
+        {% endif %}
+    </div>
+
+    <!-- Layer 2 -->
+    <div class="layer-box">
+        <h3>L2 - Extração/OCR</h3>
+        {% if result.layer2 %}
+        <span class="status status-ok">✓ OK</span>
+        <div class="metadata">
+            {% if result.layer2.texto_ocr_literal %}
+            Confiança OCR: {{ result.layer2.texto_ocr_literal.confiança or '-' }}<br>
+            {% endif %}
+        </div>
+        <pre>{{ result.layer2.texto_ocr_literal.valor if result.layer2.texto_ocr_literal else "Sem texto extraível" }}</pre>
+        {% else %}
+        <span class="status status-pending">○ Pendente</span>
+        {% endif %}
+    </div>
+
+    <!-- Layer 3 -->
+    <div class="layer-box">
+        <h3>L3 - Inferência de Contexto</h3>
+        {% if result.layer3 %}
+        <span class="status status-ok">✓ OK</span>
+        <pre>{{ result.layer3.model_dump_json(indent=2) if result.layer3 else {} }}</pre>
+        {% else %}
+        <span class="status status-pending">○ Pendente</span>
+        {% endif %}
+    </div>
+
+    <!-- Layer 4 -->
+    <div class="layer-box">
+        <h3>L4 - Normalização</h3>
+        {% if result.layer4 %}
+        <span class="status status-ok">✓ OK</span>
+        <pre>{{ result.layer4.model_dump_json(indent=2) if result.layer4 else {} }}</pre>
+        {% else %}
+        <span class="status status-pending">○ Pendente</span>
+        {% endif %}
+    </div>
+
+    <!-- Layer 5 -->
+    <div class="layer-box">
+        <h3>L5 - Derivados</h3>
+        {% if result.layer5 %}
+        <span class="status status-ok">✓ OK</span>
+        <pre>{{ result.layer5.model_dump_json(indent=2) if result.layer5 else {} }}</pre>
+        {% else %}
+        <span class="status status-pending">○ Pendente</span>
+        {% endif %}
+    </div>
+
+</div>
+
+<div style="margin-top: 30px; padding: 20px; background: #f8f9fa; border-radius: 8px;">
+    <h3>📊 JSON Completo (DocumentMemory)</h3>
+    <pre>{{ result.model_dump_json(indent=2) }}</pre>
+</div>
+
+{% endif %}
+
+</body>
+</html>

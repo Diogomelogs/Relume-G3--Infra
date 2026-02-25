@@ -1,0 +1,8 @@
+README.md
+pyproject.toml
+relluna.egg-info/PKG-INFO
+relluna.egg-info/SOURCES.txt
+relluna.egg-info/dependency_links.txt
+relluna.egg-info/requires.txt
+relluna.egg-info/top_level.txt
+tests/test_ingest_document_memory.py

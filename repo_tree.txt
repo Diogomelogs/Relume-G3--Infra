@@ -1,0 +1,281 @@
+.
+├── .env
+├── .gitignore
+├── .uploads
+│   ├── 02ea791ec9a21a3a990190e570f6b39d779b1c3ffebe6621eb01b180d3d2e2f8_IMG_7367.JPG
+│   ├── 07d4aac740753e66b6be4c7009026ea1bc46b075b362672837549a512f84e40e_IMG_7245.MOV
+│   ├── 08ce661342732b9d88c6dbfe003a9b28a5b9d0356f297c6014322d84f36f09fc_Gravando.m4a
+│   ├── 146914e63ad3f4dd1da879d0df45cb3b41e58d42c8c35c9f3b679b97dee2db92_test.txt
+│   ├── 30f0d76a3e5f7aa4427c837b5641723355817652c446473512540812f8d2759c_Recibo do bilhete eletrônico, 03 Junho para DIOGO SILVA.pdf
+│   ├── 30f0d76a3e5f7aa4427c837b5641723355817652c446473512540812f8d2759c_simple.pdf
+│   ├── 41f57612b7434ba7eaaa5b1e3925a4239e993e926722f240a3eba840b82bdb4c_IMG_7599.HEIC
+│   ├── 4d62b61fb766b4b4c6d46e3a5ff8284b71bb4392ed607a71f93a1bbee23476e8_image_exif.jpg
+│   ├── 4e7eb38e784b0649b67a57663e04463bb193a516c7f653238f896d2c8c3e2964_extrato.pdf
+│   ├── 6101da06c040e44de4ce7859392019f68dff7d04e3dd9d137bc373c224119a7b_audio.wav
+│   ├── 78873b48ab234002030f7fbb3ef7eb580ac01263a400293bf3541a9cd802416c_teste_exif.jpg
+│   ├── 8810c947ede090da1c3b8b882a013dc9132e88528461fdcd53f57e6ce62c86b5_IMG_0770.HEIC
+│   ├── bc29e1b3a2e031362a11ef6853abc8903cfdd60c59b7f3d4a2da0e61894b4043_extrato (1).pdf
+│   ├── c23286008430ee9298ffee64aa11f63c5d49c14a0a0908cde43130464e1ac63b_IMG_0249.JPG
+│   ├── c23286008430ee9298ffee64aa11f63c5d49c14a0a0908cde43130464e1ac63b_image_exif.jpg
+│   ├── d4cfed12164193c49c18dc44913d3d53d4637b0208664de23af0147964210bc7_safe.jpg
+│   ├── d4cfed12164193c49c18dc44913d3d53d4637b0208664de23af0147964210bc7_teste.jpg
+│   ├── f78c98b6bf243f8c7f837994a99e08fd253583c854dd4d30c834924b1d1184d4_IMG_0297.JPG
+│   └── f78c98b6bf243f8c7f837994a99e08fd253583c854dd4d30c834924b1d1184d4_image_analog.jpg
+├── Dockerfile
+├── README.md
+├── art
+├── data
+│   ├── 088523b5453239f990d49f00fa4e7a01640f47746ff6341d5afc8279365a6f46_DSC00410.JPG
+│   ├── 3f616b38633aaaa739ef35144b87a9e482a9188b25abe888bcdff238093734b7_IMG_4420.JPG
+│   ├── 63d57c738aadc370035d4019ed40809a44da022fc1d5566b8343f3271ebda1c4_0111D7B8-A83A-4A4B-89E1-0B1F2D74E853.JPG
+│   ├── 7bbebe93aede6f3b940134a91164531c1d949b61b66d9f022f647e554eabf060_IMG_4424.JPG
+│   ├── 8578bad75cde53c9bc1e86e8794a25b0f3aab517035a90cdf82f1e117868b5dc_8FFAA388-DD6A-48B5-8C70-81BBD100FBBE.JPG
+│   ├── ae9ce8af8c5cad2b04b62c2240bde5f7e2375f4bcb8a29d55025341d7f44a83a_DANFES (1).pdf
+│   └── b9c3aaf94abf7c1ae0ef94f5e5a312fa1e8a2794b4f5e8b7f2cc1570c3813478_2B1605D6-1075-4537-AD00-41499B0A7880.JPG
+├── dm_real.json
+├── docker-compose.dev.yml
+├── pyproject.toml
+├── relluna
+│   ├── core
+│   │   ├── __init__.py
+│   │   ├── basic_pipeline.py
+│   │   ├── contracts
+│   │   │   ├── __init__.py
+│   │   │   ├── document_memory_contract.py
+│   │   │   └── mappers.py
+│   │   ├── dm_normalizer.py
+│   │   ├── document_memory
+│   │   │   ├── __init__.py
+│   │   │   ├── apply.py
+│   │   │   ├── layer0.py
+│   │   │   ├── layer1.py
+│   │   │   ├── layer2.py
+│   │   │   ├── layer3.py
+│   │   │   ├── layer4_canonical.py
+│   │   │   ├── layer4_front.py
+│   │   │   ├── layer5.py
+│   │   │   ├── layer6.py
+│   │   │   ├── models.py
+│   │   │   ├── transcription.py
+│   │   │   └── types_basic.py
+│   │   ├── document_memory.schema.v0.1.0.json
+│   │   ├── inference
+│   │   │   └── basic_temporal.py
+│   │   ├── normalization.py
+│   │   └── versioning.py
+│   ├── infra
+│   │   ├── __init__.py
+│   │   ├── azureblobbackend.py
+│   │   ├── blob
+│   │   │   ├── __init__.py
+│   │   │   ├── artefact_store.py
+│   │   │   ├── client.py
+│   │   │   └── paths.py
+│   │   ├── memory_store.py
+│   │   ├── mongo
+│   │   │   ├── __init__.py
+│   │   │   ├── client.py
+│   │   │   ├── document_store.py
+│   │   │   └── indexes.py
+│   │   ├── mongo_indexes.py
+│   │   └── mongo_store.py
+│   ├── scripts
+│   │   └── update_golden.py
+│   └── services
+│       ├── analysis
+│       │   └── layer5.py
+│       ├── content_safety
+│       │   └── nsfw.py
+│       ├── context_inference
+│       │   ├── basic.py
+│       │   └── document_taxonomy
+│       │       ├── __init__.py
+│       │       ├── apply.py
+│       │       ├── rules
+│       │       │   ├── __init__.py
+│       │       │   ├── base.py
+│       │       │   ├── documento_identidade.py
+│       │       │   ├── engine.py
+│       │       │   ├── nota_fiscal.py
+│       │       │   └── recibo.py
+│       │       ├── rules.py
+│       │       ├── signals.py
+│       │       └── types.py
+│       ├── correlation
+│       │   ├── layer4.py
+│       │   └── layer5.py
+│       ├── derivatives
+│       │   └── layer5.py
+│       ├── deterministic_extractors
+│       │   ├── __init__.py
+│       │   ├── base.py
+│       │   └── basic.py
+│       ├── forensics
+│       │   ├── __init__.py
+│       │   └── layer6.py
+│       ├── indexing
+│       │   └── layer5.py
+│       ├── ingestion
+│       │   ├── __init__.py
+│       │   ├── api.py
+│       │   └── service.py
+│       ├── ocr
+│       │   ├── __init__.py
+│       │   └── service.py
+│       ├── persistence
+│       │   └── dm_writer.py
+│       ├── read_model
+│       │   ├── __init__.py
+│       │   ├── endpoints.py
+│       │   ├── models.py
+│       │   ├── projector.py
+│       │   ├── schema.py
+│       │   ├── store.py
+│       │   └── text_search.py
+│       ├── test_ui
+│       │   ├── router.py
+│       │   ├── router.py.bak
+│       │   └── templates
+│       │       └── index.html
+│       └── transcription
+│           ├── __init__.py
+│           └── asr.py
+├── relluna.egg-info
+│   ├── PKG-INFO
+│   ├── SOURCES.txt
+│   ├── dependency_links.txt
+│   ├── requires.txt
+│   └── top_level.txt
+├── repo_tree.txt
+├── scaffold_relluna.py
+├── schema.json
+├── schema.json.save
+├── test_audio.wav
+├── test_video.mp4
+├── tests
+│   ├── .uploads
+│   │   ├── 02ea791ec9a21a3a990190e570f6b39d779b1c3ffebe6621eb01b180d3d2e2f8_IMG_7367.JPG
+│   │   ├── 07d4aac740753e66b6be4c7009026ea1bc46b075b362672837549a512f84e40e_IMG_7245.MOV
+│   │   ├── 08ce661342732b9d88c6dbfe003a9b28a5b9d0356f297c6014322d84f36f09fc_Gravando.m4a
+│   │   ├── 30f0d76a3e5f7aa4427c837b5641723355817652c446473512540812f8d2759c_Recibo do bilhete eletrônico, 03 Junho para DIOGO SILVA.pdf
+│   │   ├── 41f57612b7434ba7eaaa5b1e3925a4239e993e926722f240a3eba840b82bdb4c_IMG_7599.HEIC
+│   │   ├── 8810c947ede090da1c3b8b882a013dc9132e88528461fdcd53f57e6ce62c86b5_IMG_0770.HEIC
+│   │   ├── c23286008430ee9298ffee64aa11f63c5d49c14a0a0908cde43130464e1ac63b_IMG_0249.JPG
+│   │   └── f78c98b6bf243f8c7f837994a99e08fd253583c854dd4d30c834924b1d1184d4_IMG_0297.JPG
+│   ├── __init__.py
+│   ├── conftest.py
+│   ├── data
+│   │   ├── golden
+│   │   │   ├── Gravando.m4a
+│   │   │   ├── IMG_0249.JPG
+│   │   │   ├── IMG_0297.JPG
+│   │   │   ├── IMG_0770.HEIC
+│   │   │   ├── IMG_7245.MOV
+│   │   │   ├── IMG_7367.JPG
+│   │   │   ├── IMG_7599.HEIC
+│   │   │   ├── Recibo do bilhete eletrônico, 03 Junho para DIOGO SILVA.pdf
+│   │   │   ├── dm_audio_wav.json
+│   │   │   ├── dm_image_analog_no_exif.json
+│   │   │   ├── dm_image_exif_complete.json
+│   │   │   └── dm_pdf_simple.json
+│   │   └── media
+│   │       ├── DSCN0951.JPG
+│   │       ├── audio.wav
+│   │       ├── image_analog.jpg
+│   │       ├── image_exif.jpg
+│   │       ├── image_exiyf.jpg
+│   │       └── simple.pdf
+│   ├── e2e
+│   │   ├── test_audio_m4a.py
+│   │   ├── test_health_endpoint.py
+│   │   ├── test_heic_blocked.py
+│   │   ├── test_images_no_false_positive.py
+│   │   ├── test_layer5_derivatives.py
+│   │   ├── test_layer5_derivatives_contract.py
+│   │   ├── test_layer5_persistence.py
+│   │   ├── test_layer6_narrative.py
+│   │   ├── test_pdf_textual.py
+│   │   ├── test_read_model_search_http.py
+│   │   └── test_video_mov.py
+│   ├── fakes
+│   │   ├── __init__.py
+│   │   └── fake_mongo_store.py
+│   ├── test_blob_artefact_store_contract.py
+│   ├── test_content_safety.py
+│   ├── test_context_inference_api.py
+│   ├── test_dm_contract_layers_0_3.py
+│   ├── test_document_signals_extraction.py
+│   ├── test_document_taxonomy_rules.py
+│   ├── test_extract_basic_api_flow.py
+│   ├── test_extract_basic_audio.py
+│   ├── test_extract_basic_image.py
+│   ├── test_extract_basic_pdf.py
+│   ├── test_extract_basic_video.py
+│   ├── test_ingest_document_memory.py
+│   ├── test_ingest_nsfw_block.py
+│   ├── test_ingest_persists_dm.py
+│   ├── test_layer3_contract.py
+│   ├── test_layer3_inference_api.py
+│   ├── test_layer3_inference_contract.py
+│   ├── test_layer4_normalization_contract.py
+│   ├── test_layer4_promotion.py
+│   ├── test_mongo_document_store_contract.py
+│   ├── test_nsfw_image.py
+│   ├── test_pipeline_e2e_layers_0_3.py
+│   ├── test_pipeline_e2e_layers_0_4.py
+│   ├── test_read_model_projector_contract.py
+│   ├── test_read_model_search_contract.py
+│   ├── test_read_model_text_search.py
+│   └── utils
+│       └── schema_validator.py
+├── tools
+│   ├── create_document_memory_indexes.py
+│   ├── create_e2e_tests.py
+│   └── create_e2e_tests_from_golden.py
+├── uploads
+│   ├── 02ea791ec9a21a3a990190e570f6b39d779b1c3ffebe6621eb01b180d3d2e2f8_IMG_7367.JPG
+│   ├── 081b4b059f86ae23a0da05393bb67c866ae1ee9af5c76269fb8e5fe9ac90fa90_9CAFB961-9BC8-46D4-B325-6D5FF936DB69.JPG
+│   ├── 088523b5453239f990d49f00fa4e7a01640f47746ff6341d5afc8279365a6f46_088523b5453239f990d49f00fa4e7a01640f47746ff6341d5afc8279365a6f46_DSC00410.JPG
+│   ├── 08ce661342732b9d88c6dbfe003a9b28a5b9d0356f297c6014322d84f36f09fc_Gravando.m4a
+│   ├── 2775039a7c170ee3022a9934b83853e1b0d60ae0b55ca95a98a009f7973a8b6f_3F60A968-D536-4C6D-8B3D-A8C678FBC822.JPG
+│   ├── 4d62b61fb766b4b4c6d46e3a5ff8284b71bb4392ed607a71f93a1bbee23476e8_DSCN0951.JPG
+│   ├── 63d57c738aadc370035d4019ed40809a44da022fc1d5566b8343f3271ebda1c4_0111D7B8-A83A-4A4B-89E1-0B1F2D74E853.JPG
+│   ├── 8810c947ede090da1c3b8b882a013dc9132e88528461fdcd53f57e6ce62c86b5_IMG_0770.HEIC
+│   ├── a8646098355e13ee3bc5e73c1c7ffb8c9a96fe026db319d6fae7ca68f7d20f58_7DF77E7D-FAF5-48C8-9572-5F67242CF424.JPG
+│   ├── ba859dc7f3211e9bdac3f526235c1c99b35ac9f5798d27ad214db67c58f357ed_WhatsApp Image 2025-12-08 at 16.52.20.jpeg
+│   └── bc29e1b3a2e031362a11ef6853abc8903cfdd60c59b7f3d4a2da0e61894b4043_extrato (1).pdf
+├── uploads_test
+│   ├── 07d4aac740753e66b6be4c7009026ea1bc46b075b362672837549a512f84e40e_IMG_7245.MOV
+│   ├── 08ce661342732b9d88c6dbfe003a9b28a5b9d0356f297c6014322d84f36f09fc_Gravando.m4a
+│   ├── 30f0d76a3e5f7aa4427c837b5641723355817652c446473512540812f8d2759c_Recibo do bilhete eletrônico, 03 Junho para DIOGO SILVA.pdf
+│   ├── 41f57612b7434ba7eaaa5b1e3925a4239e993e926722f240a3eba840b82bdb4c_IMG_7599.HEIC
+│   ├── 78873b48ab234002030f7fbb3ef7eb580ac01263a400293bf3541a9cd802416c_teste_exif.jpg
+│   ├── 8810c947ede090da1c3b8b882a013dc9132e88528461fdcd53f57e6ce62c86b5_IMG_0770.HEIC
+│   ├── c23286008430ee9298ffee64aa11f63c5d49c14a0a0908cde43130464e1ac63b_IMG_0249.JPG
+│   └── d4cfed12164193c49c18dc44913d3d53d4637b0208664de23af0147964210bc7_teste.jpg
+└── uploads_test_ui
+    ├── 01b85804-16f5-44be-8e71-07c0fa9c3560_orcamento.pdf
+    ├── 12a58317-dcac-486a-b8ea-fcc3a7858aaf_orcamento.pdf
+    ├── 14ed13ab-bccb-4bc1-bc9f-ac1a4b1a95fa_E4574938-657A-4711-AD26-CDA46BA210F6.JPG
+    ├── 1883ded2-873a-474e-b2c7-eede9a8e7c93_3db677fe-6af0-417f-b61d-f9e396169e74_WhatsApp Audio 2026-02-20 at 09.39.08.mp4
+    ├── 213bbfda-e939-402d-bd81-c76c524e677f_Unleash the power of the ReefDose 4 and experience simplified dosing!.mp4
+    ├── 2a7fe209-b458-4cc4-adc4-25a678719813_orcamento.pdf
+    ├── 3073a77f-2f09-4fe3-97dd-618653d6ca47_orcamento.pdf
+    ├── 3db677fe-6af0-417f-b61d-f9e396169e74_WhatsApp Audio 2026-02-20 at 09.39.08.mp4
+    ├── 56fa12d0-e277-43b5-a0c3-f94762dc633e_orcamento.pdf
+    ├── 60b50a44-8a29-4d40-a2a3-6676d6c8a78d_test_audio.wav
+    ├── 681e96b9-1224-46e5-9340-6f1dd8734ffb_RG - DIOGO DE MELO GOMES SILVA.pdf
+    ├── 6d6bfcb4-cf1b-4fa3-a049-25c555bda945_WhatsApp Audio 2026-02-20 at 09.39.08.mp4
+    ├── 718969a3-c50c-44b1-ae0f-852cb22c8a50_WhatsApp Audio 2026-02-20 at 09.39.08.mp4
+    ├── 7825f7b5-1f17-4c0e-9177-c2382d617f15_IMG_4420.JPG
+    ├── 8314bfbb-96d8-4555-9900-3a66374886ce_AQUARIOZ - BOLETO VENCIMENTO 16-02-2026 - R$ 1.740,10.pdf
+    ├── 9f087199-f1d1-4760-a98c-0f95dc60b607_orcamento.pdf
+    ├── cafcdd73-589f-457e-8a87-0a0135f31481_DSC00763.JPG
+    ├── db535ee8-0842-4040-a7c8-0ef6a54fa0af_RG - DIOGO DE MELO GOMES SILVA.pdf
+    ├── dbbf615c-7358-4843-8a4a-eadc23865369_orcamento.pdf
+    ├── e3cfcbbe-e82a-411e-910f-99ae9982e75a_orcamento.pdf
+    ├── e657caaa-443a-4c9c-84a0-9435f396f2c1_RG - DIOGO DE MELO GOMES SILVA.pdf
+    ├── e9e011ae-8ee7-47ea-b7fe-d5c493621b2e_RG - DIOGO DE MELO GOMES SILVA.pdf
+    └── eee5fe5d-e83c-410c-9b96-d140ef0a1903_ElevenLabs_2026-01-19T16_14_02_Bill+-+Wise,+Mature,+Balanced_pre_sp100_s50_sb75_m1.mp3.mp4
+
+43 directories, 236 files
