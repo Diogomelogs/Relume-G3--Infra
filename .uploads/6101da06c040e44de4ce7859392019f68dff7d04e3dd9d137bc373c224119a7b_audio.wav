@@ -1,0 +1,48 @@
+{
+  "version": "v0.1.0",
+  "layer0": {
+    "documentid": "3157211c-5386-4b42-9046-0873967b56ab",
+    "contentfingerprint": "08ce661342732b9d88c6dbfe003a9b28a5b9d0356f297c6014322d84f36f09fc",
+    "ingestiontimestamp": "2026-02-08T03:49:31.600000",
+    "ingestionagent": "api_dev",
+    "custodychain": [],
+    "processingevents": [],
+    "versiongraph": [],
+    "integrityproofs": [],
+    "authenticitystate": "original",
+    "juridicalreadinesslevel": 0
+  },
+  "layer1": {
+    "midia": "audio",
+    "origem": "digital_nativo",
+    "artefatos": [
+      {
+        "id": "08ce661342732b9d88c6dbfe003a9b28a5b9d0356f297c6014322d84f36f09fc_Gravando.m4a",
+        "tipo": "original",
+        "uri": "/app/uploads/08ce661342732b9d88c6dbfe003a9b28a5b9d0356f297c6014322d84f36f09fc_Gravando.m4a",
+        "metadados_nativos": {},
+        "logs_ingestao": []
+      }
+    ]
+  },
+  "layer2": {
+    "duracao_segundos": {
+      "valor": null,
+      "fonte": "deterministic_extractors.basic",
+      "metodo": "audio_duration_not_implemented",
+      "estado": "insuficiente",
+      "confianca": null
+    },
+    "entidades_visuais_objetivas": []
+  },
+  "layer3": {
+    "tipo_evento": {
+      "valor": "registro_audio",
+      "fonte": "context_inference.basic",
+      "metodo": "heuristica_basica_tipo_evento",
+      "estado": "inferido",
+      "confianca": 0.5
+    },
+    "similaridade_semantica": []
+  }
+}

@@ -1,0 +1,184 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Documento-Memória Relluna",
+  "type": "object",
+  "required": ["version", "layer0", "layer1", "layer2"],
+  "properties": {
+    "version": {
+      "type": "string",
+      "enum": ["v0.1.0"]
+    },
+
+    "layer0": { "$ref": "#/$defs/layer0_custodia" },
+    "layer1": { "$ref": "#/$defs/layer1_artefatos" },
+    "layer2": { "$ref": "#/$defs/layer2_deterministico" },
+    "layer3": { "$ref": "#/$defs/layer3_contextual" },
+    "layer4": { "$ref": "#/$defs/layer4_correlacional" },
+    "layer5": { "$ref": "#/$defs/layer5_persistencia" },
+    "layer6": { "$ref": "#/$defs/layer6_narrativa" }
+  },
+
+  "$defs": {
+    "confidence_state": {
+      "type": "string",
+      "enum": ["confirmado", "inferido", "estimado", "insuficiente"]
+    },
+
+    "temporal_reference": {
+      "type": "object",
+      "description": "Referência temporal com lastro, incerteza e natureza explícita",
+      "properties": {
+        "tipo": {
+          "type": "string",
+          "enum": ["evento", "artefato", "digitalizacao"]
+        },
+        "valor": {
+          "type": ["string", "null"],
+          "description": "ISO parcial ou completo (ex: 1958, 1958-06, 1958-06-12)"
+        },
+        "intervalo": {
+          "type": "array",
+          "items": { "type": "string" },
+          "minItems": 2,
+          "maxItems": 2
+        },
+        "estado": { "$ref": "#/$defs/confidence_state" },
+        "confianca": {
+          "type": ["number", "null"],
+          "minimum": 0,
+          "maximum": 1
+        },
+        "fontes": {
+          "type": "array",
+          "items": { "type": "string" }
+        }
+      },
+      "required": ["tipo", "estado"]
+    },
+
+    "layer0_custodia": {
+      "type": "object",
+      "required": ["documentid", "contentfingerprint", "ingestiontimestamp", "ingestionagent"],
+      "properties": {
+        "documentid": { "type": "string" },
+        "contentfingerprint": { "type": "string" },
+        "ingestiontimestamp": { "type": "string", "format": "date-time" },
+        "ingestionagent": { "type": "string" },
+
+        "custodychain": {
+          "type": "array",
+          "items": { "type": "object" }
+        },
+        "processingevents": {
+          "type": "array",
+          "items": { "type": "object" }
+        },
+        "versiongraph": {
+          "type": "array",
+          "items": { "type": "object" }
+        },
+        "integrityproofs": {
+          "type": "array",
+          "items": { "type": "object" }
+        },
+        "authenticitystate": {
+          "type": "string",
+          "enum": ["original", "derivado", "certificado", "contestado"]
+        },
+        "juridicalreadinesslevel": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 3
+        }
+      }
+    },
+
+    "layer1_artefatos": {
+      "type": "object",
+      "required": ["midia", "artefatos"],
+      "properties": {
+        "midia": {
+          "type": "string",
+          "enum": ["imagem", "video", "audio", "documento"]
+        },
+        "origem": {
+          "type": "string",
+          "enum": ["digital_nativo", "digitalizado", "hibrido"]
+        },
+        "artefatos": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["id", "tipo", "uri"],
+            "properties": {
+              "id": { "type": "string" },
+              "tipo": { "type": "string" },
+              "uri": { "type": "string" },
+              "created_at": { "type": "string", "format": "date-time" },
+              "tempo_digitalizacao": { "$ref": "#/$defs/temporal_reference" }
+            }
+          }
+        }
+      }
+    },
+
+    "layer2_deterministico": {
+      "type": "object",
+      "properties": {
+        "largura_px": { "type": ["object", "null"] },
+        "altura_px": { "type": ["object", "null"] },
+        "num_paginas": { "type": ["object", "null"] },
+        "duracao_segundos": { "type": ["object", "null"] },
+        "data_exif": { "type": ["object", "null"] },
+        "gps_exif": { "type": ["object", "null"] },
+        "texto_ocr_literal": { "type": ["object", "null"] },
+        "entidades_visuais_objetivas": {
+          "type": "array",
+          "items": { "type": "object" }
+        }
+      }
+    },
+
+    "layer3_contextual": {
+      "type": "object",
+      "properties": {
+        "temporalidades_inferidas": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/temporal_reference" }
+        },
+        "entidades_semanticas": {
+          "type": "array",
+          "items": { "type": "object" }
+        }
+      }
+    },
+
+    "layer4_correlacional": {
+      "type": "object",
+      "properties": {
+        "tempo_canonico": {
+          "type": "object",
+          "properties": {
+            "referencia_escolhida": { "$ref": "#/$defs/temporal_reference" },
+            "justificativa": { "type": "string" }
+          },
+          "required": ["referencia_escolhida"]
+        },
+        "relacoes": {
+          "type": "array",
+          "items": { "type": "object" }
+        }
+      }
+    },
+
+    "layer5_persistencia": {
+      "type": ["object", "null"],
+      "description": "Persistência física, versionamento e endereçamento externo"
+    },
+
+    "layer6_narrativa": {
+      "type": ["object", "null"],
+      "description": "Narrativa humana, linha do tempo emocional e curadoria"
+    }
+  }
+}

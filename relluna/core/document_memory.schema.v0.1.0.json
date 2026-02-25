@@ -1,0 +1,156 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://relluna.app/schema/document-memory/v0.1.0",
+  "title": "DocumentoMemoria_v0_1_0",
+  "description": "Documento-Memória (versão mínima v0.1.0) usado na Fase 1 da Relluna.",
+  "type": "object",
+  "required": ["version", "layer0", "layer1", "layer2"],
+  "properties": {
+    "version": {
+      "type": "string",
+      "const": "v0.1.0",
+      "description": "Versão do schema atual do Documento-Memória."
+    },
+
+    "layer0": { "$ref": "#/$defs/layer0_min_custodia" },
+    "layer1": { "$ref": "#/$defs/layer1_min_artefatos" },
+    "layer2": { "$ref": "#/$defs/layer2_min_evidencias" }
+  },
+
+  "$defs": {
+    "confidence_state": {
+      "type": "string",
+      "enum": ["confirmado", "inferido", "insuficiente"],
+      "description": "Estado de confiança da evidência técnica."
+    },
+
+    "provenanced_value_string": {
+      "type": "object",
+      "properties": {
+        "valor": { "type": ["string", "null"] },
+        "fonte": { "type": "string" },
+        "metodo": { "type": "string" },
+        "estado": { "$ref": "#/$defs/confidence_state" },
+        "confianca": {
+          "type": ["number", "null"],
+          "minimum": 0,
+          "maximum": 1
+        }
+      },
+      "required": ["fonte", "metodo", "estado"]
+    },
+
+    "provenanced_value_number": {
+      "type": "object",
+      "properties": {
+        "valor": { "type": ["number", "null"] },
+        "fonte": { "type": "string" },
+        "metodo": { "type": "string" },
+        "estado": { "$ref": "#/$defs/confidence_state" },
+        "confianca": {
+          "type": ["number", "null"],
+          "minimum": 0,
+          "maximum": 1
+        }
+      },
+      "required": ["fonte", "metodo", "estado"]
+    },
+
+    "layer0_min_custodia": {
+      "type": "object",
+      "description": "CAMADA 0 mínima – Identidade básica e ingestão.",
+      "required": [
+        "documentid",
+        "contentfingerprint",
+        "ingestiontimestamp",
+        "ingestionagent"
+      ],
+      "properties": {
+        "documentid": {
+          "type": "string",
+          "description": "UUID canônico do DM (ex.: v7)."
+        },
+        "contentfingerprint": {
+          "type": "string",
+          "description": "Hash criptográfico do artefato bruto (ex.: SHA-256)."
+        },
+        "ingestiontimestamp": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Momento em que o DM foi ingerido."
+        },
+        "ingestionagent": {
+          "type": "string",
+          "description": "Identificador do agente/serviço de ingestão (ex.: api_dev)."
+        }
+      },
+      "additionalProperties": true
+    },
+
+    "layer1_min_artefatos": {
+      "type": "object",
+      "description": "CAMADA 1 mínima – Artefatos brutos e metadados nativos.",
+      "required": ["midia", "origem", "artefatos"],
+      "properties": {
+        "midia": {
+          "type": "string",
+          "enum": ["imagem", "video", "audio", "documento"],
+          "description": "Tipo principal de mídia do DM."
+        },
+        "origem": {
+          "type": "string",
+          "enum": ["digital_nativo", "digitalizado_analogico"],
+          "description": "Origem do artefato (nativo digital ou digitalização)."
+        },
+        "artefatos": {
+          "type": "array",
+          "description": "Lista de artefatos (original + intermediários).",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": { "type": "string" },
+              "tipo": { "type": "string" },
+              "uri": { "type": "string" },
+              "metadados_nativos": {
+                "type": "object",
+                "description": "Metadados crus do arquivo (EXIF completo, headers, etc.).",
+                "additionalProperties": true
+              }
+            },
+            "required": ["id", "tipo", "uri"],
+            "additionalProperties": true
+          }
+        }
+      },
+      "additionalProperties": true
+    },
+
+    "layer2_min_evidencias": {
+      "type": "object",
+      "description": "CAMADA 2 mínima – Evidências técnicas hoje implementadas.",
+      "properties": {
+        "data_exif": {
+          "$ref": "#/$defs/provenanced_value_string",
+          "description": "Data/hora de captura extraída do EXIF (quando disponível)."
+        },
+        "largura_px": {
+          "$ref": "#/$defs/provenanced_value_number",
+          "description": "Largura em pixels da imagem."
+        },
+        "altura_px": {
+          "$ref": "#/$defs/provenanced_value_number",
+          "description": "Altura em pixels da imagem."
+        },
+        "num_paginas": {
+          "type": ["integer", "null"],
+          "description": "Número de páginas (para PDFs), ainda não preenchido para imagens."
+        },
+        "duracao_segundos": {
+          "type": ["number", "null"],
+          "description": "Duração em segundos (para áudio/vídeo)."
+        }
+      },
+      "additionalProperties": true
+    }
+  }
+}
