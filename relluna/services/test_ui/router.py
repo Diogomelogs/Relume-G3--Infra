@@ -31,42 +31,57 @@ async def upload_file(request: Request, file: UploadFile = File(...)):
     file_id = str(uuid.uuid4())
     file_path = UPLOAD_DIR / f"{file_id}_{file.filename}"
 
+    # Salva o arquivo em disco
     with open(file_path, "wb") as buffer:
         shutil.copyfileobj(file.file, buffer)
 
-    # Define media type
+    # Lê o conteúdo salvo e calcula SHA-256 completo (64 caracteres)
+    content = file_path.read_bytes()
+    digest = sha256(content).hexdigest()
+
+    # Define media type por extensão
     media_type = MediaType.documento
-    if file.filename.lower().endswith((".jpg", ".jpeg", ".png")):
+    fname_lower = file.filename.lower()
+
+    if fname_lower.endswith((".jpg", ".jpeg", ".png")):
         media_type = MediaType.imagem
-    elif file.filename.lower().endswith((".mp4", ".mov")):
+    elif fname_lower.endswith((".mp4", ".mov")):
         media_type = MediaType.video
-    elif file.filename.lower().endswith((".mp3", ".wav", ".m4a")):
+    elif fname_lower.endswith((".mp3", ".wav", ".m4a")):
         media_type = MediaType.audio
 
-    # Criar DocumentMemory
+    now = datetime.utcnow()
+
+    # Criar DocumentMemory com Layer0 e Layer1 consistentes com a API
     dm = DocumentMemory(
         layer0=Layer0(
             documentid=file_id,
-            contentfingerprint=sha256(file_id.encode()).hexdigest()[:16],
-            ingestiontimestamp=datetime.utcnow(),
+            contentfingerprint=digest,
+            ingestiontimestamp=now,
             ingestionagent="test-ui",
+            integrityproofs=[{"algoritmo": "sha256", "hash": digest}],
+            juridicalreadinesslevel=0,
+            processingevents=[],
         ),
         layer1=Layer1(
             midia=media_type,
             origem=OriginType.digitalizado,
             artefatos=[
                 ArtefatoBruto(
+                    id=file_id,
+                    tipo="original",
                     uri=str(file_path),
                     nome=file.filename,
+                    mimetype=file.content_type,
+                    tamanho_bytes=len(content),
+                    created_at=now,
                 )
             ],
         ),
     )
 
-    # Rodar pipeline
+    # Rodar pipeline básica
     dm = run_basic_pipeline(dm)
-    dm = infer_layer3(dm)
-    dm = apply_layer4(dm)
 
     return templates.TemplateResponse(
         "index.html",

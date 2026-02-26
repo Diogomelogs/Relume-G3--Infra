@@ -121,3 +121,19 @@ class EntidadeVisualObjetiva(BaseModel):
     model_config = ConfigDict(extra="allow")
     label: str
     score: Optional[float] = None
+
+# ============================================================
+# v0.2.0 – Modelo forte de entidade semântica
+# ============================================================
+
+class SemanticEntity(BaseModel):
+    model_config = ConfigDict(extra="allow")
+
+    tipo: str
+    valor: str
+    fonte: str
+    confianca: float
+
+    # Campos preparados para evolução futura
+    normalizado: Optional[str] = None
+    contexto: Optional[str] = None

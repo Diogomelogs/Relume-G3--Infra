@@ -72,61 +72,39 @@ def _infer_document_tipo_from_ocr(text: str, dm: DocumentMemory) -> Optional[str
         return "recibo"
     return None
 
-
-
-def _has_media_evidence(dm: DocumentMemory) -> bool:
-    """
-    Verifica se existe algum sinal mínimo em layer2
-    para mídias não-documento (dimensão ou duração).
-    """
-    if dm.layer2 is None:
-        return False
-
-
-    l2 = dm.layer2
-    midia = dm.layer1.midia
-
-
-    if midia == MediaType.imagem:
-        return any(
-            [
-                getattr(l2, "largura_px", None) is not None,
-                getattr(l2, "altura_px", None) is not None,
-                getattr(l2, "data_exif", None) is not None,
-                getattr(l2, "qualidade_sinal", None) is not None,
-            ]
-        )
-
-
-    if midia in (MediaType.audio, MediaType.video):
-        return getattr(l2, "duracao_segundos", None) is not None
-
-
-    return False
-
-
-
 def infer_layer3(dm: DocumentMemory) -> DocumentMemory:
     if dm.layer1 is None:
         return dm
 
-
     midia = dm.layer1.midia
 
-
-    # ---------- MÍDIAS NÃO-DOCUMENTO ----------
-    # Só cria Layer3 se houver alguma evidência em layer2
+    # =====================================================
+    # -------- NÃO DOCUMENTO (imagem / áudio / vídeo) ----
+    # =====================================================
     if midia in (MediaType.imagem, MediaType.video, MediaType.audio):
-        if not _has_media_evidence(dm):
+        if dm.layer2 is None:
             return dm
 
+        l2 = dm.layer2
+        has_signal = False
+
+        if midia == MediaType.imagem:
+            has_signal = any([
+                getattr(l2, "largura_px", None) is not None,
+                getattr(l2, "altura_px", None) is not None,
+                getattr(l2, "data_exif", None) is not None,
+            ])
+
+        elif midia in (MediaType.audio, MediaType.video):
+            has_signal = getattr(l2, "duracao_segundos", None) is not None
+
+        if not has_signal:
+            return dm
 
         l3 = Layer3Evidence()
         meta = InferenceMeta(engine=_SOURCE)
         lastro = [EvidenceRef(path="layer1.midia")]
 
-
-        # Para os testes, basta distinguir imagem/áudio/vídeo; imagem já cobre o contrato.
         l3.tipo_evento = InferredString(
             valor=midia.value,
             fonte=_SOURCE,
@@ -137,49 +115,106 @@ def infer_layer3(dm: DocumentMemory) -> DocumentMemory:
             meta=meta,
         )
 
-
         dm.layer3 = l3
         return dm
 
-
-    # ---------- DOCUMENTO ----------
-    if not _has_any_evidence_for_document(dm):
-        # NÃO criar layer3 quando não há lastro textual
-        return dm
-
+    # =====================================================
+    # ------------------- DOCUMENTO -----------------------
+    # =====================================================
 
     text = _ocr_text(dm)
-    inferred = _infer_document_tipo_from_ocr(text, dm)
-    if inferred is None:
+    if not text or not text.strip():
         return dm
 
+    signals = extract_document_signals(dm)
+    signals.ocr_text = text
+    signals.has_text = True
+
+    result = infer_document_type(signals)
+
+    # ---------- Fallback médico estruturado ----------
+    if result is None:
+        upper_text = text.upper()
+
+        if "PARECER" in upper_text and "CID:" in upper_text:
+            inferred_valor = "parecer_medico"
+            confidence = 0.95
+        else:
+            return dm
+    else:
+        inferred = result.doc_type
+        inferred_valor = inferred.value if hasattr(inferred, "value") else str(inferred)
+        confidence = result.confidence
 
     l3 = Layer3Evidence()
     meta = InferenceMeta(engine=_SOURCE)
     lastro = [EvidenceRef(path="layer2.texto_ocr_literal.valor")]
 
-
     l3.tipo_documento = InferredString(
-        valor=inferred,
+        valor=inferred_valor,
         fonte=_SOURCE,
         metodo=_METHOD,
         estado=ConfidenceState.inferido,
-        confianca=0.85,
+        confianca=confidence,
         lastro=lastro,
         meta=meta,
     )
-
 
     l3.tipo_evento = InferredString(
-        valor=inferred.value if hasattr(inferred, 'value') else inferred,
+        valor=inferred_valor,
         fonte=_SOURCE,
         metodo=_METHOD,
         estado=ConfidenceState.inferido,
-        confianca=0.85,
+        confianca=confidence,
         lastro=lastro,
         meta=meta,
     )
 
+    # =====================================================
+    # ------------- REGEX ENTIDADES TRANSVERSAL ----------
+    # =====================================================
+
+    import re
+    from relluna.core.document_memory.types_basic import SemanticEntity
+
+    entidades: list[SemanticEntity] = []
+
+    def _add(tipo, valor):
+        entidades.append(
+            SemanticEntity(
+                tipo=tipo,
+                valor=valor,
+                fonte="regex",
+                confianca=0.9,
+            )
+        )
+
+    # CPF
+    for m in re.findall(r"\b\d{3}\.\d{3}\.\d{3}-\d{2}\b", text):
+        _add("cpf", m)
+
+    # CNPJ
+    for m in re.findall(r"\b\d{2}\.\d{3}\.\d{3}/\d{4}-\d{2}\b", text):
+        _add("cnpj", m)
+
+    # Valor monetário
+    for m in re.findall(r"R\$\s?\d{1,3}(?:\.\d{3})*,\d{2}", text):
+        _add("valor_monetario", m)
+
+    # Datas simples
+    for m in re.findall(r"\b\d{2}/\d{2}/\d{4}\b", text):
+        _add("data_textual", m)
+
+    # CID médico
+    for m in re.findall(r"\b[A-Z]\d{2}\.\d\b", text):
+        _add("cid", m)
+
+    # CRM
+    for m in re.findall(r"CRM\s*\d+\s*[A-Z]{2}", text):
+        _add("crm", m)
+
+    if entidades:
+        l3.entidades_semanticas = entidades
 
     dm.layer3 = l3
     return dm
