@@ -135,7 +135,6 @@ async def health() -> HealthResponse:
 # INGEST
 # ============================================================
 
-
 @app.post("/ingest")
 async def ingest(
     file: UploadFile = File(...),
@@ -150,11 +149,12 @@ async def ingest(
         raise HTTPException(status_code=400, detail="Arquivo vazio")
 
     digest = sha256(content).hexdigest()
+
     filename = f"{digest}_{file.filename}"
     target_path = UPLOAD_DIR / filename
     target_path.write_bytes(content)
 
-    # Detectar tipo de mídia se não vier explícito
+    # Detectar tipo de mídia
     if media_type:
         midia = media_type
     else:
@@ -175,6 +175,9 @@ async def ingest(
         contentfingerprint=digest,
         ingestiontimestamp=datetime.now(UTC),
         ingestionagent="api",
+        integrityproofs=[{"algoritmo": "sha256", "hash": digest}],
+        juridicalreadinesslevel=0,
+        processingevents=[],
     )
 
     layer1 = Layer1(
@@ -193,29 +196,25 @@ async def ingest(
     )
 
     dm = DocumentMemory(
-        version="v0.1.0",
+        version=API_VERSION,
         layer0=layer0,
         layer1=layer1,
     )
 
-    # ==============================
-    # CONTENT SAFETY (NSFW)
-    # ==============================
+    # Content safety (não pode quebrar ingest)
     if midia == MediaType.imagem:
         try:
             nsfw_result = check_image_nsfw(target_path, threshold=0.7)
-            if nsfw_result is not None:
+            if nsfw_result:
                 layer1.artefatos[0].metadados_nativos = (
                     layer1.artefatos[0].metadados_nativos or {}
                 )
                 layer1.artefatos[0].metadados_nativos["nsfw"] = nsfw_result.to_dict()
         except Exception:
-            # Nunca quebrar ingestão por falha de modelo externo
             pass
-        
+
     await mongo_store.save(dm)
 
-    # Por enquanto, URI local fake; em produção você pode usar AzureBlobBackend.upload
     blob_uri = f"https://local.blob/{filename}"
 
     return {
@@ -224,11 +223,9 @@ async def ingest(
         "hash": digest,
     }
 
-
 # ============================================================
 # EXTRACT (Layer2 + Layer5)
 # ============================================================
-
 
 @app.post("/extract/{documentid}")
 async def extract(documentid: str):
@@ -237,14 +234,32 @@ async def extract(documentid: str):
         raise HTTPException(status_code=404, detail="Documento não encontrado")
 
     dm = DocumentMemory.model_validate(dm_dict)
+
     dm = extract_basic(dm)
+
+    if dm.layer0:
+        dm.layer0.juridicalreadinesslevel = max(
+            dm.layer0.juridicalreadinesslevel or 0, 1
+        )
+
+
+    if dm.layer0:
+        dm.layer0.processingevents.append({
+            "etapa": "extract_basic",
+            "engine": "deterministic_extractors.basic",
+            "timestamp": datetime.now(UTC).isoformat(),
+        })
+
+
+    if dm.layer0:
+        dm.layer0.juridicalreadinesslevel = 1
+
     dm = apply_transcription_to_layer2(dm)
     dm = apply_layer5(dm)
 
     await mongo_store.save(dm)
 
     return to_contract(dm)
-
 
 # ============================================================
 # INFER CONTEXT (Layer3 + Layer4)
@@ -268,6 +283,14 @@ async def infer_context(documentid: str):
     # ---------- LAYER 3 ----------
     dm = infer_layer3(dm)
 
+    if dm.layer0:
+        dm.layer0.processingevents.append({
+            "etapa": "infer_layer3",
+            "engine": "taxonomy_rules",
+            "timestamp": datetime.now(UTC).isoformat(),
+        })
+
+
     # Garantir que Layer3 sempre exista
     if dm.layer3 is None:
         # Se seu Layer3EvidenceBaseModel exige campos, pode ajustar aqui depois
@@ -275,6 +298,20 @@ async def infer_context(documentid: str):
 
     # ---------- LAYER 4 ----------
     dm = apply_layer4(dm)
+
+    if dm.layer0:
+        dm.layer0.juridicalreadinesslevel = max(
+            dm.layer0.juridicalreadinesslevel or 0, 2
+        )
+
+
+    if dm.layer0:
+        dm.layer0.processingevents.append({
+            "etapa": "apply_layer4",
+            "engine": "normalization",
+            "timestamp": datetime.now(UTC).isoformat(),
+        })
+
 
     # Garantir que Layer4 sempre exista
     if dm.layer4 is None:
