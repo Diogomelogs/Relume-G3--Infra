@@ -1,0 +1,6 @@
+{
+  "source_path": "/workspaces/Relume-G3--Infra/.uploads/4d62b61fb766b4b4c6d46e3a5ff8284b71bb4392ed607a71f93a1bbee23476e8_image_exif.jpg",
+  "method": "tesseract.image_to_string+preprocess",
+  "text_len": 5,
+  "has_text": true
+}

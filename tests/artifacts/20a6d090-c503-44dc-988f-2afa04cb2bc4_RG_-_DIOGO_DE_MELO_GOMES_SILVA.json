@@ -1,0 +1,46 @@
+{
+  "text": "|\nss roms o OQ. S oo BR E EC MEOE MIEN D BOMBER OMS S,\nWOLTUID 00 VUNIYNISSY \\ ! E TO\nBoBIGZIEVEIL Get E atid OT/8TONEGBHE | o ASPEN — — UNSIVEO\nR ae L75SCUN ‘ |\nEtoS13/6IZV ATND ViISTINVd 13NSIW OYS dS ° OVA OYS .. YY) o\na “YY \"\n. 4/4 Wy) iy ,\nr | = do ia\nLB6T/TO/PL dS - ONVES eo ! WA if é\neneeenne ee Sy f GE Ga.\nDo ISA. IN Ts t t ( Ny 5 I dó 4 Qe Gy\nOW 30 VNINYVI38 VNIDUTH 4 4 q LOS ul!\nVAIS Vd SIWO9 OUDID = CNO OQ\"; |\n| cs 9 Yo it\n| VATIS SIWOD O13W 30 OSOIG 4 -- — 00\n. los vo RR: 2 in ie | Noob :\no cs, BRAZ . . . e y LS VINIL TTB VSG\n. B10z/BO/60 co G-s6B'LBL' Lt 4 b-0048 Oinvd OYS 20 00VIC)\nOI WNOIOWN OLUQIUAL OOGOLWavanyA TOO. EINS 00 vauvesass vononday J) NO",
+  "doc_type": "scanned_pdf",
+  "pages": 1,
+  "engine": "tesseract_pdf_fallback",
+  "confidence": 40.73,
+  "status": "review",
+  "reasons": [
+    "confianca_baixa",
+    "sem_estrutura_documental"
+  ],
+  "warnings": [],
+  "metrics": {
+    "total_chars": 673,
+    "non_space_chars": 505,
+    "word_count": 148,
+    "long_word_count": 57,
+    "alnum_ratio": 0.8832,
+    "alpha_ratio": 0.7901,
+    "digit_ratio": 0.0931,
+    "single_char_ratio": 0.2297,
+    "repeated_symbol_ratio": 0.0,
+    "printable_ratio": 0.9718,
+    "line_count": 20,
+    "structured_hits": 0,
+    "document_score": -11.0,
+    "confidence": 40.73,
+    "score": 47.79
+  },
+  "candidates": [
+    {
+      "page": 1,
+      "engine": "tesseract:adaptive:psm6",
+      "variant": "adaptive",
+      "psm": 6,
+      "confidence": 40.73,
+      "status": "review",
+      "score": 47.79,
+      "document_score": -11.0,
+      "reasons": [
+        "confianca_baixa",
+        "sem_estrutura_documental"
+      ]
+    }
+  ]
+}

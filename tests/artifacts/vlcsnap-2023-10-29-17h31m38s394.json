@@ -1,0 +1,260 @@
+{
+  "text": ") oh SF a ey ew Ls",
+  "doc_type": "image",
+  "pages": 1,
+  "engine": "tesseract:no_tables:psm11",
+  "confidence": 39.57,
+  "status": "review",
+  "reasons": [
+    "texto_curto",
+    "poucas_palavras_boas",
+    "confianca_baixa"
+  ],
+  "warnings": [],
+  "metrics": {
+    "total_chars": 18,
+    "non_space_chars": 12,
+    "word_count": 6,
+    "long_word_count": 0,
+    "alnum_ratio": 0.9167,
+    "alpha_ratio": 0.9167,
+    "digit_ratio": 0.0,
+    "single_char_ratio": 0.1667,
+    "repeated_symbol_ratio": 0.0,
+    "printable_ratio": 1.0,
+    "confidence": 39.57,
+    "score": 50.92
+  },
+  "candidates": [
+    {
+      "engine": "tesseract:no_tables:psm11",
+      "variant": "no_tables",
+      "psm": 11,
+      "confidence": 39.57,
+      "status": "review",
+      "score": 50.92,
+      "reasons": [
+        "texto_curto",
+        "poucas_palavras_boas",
+        "confianca_baixa"
+      ]
+    },
+    {
+      "engine": "tesseract:gray:psm6",
+      "variant": "gray",
+      "psm": 6,
+      "confidence": 52.45,
+      "status": "review",
+      "score": 50.59,
+      "reasons": [
+        "poucas_palavras_boas"
+      ]
+    },
+    {
+      "engine": "tesseract:adaptive:psm6",
+      "variant": "adaptive",
+      "psm": 6,
+      "confidence": 37.83,
+      "status": "review",
+      "score": 49.28,
+      "reasons": [
+        "poucas_palavras_boas",
+        "confianca_baixa"
+      ]
+    },
+    {
+      "engine": "tesseract:otsu:psm11",
+      "variant": "otsu",
+      "psm": 11,
+      "confidence": 37.17,
+      "status": "review",
+      "score": 48.71,
+      "reasons": [
+        "poucas_palavras_boas",
+        "confianca_baixa"
+      ]
+    },
+    {
+      "engine": "tesseract:sharp_otsu:psm11",
+      "variant": "sharp_otsu",
+      "psm": 11,
+      "confidence": 37.17,
+      "status": "review",
+      "score": 48.71,
+      "reasons": [
+        "poucas_palavras_boas",
+        "confianca_baixa"
+      ]
+    },
+    {
+      "engine": "tesseract:inverted:psm6",
+      "variant": "inverted",
+      "psm": 6,
+      "confidence": 43.0,
+      "status": "review",
+      "score": 48.05,
+      "reasons": [
+        "poucas_palavras_boas",
+        "confianca_baixa"
+      ]
+    },
+    {
+      "engine": "tesseract:no_tables:psm6",
+      "variant": "no_tables",
+      "psm": 6,
+      "confidence": 35.92,
+      "status": "review",
+      "score": 47.85,
+      "reasons": [
+        "poucas_palavras_boas",
+        "confianca_baixa"
+      ]
+    },
+    {
+      "engine": "tesseract:adaptive:psm11",
+      "variant": "adaptive",
+      "psm": 11,
+      "confidence": 44.79,
+      "status": "review",
+      "score": 46.59,
+      "reasons": [
+        "poucas_palavras_boas",
+        "confianca_baixa"
+      ]
+    },
+    {
+      "engine": "tesseract:inverted:psm11",
+      "variant": "inverted",
+      "psm": 11,
+      "confidence": 50.1,
+      "status": "review",
+      "score": 45.25,
+      "reasons": [
+        "poucas_palavras_boas"
+      ]
+    },
+    {
+      "engine": "tesseract:otsu:psm6",
+      "variant": "otsu",
+      "psm": 6,
+      "confidence": 45.36,
+      "status": "rejected",
+      "score": 44.43,
+      "reasons": [
+        "poucas_palavras_boas"
+      ]
+    },
+    {
+      "engine": "tesseract:sharp_otsu:psm6",
+      "variant": "sharp_otsu",
+      "psm": 6,
+      "confidence": 45.36,
+      "status": "rejected",
+      "score": 44.43,
+      "reasons": [
+        "poucas_palavras_boas"
+      ]
+    },
+    {
+      "engine": "tesseract:gray:psm11",
+      "variant": "gray",
+      "psm": 11,
+      "confidence": 45.5,
+      "status": "rejected",
+      "score": 43.28,
+      "reasons": [
+        "poucas_palavras_boas"
+      ]
+    },
+    {
+      "engine": "tesseract:gray:psm4",
+      "variant": "gray",
+      "psm": 4,
+      "confidence": 95.0,
+      "status": "rejected",
+      "score": 0.0,
+      "reasons": [
+        "texto_vazio",
+        "texto_curto",
+        "poucas_palavras_boas",
+        "muito_ruido",
+        "baixa_printabilidade"
+      ]
+    },
+    {
+      "engine": "tesseract:adaptive:psm4",
+      "variant": "adaptive",
+      "psm": 4,
+      "confidence": 95.0,
+      "status": "rejected",
+      "score": 0.0,
+      "reasons": [
+        "texto_vazio",
+        "texto_curto",
+        "poucas_palavras_boas",
+        "muito_ruido",
+        "baixa_printabilidade"
+      ]
+    },
+    {
+      "engine": "tesseract:otsu:psm4",
+      "variant": "otsu",
+      "psm": 4,
+      "confidence": 95.0,
+      "status": "rejected",
+      "score": 0.0,
+      "reasons": [
+        "texto_vazio",
+        "texto_curto",
+        "poucas_palavras_boas",
+        "muito_ruido",
+        "baixa_printabilidade"
+      ]
+    },
+    {
+      "engine": "tesseract:sharp_otsu:psm4",
+      "variant": "sharp_otsu",
+      "psm": 4,
+      "confidence": 95.0,
+      "status": "rejected",
+      "score": 0.0,
+      "reasons": [
+        "texto_vazio",
+        "texto_curto",
+        "poucas_palavras_boas",
+        "muito_ruido",
+        "baixa_printabilidade"
+      ]
+    },
+    {
+      "engine": "tesseract:no_tables:psm4",
+      "variant": "no_tables",
+      "psm": 4,
+      "confidence": 95.0,
+      "status": "rejected",
+      "score": 0.0,
+      "reasons": [
+        "texto_vazio",
+        "texto_curto",
+        "poucas_palavras_boas",
+        "muito_ruido",
+        "baixa_printabilidade"
+      ]
+    },
+    {
+      "engine": "tesseract:inverted:psm4",
+      "variant": "inverted",
+      "psm": 4,
+      "confidence": 95.0,
+      "status": "rejected",
+      "score": 0.0,
+      "reasons": [
+        "texto_vazio",
+        "texto_curto",
+        "poucas_palavras_boas",
+        "muito_ruido",
+        "baixa_printabilidade"
+      ]
+    }
+  ]
+}

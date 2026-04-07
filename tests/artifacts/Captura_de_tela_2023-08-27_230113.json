@@ -1,0 +1,161 @@
+{
+  "text": "Página 2 de 3 INSS CNIS - Cadastro Nacional de Informações Sociais PREVIDÊNCIA a Extrato Previdenciário 19/08/2023 15:07:41 Identificação do Filiado NIT: 168.17144.54-0 CPF: 134.939.808-09 Nome: HERCILIA BELARMINA DE MELO Data de nascimento: 25/12/1952 Nome da mãe: FRANCISCA BERLAMINA DE MELO Relações Previdenciárias 06/2018 2.913,92 05/2018 2.913,92 04/2018 2.913,92 03/2018 2.913,92 02/2018 2.913,92 01/2018 2.913,92 12/2017 2.854,83 11/2017 2.854,83 01/2017 2.532,26 Seq. NIT Origem do Vinculo Tipo Filiado no Vinculo Data Inicio Data Fim Indicadores 2 168.17144.54-0 RECOLHIMENTO Facultativo 01/03/2019 31/07/2019 IREC-INDPEND Contribuições Competência Data Pgto. Contribuição Salário Contribuição Indicadores Competência Data Pgto. Contribuição Salário Contribuição Indicadores PREC-FBR, IREC- PREC-FBR, IREC- 03/2019 12/04/2019 49,90 998,00 04/2019 23/05/2019 49,90 998,00 PRECÍFBR, IREC- PRECÍFBR, IREC- 05/2019 17/06/2019 49,90 998,00 C123 06/2019 17/06/2019 49,90 998,00 Lc123 07/2019 10/07/2019 49,90 998,00 PREC-FBR, IREC- LC123 Legenda de Indicadores Indicador Descrição Indicador Descrição IREC-INDPEND Recolhimentos com indicadores/pendências IREC-LC123 Recolhimento no Plano Simplificado de Previdência Social (LC 123/2006) PREC-FBR Recolhimento facultativo baixa renda pendente de análise.",
+  "doc_type": "image",
+  "pages": 1,
+  "engine": "tesseract:gray:psm11",
+  "confidence": 93.45,
+  "status": "approved",
+  "reasons": [],
+  "warnings": [],
+  "metrics": {
+    "total_chars": 1307,
+    "non_space_chars": 1149,
+    "word_count": 238,
+    "long_word_count": 147,
+    "alnum_ratio": 0.9112,
+    "alpha_ratio": 0.6362,
+    "digit_ratio": 0.275,
+    "single_char_ratio": 0.063,
+    "repeated_symbol_ratio": 0.0,
+    "printable_ratio": 1.0,
+    "confidence": 93.45,
+    "score": 96.94
+  },
+  "candidates": [
+    {
+      "engine": "tesseract:gray:psm11",
+      "variant": "gray",
+      "psm": 11,
+      "confidence": 93.45,
+      "status": "approved",
+      "score": 96.94,
+      "reasons": []
+    },
+    {
+      "engine": "tesseract:gray:psm4",
+      "variant": "gray",
+      "psm": 4,
+      "confidence": 92.07,
+      "status": "approved",
+      "score": 96.92,
+      "reasons": []
+    },
+    {
+      "engine": "tesseract:otsu:psm4",
+      "variant": "otsu",
+      "psm": 4,
+      "confidence": 91.0,
+      "status": "approved",
+      "score": 96.81,
+      "reasons": []
+    },
+    {
+      "engine": "tesseract:sharp_otsu:psm4",
+      "variant": "sharp_otsu",
+      "psm": 4,
+      "confidence": 91.0,
+      "status": "approved",
+      "score": 96.81,
+      "reasons": []
+    },
+    {
+      "engine": "tesseract:gray:psm6",
+      "variant": "gray",
+      "psm": 6,
+      "confidence": 91.61,
+      "status": "approved",
+      "score": 96.79,
+      "reasons": []
+    },
+    {
+      "engine": "tesseract:adaptive:psm11",
+      "variant": "adaptive",
+      "psm": 11,
+      "confidence": 91.36,
+      "status": "approved",
+      "score": 96.79,
+      "reasons": []
+    },
+    {
+      "engine": "tesseract:otsu:psm11",
+      "variant": "otsu",
+      "psm": 11,
+      "confidence": 91.49,
+      "status": "approved",
+      "score": 96.74,
+      "reasons": []
+    },
+    {
+      "engine": "tesseract:sharp_otsu:psm11",
+      "variant": "sharp_otsu",
+      "psm": 11,
+      "confidence": 91.49,
+      "status": "approved",
+      "score": 96.74,
+      "reasons": []
+    },
+    {
+      "engine": "tesseract:otsu:psm6",
+      "variant": "otsu",
+      "psm": 6,
+      "confidence": 90.16,
+      "status": "approved",
+      "score": 96.72,
+      "reasons": []
+    },
+    {
+      "engine": "tesseract:sharp_otsu:psm6",
+      "variant": "sharp_otsu",
+      "psm": 6,
+      "confidence": 90.16,
+      "status": "approved",
+      "score": 96.72,
+      "reasons": []
+    },
+    {
+      "engine": "tesseract:no_tables:psm11",
+      "variant": "no_tables",
+      "psm": 11,
+      "confidence": 92.21,
+      "status": "approved",
+      "score": 96.71,
+      "reasons": []
+    },
+    {
+      "engine": "tesseract:no_tables:psm4",
+      "variant": "no_tables",
+      "psm": 4,
+      "confidence": 91.28,
+      "status": "approved",
+      "score": 96.69,
+      "reasons": []
+    },
+    {
+      "engine": "tesseract:adaptive:psm6",
+      "variant": "adaptive",
+      "psm": 6,
+      "confidence": 89.28,
+      "status": "approved",
+      "score": 96.64,
+      "reasons": []
+    },
+    {
+      "engine": "tesseract:adaptive:psm4",
+      "variant": "adaptive",
+      "psm": 4,
+      "confidence": 88.42,
+      "status": "approved",
+      "score": 96.41,
+      "reasons": []
+    },
+    {
+      "engine": "tesseract:no_tables:psm6",
+      "variant": "no_tables",
+      "psm": 6,
+      "confidence": 88.74,
+      "status": "approved",
+      "score": 96.34,
+      "reasons": []
+    }
+  ]
+}

@@ -1,0 +1,1407 @@
+{
+  "$defs": {
+    "ArtefatoBruto": {
+      "additionalProperties": true,
+      "properties": {
+        "id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Id"
+        },
+        "tipo": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Tipo"
+        },
+        "uri": {
+          "title": "Uri",
+          "type": "string"
+        },
+        "nome": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Nome"
+        },
+        "mimetype": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Mimetype"
+        },
+        "tamanho_bytes": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Tamanho Bytes"
+        },
+        "created_at": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Created At"
+        },
+        "metadados_nativos": {
+          "anyOf": [
+            {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Metadados Nativos"
+        }
+      },
+      "required": [
+        "uri"
+      ],
+      "title": "ArtefatoBruto",
+      "type": "object"
+    },
+    "ConfidenceState": {
+      "enum": [
+        "confirmado",
+        "inferido",
+        "insuficiente",
+        "negado",
+        "estimado"
+      ],
+      "title": "ConfidenceState",
+      "type": "string"
+    },
+    "Derivado": {
+      "additionalProperties": false,
+      "properties": {
+        "tipo": {
+          "title": "Tipo",
+          "type": "string"
+        },
+        "uri": {
+          "title": "Uri",
+          "type": "string"
+        }
+      },
+      "required": [
+        "tipo",
+        "uri"
+      ],
+      "title": "Derivado",
+      "type": "object"
+    },
+    "EntidadeCanonica": {
+      "additionalProperties": false,
+      "properties": {
+        "kind": {
+          "title": "Kind",
+          "type": "string"
+        },
+        "label": {
+          "title": "Label",
+          "type": "string"
+        }
+      },
+      "required": [
+        "kind",
+        "label"
+      ],
+      "title": "EntidadeCanonica",
+      "type": "object"
+    },
+    "EntidadeVisualObjetiva": {
+      "additionalProperties": true,
+      "properties": {
+        "label": {
+          "title": "Label",
+          "type": "string"
+        },
+        "score": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Score"
+        }
+      },
+      "required": [
+        "label"
+      ],
+      "title": "EntidadeVisualObjetiva",
+      "type": "object"
+    },
+    "EvidenceRef": {
+      "additionalProperties": true,
+      "description": "Referência leve para evidência/lastro.",
+      "properties": {
+        "kind": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Kind"
+        },
+        "uri": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Uri"
+        },
+        "page": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Page"
+        },
+        "span": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "integer"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Span"
+        },
+        "note": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Note"
+        }
+      },
+      "title": "EvidenceRef",
+      "type": "object"
+    },
+    "GpsExif": {
+      "additionalProperties": true,
+      "properties": {
+        "lat": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ProvenancedNumber"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "lon": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ProvenancedNumber"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        }
+      },
+      "title": "GpsExif",
+      "type": "object"
+    },
+    "InferenceMeta": {
+      "additionalProperties": true,
+      "properties": {
+        "engine": {
+          "default": "rules",
+          "title": "Engine",
+          "type": "string"
+        },
+        "version": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Version"
+        },
+        "timestamp": {
+          "format": "date-time",
+          "title": "Timestamp",
+          "type": "string"
+        }
+      },
+      "title": "InferenceMeta",
+      "type": "object"
+    },
+    "Layer0Custodia": {
+      "additionalProperties": false,
+      "properties": {
+        "documentid": {
+          "title": "Documentid",
+          "type": "string"
+        },
+        "contentfingerprint": {
+          "title": "Contentfingerprint",
+          "type": "string"
+        },
+        "ingestiontimestamp": {
+          "format": "date-time",
+          "title": "Ingestiontimestamp",
+          "type": "string"
+        },
+        "ingestionagent": {
+          "title": "Ingestionagent",
+          "type": "string"
+        },
+        "authenticitystate": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Authenticitystate"
+        },
+        "juridicalreadinesslevel": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Juridicalreadinesslevel"
+        },
+        "custodychain": {
+          "items": {
+            "additionalProperties": true,
+            "type": "object"
+          },
+          "title": "Custodychain",
+          "type": "array"
+        },
+        "processingevents": {
+          "items": {
+            "additionalProperties": true,
+            "type": "object"
+          },
+          "title": "Processingevents",
+          "type": "array"
+        },
+        "versiongraph": {
+          "items": {
+            "additionalProperties": true,
+            "type": "object"
+          },
+          "title": "Versiongraph",
+          "type": "array"
+        },
+        "integrityproofs": {
+          "items": {
+            "additionalProperties": true,
+            "type": "object"
+          },
+          "title": "Integrityproofs",
+          "type": "array"
+        }
+      },
+      "required": [
+        "documentid",
+        "contentfingerprint",
+        "ingestiontimestamp",
+        "ingestionagent"
+      ],
+      "title": "Layer0Custodia",
+      "type": "object"
+    },
+    "Layer1": {
+      "additionalProperties": false,
+      "properties": {
+        "midia": {
+          "$ref": "#/$defs/MediaType"
+        },
+        "origem": {
+          "$ref": "#/$defs/OriginType"
+        },
+        "artefatos": {
+          "items": {
+            "$ref": "#/$defs/ArtefatoBruto"
+          },
+          "title": "Artefatos",
+          "type": "array"
+        }
+      },
+      "required": [
+        "midia",
+        "origem",
+        "artefatos"
+      ],
+      "title": "Layer1",
+      "type": "object"
+    },
+    "Layer2Evidence": {
+      "additionalProperties": true,
+      "description": "Camada de evidência técnica determinística.\nNÃO deve usar tipos primitivos.\nMantém rastreabilidade (lastro) para Layer3 e auditoria.",
+      "properties": {
+        "largura_px": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ProvenancedNumber"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "altura_px": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ProvenancedNumber"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "num_paginas": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ProvenancedNumber"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "texto_ocr_literal": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ProvenancedString"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "duracao_segundos": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ProvenancedNumber"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "taxa_amostragem_hz": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ProvenancedNumber"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "data_exif": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ProvenancedString"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "gps_exif": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/GpsExif"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "qualidade_sinal": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/QualidadeSinal"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "entidades_visuais_objetivas": {
+          "items": {
+            "$ref": "#/$defs/EntidadeVisualObjetiva"
+          },
+          "title": "Entidades Visuais Objetivas",
+          "type": "array"
+        },
+        "ocr_texto": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ProvenancedString"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "sinais_documentais": {
+          "additionalProperties": {
+            "type": "string"
+          },
+          "title": "Sinais Documentais",
+          "type": "object"
+        },
+        "transcricao_literal": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ProvenancedString"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "transcricao_segmentada": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/TranscriptionSegment"
+          },
+          "title": "Transcricao Segmentada",
+          "type": "array"
+        },
+        "num_falantes": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Num Falantes"
+        },
+        "video_metadata": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/VideoMetadata"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        }
+      },
+      "title": "Layer2Evidence",
+      "type": "object"
+    },
+    "Layer3Evidence": {
+      "additionalProperties": true,
+      "description": "Camada 3 (contextual).\n\nRegras para passar nos testes:\n- Deve existir e aceitar campos legados: `estimativa_temporal`, `tipo_documento`, `tipo_evento`\n- Campos canônicos: `temporalidades_inferidas`, `entidades_semanticas`\n- `lastro` deve existir nos campos preenchidos (quando inferidos)",
+      "properties": {
+        "temporalidades_inferidas": {
+          "items": {
+            "$ref": "#/$defs/TemporalReference"
+          },
+          "title": "Temporalidades Inferidas",
+          "type": "array"
+        },
+        "entidades_semanticas": {
+          "items": {
+            "$ref": "#/$defs/SemanticEntity"
+          },
+          "title": "Entidades Semanticas",
+          "type": "array"
+        },
+        "regras_aplicadas": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Regras Aplicadas",
+          "type": "array"
+        },
+        "estimativa_temporal": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ProvenancedDatetime"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "tipo_documento": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ProvenancedString"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "tipo_evento": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ProvenancedString"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        }
+      },
+      "title": "Layer3Evidence",
+      "type": "object"
+    },
+    "Layer4SemanticNormalization": {
+      "additionalProperties": false,
+      "properties": {
+        "data_canonica": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Data Canonica"
+        },
+        "periodo": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Periodo"
+        },
+        "local_canonico": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Local Canonico"
+        },
+        "entidades": {
+          "items": {
+            "$ref": "#/$defs/EntidadeCanonica"
+          },
+          "title": "Entidades",
+          "type": "array"
+        },
+        "tags": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Tags",
+          "type": "array"
+        },
+        "relacoes_temporais": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Relacoes Temporais",
+          "type": "array"
+        }
+      },
+      "title": "Layer4SemanticNormalization",
+      "type": "object"
+    },
+    "Layer5Derivatives": {
+      "additionalProperties": false,
+      "description": "Contrato canônico de derivados (camada 5).",
+      "properties": {
+        "imagens_derivadas": {
+          "items": {
+            "$ref": "#/$defs/Derivado"
+          },
+          "title": "Imagens Derivadas",
+          "type": "array"
+        },
+        "audios_derivados": {
+          "items": {
+            "$ref": "#/$defs/Derivado"
+          },
+          "title": "Audios Derivados",
+          "type": "array"
+        },
+        "videos_derivados": {
+          "items": {
+            "$ref": "#/$defs/Derivado"
+          },
+          "title": "Videos Derivados",
+          "type": "array"
+        },
+        "documentos_derivados": {
+          "items": {
+            "$ref": "#/$defs/Derivado"
+          },
+          "title": "Documentos Derivados",
+          "type": "array"
+        },
+        "storage_uris": {
+          "items": {
+            "$ref": "#/$defs/StorageURI"
+          },
+          "title": "Storage Uris",
+          "type": "array"
+        },
+        "persistence_state": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Persistence State"
+        }
+      },
+      "title": "Layer5Derivatives",
+      "type": "object"
+    },
+    "Layer6Optimization": {
+      "additionalProperties": true,
+      "properties": {
+        "embeddings": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "number"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Embeddings"
+        },
+        "index_refs": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Index Refs",
+          "type": "array"
+        },
+        "extra": {
+          "additionalProperties": true,
+          "title": "Extra",
+          "type": "object"
+        }
+      },
+      "title": "Layer6Optimization",
+      "type": "object"
+    },
+    "MediaType": {
+      "enum": [
+        "imagem",
+        "audio",
+        "video",
+        "documento"
+      ],
+      "title": "MediaType",
+      "type": "string"
+    },
+    "OriginType": {
+      "enum": [
+        "digital_nativo",
+        "digitalizado",
+        "hibrido"
+      ],
+      "title": "OriginType",
+      "type": "string"
+    },
+    "ProvenancedDatetime": {
+      "additionalProperties": true,
+      "properties": {
+        "valor": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Valor"
+        },
+        "fonte": {
+          "default": "unknown",
+          "title": "Fonte",
+          "type": "string"
+        },
+        "metodo": {
+          "default": "unknown",
+          "title": "Metodo",
+          "type": "string"
+        },
+        "estado": {
+          "$ref": "#/$defs/ConfidenceState",
+          "default": "insuficiente"
+        },
+        "confianca": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Confianca"
+        },
+        "lastro": {
+          "items": {
+            "$ref": "#/$defs/EvidenceRef"
+          },
+          "title": "Lastro",
+          "type": "array"
+        }
+      },
+      "title": "ProvenancedDatetime",
+      "type": "object"
+    },
+    "ProvenancedNumber": {
+      "additionalProperties": true,
+      "properties": {
+        "valor": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Valor"
+        },
+        "fonte": {
+          "default": "unknown",
+          "title": "Fonte",
+          "type": "string"
+        },
+        "metodo": {
+          "default": "unknown",
+          "title": "Metodo",
+          "type": "string"
+        },
+        "estado": {
+          "$ref": "#/$defs/ConfidenceState",
+          "default": "insuficiente"
+        },
+        "confianca": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Confianca"
+        },
+        "lastro": {
+          "items": {
+            "$ref": "#/$defs/EvidenceRef"
+          },
+          "title": "Lastro",
+          "type": "array"
+        }
+      },
+      "title": "ProvenancedNumber",
+      "type": "object"
+    },
+    "ProvenancedString": {
+      "additionalProperties": true,
+      "properties": {
+        "valor": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Valor"
+        },
+        "fonte": {
+          "default": "unknown",
+          "title": "Fonte",
+          "type": "string"
+        },
+        "metodo": {
+          "default": "unknown",
+          "title": "Metodo",
+          "type": "string"
+        },
+        "estado": {
+          "$ref": "#/$defs/ConfidenceState",
+          "default": "insuficiente"
+        },
+        "confianca": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Confianca"
+        },
+        "lastro": {
+          "items": {
+            "$ref": "#/$defs/EvidenceRef"
+          },
+          "title": "Lastro",
+          "type": "array"
+        }
+      },
+      "title": "ProvenancedString",
+      "type": "object"
+    },
+    "QualidadeSinal": {
+      "additionalProperties": false,
+      "properties": {
+        "resolucao": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ProvenancedString"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "foco": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ProvenancedNumber"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "iluminacao": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ProvenancedNumber"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "nitidez": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ProvenancedNumber"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        }
+      },
+      "title": "QualidadeSinal",
+      "type": "object"
+    },
+    "SemanticEntity": {
+      "additionalProperties": true,
+      "properties": {
+        "tipo": {
+          "title": "Tipo",
+          "type": "string"
+        },
+        "valor": {
+          "title": "Valor",
+          "type": "string"
+        },
+        "score": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Score"
+        },
+        "lastro": {
+          "items": {
+            "$ref": "#/$defs/EvidenceRef"
+          },
+          "title": "Lastro",
+          "type": "array"
+        },
+        "meta": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/InferenceMeta"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        }
+      },
+      "required": [
+        "tipo",
+        "valor"
+      ],
+      "title": "SemanticEntity",
+      "type": "object"
+    },
+    "StorageURI": {
+      "additionalProperties": false,
+      "description": "URI já persistida (ex.: Azure Blob), com metadados mínimos.",
+      "properties": {
+        "uri": {
+          "title": "Uri",
+          "type": "string"
+        },
+        "kind": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Kind"
+        }
+      },
+      "required": [
+        "uri"
+      ],
+      "title": "StorageURI",
+      "type": "object"
+    },
+    "TemporalReference": {
+      "additionalProperties": true,
+      "properties": {
+        "tipo": {
+          "default": "data_unica",
+          "title": "Tipo",
+          "type": "string"
+        },
+        "inicio": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ProvenancedDatetime"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "fim": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ProvenancedDatetime"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "confianca": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Confianca"
+        },
+        "lastro": {
+          "items": {
+            "$ref": "#/$defs/EvidenceRef"
+          },
+          "title": "Lastro",
+          "type": "array"
+        },
+        "meta": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/InferenceMeta"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        }
+      },
+      "title": "TemporalReference",
+      "type": "object"
+    },
+    "TranscriptionSegment": {
+      "description": "Segmento temporal da transcrição.\nspeaker é opcional (diarização pode ser ligada depois).",
+      "properties": {
+        "start": {
+          "minimum": 0.0,
+          "title": "Start",
+          "type": "number"
+        },
+        "end": {
+          "minimum": 0.0,
+          "title": "End",
+          "type": "number"
+        },
+        "text": {
+          "minLength": 1,
+          "title": "Text",
+          "type": "string"
+        },
+        "speaker": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Speaker"
+        }
+      },
+      "required": [
+        "start",
+        "end",
+        "text"
+      ],
+      "title": "TranscriptionSegment",
+      "type": "object"
+    },
+    "VideoMetadata": {
+      "properties": {
+        "duration_seconds": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Duration Seconds"
+        },
+        "size_bytes": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Size Bytes"
+        },
+        "bit_rate": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Bit Rate"
+        },
+        "width": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Width"
+        },
+        "height": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Height"
+        },
+        "codec": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Codec"
+        },
+        "fps": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Fps"
+        },
+        "creation_time": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Creation Time"
+        },
+        "source": {
+          "default": "ffprobe",
+          "title": "Source",
+          "type": "string"
+        }
+      },
+      "title": "VideoMetadata",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "version": {
+      "default": "v0.1.0",
+      "title": "Version",
+      "type": "string"
+    },
+    "layer0": {
+      "$ref": "#/$defs/Layer0Custodia"
+    },
+    "layer1": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/Layer1"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "layer2": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/Layer2Evidence"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "layer3": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/Layer3Evidence"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "layer4": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/Layer4SemanticNormalization"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "layer5": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/Layer5Derivatives"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "layer6": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/Layer6Optimization"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    }
+  },
+  "required": [
+    "layer0"
+  ],
+  "title": "DocumentMemory",
+  "type": "object"
+}
