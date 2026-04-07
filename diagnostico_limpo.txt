@@ -1,0 +1,678 @@
+===== TIMELINE =====
+./diagnostico_pipeline.txt:2:./relluna/services/timeline/timeline_pipeline.py:8:def build_timeline(layer2, layer3):
+./diagnostico_pipeline.txt:3:./relluna/services/timeline/timeline_builder.py:4:def build_timeline(layer2_entities):
+./diagnostico_pipeline.txt:4:./relluna/services/deterministic_extractors/timeline_seed_v2.py:53:def build_timeline_seeds_v2(dm: DocumentMemory) -> List[Dict[str, Any]]:
+./diagnostico_pipeline.txt:5:./relluna/services/deterministic_extractors/timeline_seed_v2.py:107:    seeds = build_timeline_seeds_v2(dm)
+./diagnostico_pipeline.txt:6:./relluna/services/derivatives/layer5.py:59:def _build_timeline_v1(dm: DocumentMemory) -> dict:
+./diagnostico_pipeline.txt:7:./relluna/services/derivatives/layer5.py:231:            "timeline_v1": _build_timeline_v1(dm),
+./diagnostico_pipeline.txt:8:./relluna/services/read_model/timeline_read_model.py:6:def build_timeline_read_model_v2(
+./diagnostico_pipeline.txt:19:./relluna/services/deterministic_extractors/timeline_seed_v2.py:53:def build_timeline_seeds_v2(dm: DocumentMemory) -> List[Dict[str, Any]]:
+./diagnostico_pipeline.txt:20:./relluna/services/deterministic_extractors/timeline_seed_v2.py:107:    seeds = build_timeline_seeds_v2(dm)
+./relluna/services/timeline/timeline_pipeline.py:8:def build_timeline(layer2, layer3):
+./relluna/services/timeline/timeline_builder.py:4:def build_timeline(layer2_entities):
+./relluna/services/deterministic_extractors/timeline_seed_v2.py:53:def build_timeline_seeds_v2(dm: DocumentMemory) -> List[Dict[str, Any]]:
+./relluna/services/deterministic_extractors/timeline_seed_v2.py:107:    seeds = build_timeline_seeds_v2(dm)
+./relluna/services/derivatives/layer5.py:59:def _build_timeline_v1(dm: DocumentMemory) -> dict:
+./relluna/services/derivatives/layer5.py:231:            "timeline_v1": _build_timeline_v1(dm),
+./relluna/services/read_model/timeline_read_model.py:6:def build_timeline_read_model_v2(
+./diagnostico_pipeline.txt:4:./relluna/services/deterministic_extractors/timeline_seed_v2.py:53:def build_timeline_seeds_v2(dm: DocumentMemory) -> List[Dict[str, Any]]:
+./diagnostico_pipeline.txt:5:./relluna/services/deterministic_extractors/timeline_seed_v2.py:107:    seeds = build_timeline_seeds_v2(dm)
+./diagnostico_pipeline.txt:9:./debug_run_pipeline.py:24:from relluna.services.deterministic_extractors.timeline_seed_v2 import seed_timeline_v2
+./diagnostico_pipeline.txt:10:./debug_run_pipeline.py:140:    dump_signal(dm, "timeline_seed_v2")
+./diagnostico_pipeline.txt:11:./relluna/core/document_memory/layer2.py:82:    # Ex.: hard_entities_v2, layout_spans_v2, page_evidence_v1, timeline_seed_v2
+./diagnostico_pipeline.txt:12:./relluna/services/ingestion/api.py:34:from relluna.services.deterministic_extractors.timeline_seed_v2 import seed_timeline_v2
+./diagnostico_pipeline.txt:13:./relluna/services/ingestion/api.py:473:        etapa="timeline_seed_v2",
+./diagnostico_pipeline.txt:14:./relluna/services/ingestion/api.py:474:        engine="deterministic_extractors.timeline_seed_v2",
+./diagnostico_pipeline.txt:15:./relluna/services/ingestion/api.py:489:        has_timeline = dm.layer2 is not None and "timeline_seed_v2" in dm.layer2.sinais_documentais
+./diagnostico_pipeline.txt:16:./relluna/services/timeline/event_builder.py:53:    timeline_seeds: List[Dict[str, Any]],
+./diagnostico_pipeline.txt:17:./relluna/services/timeline/event_builder.py:60:    for seed in timeline_seeds:
+./diagnostico_pipeline.txt:18:./relluna/services/deterministic_extractors/timeline_seed_v2.py:11:FONTE = "deterministic_extractors.timeline_seed_v2"
+./diagnostico_pipeline.txt:19:./relluna/services/deterministic_extractors/timeline_seed_v2.py:53:def build_timeline_seeds_v2(dm: DocumentMemory) -> List[Dict[str, Any]]:
+./diagnostico_pipeline.txt:20:./relluna/services/deterministic_extractors/timeline_seed_v2.py:107:    seeds = build_timeline_seeds_v2(dm)
+./diagnostico_pipeline.txt:21:./relluna/services/deterministic_extractors/timeline_seed_v2.py:111:    dm.layer2.sinais_documentais["timeline_seed_v2"] = ProvenancedString(
+./diagnostico_pipeline.txt:22:./relluna/services/deterministic_extractors/timeline_seed.py:44:    Persiste em layer2.sinais_documentais["timeline_seed_v1"] como JSON string.
+./diagnostico_pipeline.txt:23:./relluna/services/deterministic_extractors/timeline_seed.py:102:    dm.layer2.sinais_documentais["timeline_seed_v1"] = _prov_json(
+./diagnostico_pipeline.txt:24:./relluna/services/deterministic_extractors/timeline_seed.py:104:        fonte="deterministic_extractors.timeline_seed",
+./diagnostico_pipeline.txt:25:./relluna/services/read_model/timeline_builder.py:60:    1. timeline_seed_v2
+./diagnostico_pipeline.txt:26:./relluna/services/read_model/timeline_builder.py:61:    2. timeline_seed_v1
+./diagnostico_pipeline.txt:27:./relluna/services/read_model/timeline_builder.py:66:    timeline_v2 = _load_signal_json(dm, "timeline_seed_v2") or []
+./diagnostico_pipeline.txt:28:./relluna/services/read_model/timeline_builder.py:67:    timeline_v1 = _load_signal_json(dm, "timeline_seed_v1") or []
+./diagnostico_pipeline.txt:29:./relluna/services/context_inference/basic.py:341:    seeds = _load_signal_json(dm, "timeline_seed_v2") or []
+./diagnostico_pipeline.txt:30:./relluna/services/context_inference/basic.py:374:        source_path = seed.get("source_path", "layer2.sinais_documentais.timeline_seed_v2")
+./diagnostico_pipeline.txt:31:./debug_profile_pipeline.py:25:from relluna.services.deterministic_extractors.timeline_seed_v2 import seed_timeline_v2
+./diagnostico_pipeline.txt:61:./relluna/services/deterministic_extractors/timeline_seed.py:12:_RE_DATE_DMY = re.compile(r"\b(\d{1,2})/(\d{1,2})/(\d{4})\b")
+./diagnostico_pipeline.txt:62:./relluna/services/deterministic_extractors/timeline_seed.py:60:    for m in _RE_DATE_DMY.finditer(text):
+./diagnostico_pipeline.txt:83:./relluna/services/deterministic_extractors/timeline_seed_v2.py:65:        date_iso = item.get("value_iso")
+./diagnostico_pipeline.txt:84:./relluna/services/deterministic_extractors/timeline_seed_v2.py:67:        if not date_iso:
+./diagnostico_pipeline.txt:85:./relluna/services/deterministic_extractors/timeline_seed_v2.py:75:        dedup_key = (date_iso, event_hint, item.get("page"), item.get("snippet"))
+./diagnostico_pipeline.txt:86:./relluna/services/deterministic_extractors/timeline_seed_v2.py:80:        basis = f"{date_iso}|{event_hint}|{item.get('page')}|{item.get('snippet')}"
+./diagnostico_pipeline.txt:87:./relluna/services/deterministic_extractors/timeline_seed_v2.py:85:            "date_iso": date_iso,
+./diagnostico_pipeline.txt:88:./relluna/services/deterministic_extractors/timeline_seed_v2.py:100:    seeds.sort(key=lambda x: (x["date_iso"], x.get("priority", 500), x["seed_id"]))
+./diagnostico_pipeline.txt:89:./relluna/services/deterministic_extractors/timeline_seed.py:41:    - date_iso
+./diagnostico_pipeline.txt:90:./relluna/services/deterministic_extractors/timeline_seed.py:62:        date_iso = f"{y}-{int(mo):02d}-{int(d):02d}"
+./diagnostico_pipeline.txt:91:./relluna/services/deterministic_extractors/timeline_seed.py:63:        key = (date_iso, m.start())
+./diagnostico_pipeline.txt:92:./relluna/services/deterministic_extractors/timeline_seed.py:83:        seed_id = sha256(f"{date_iso}|{snippet}".encode("utf-8")).hexdigest()[:16]
+./diagnostico_pipeline.txt:93:./relluna/services/deterministic_extractors/timeline_seed.py:88:                "date_iso": date_iso,
+./diagnostico_pipeline.txt:1616:./relluna/services/deterministic_extractors/timeline_seed_v2.py:14:    "internacao_inicio": 10,
+./diagnostico_pipeline.txt:1617:./relluna/services/deterministic_extractors/timeline_seed_v2.py:15:    "internacao_fim": 20,
+./diagnostico_pipeline.txt:1618:./relluna/services/deterministic_extractors/timeline_seed_v2.py:25:    "internacao_inicio": True,
+./diagnostico_pipeline.txt:1619:./relluna/services/deterministic_extractors/timeline_seed_v2.py:26:    "internacao_fim": True,
+./diagnostico_pipeline.txt:1633:./relluna/services/deterministic_extractors/timeline_seed_v2.py:18:    "afastamento_inicio": 50,
+./diagnostico_pipeline.txt:1634:./relluna/services/deterministic_extractors/timeline_seed_v2.py:19:    "afastamento_fim_estimado": 60,
+./diagnostico_pipeline.txt:1635:./relluna/services/deterministic_extractors/timeline_seed_v2.py:29:    "afastamento_inicio": True,
+./diagnostico_pipeline.txt:1636:./relluna/services/deterministic_extractors/timeline_seed_v2.py:30:    "afastamento_fim_estimado": True,
+./debug_run_pipeline.py:24:from relluna.services.deterministic_extractors.timeline_seed_v2 import seed_timeline_v2
+./debug_run_pipeline.py:140:    dump_signal(dm, "timeline_seed_v2")
+./relluna/core/document_memory/layer2.py:82:    # Ex.: hard_entities_v2, layout_spans_v2, page_evidence_v1, timeline_seed_v2
+./relluna/services/ingestion/api.py:34:from relluna.services.deterministic_extractors.timeline_seed_v2 import seed_timeline_v2
+./relluna/services/ingestion/api.py:473:        etapa="timeline_seed_v2",
+./relluna/services/ingestion/api.py:474:        engine="deterministic_extractors.timeline_seed_v2",
+./relluna/services/ingestion/api.py:489:        has_timeline = dm.layer2 is not None and "timeline_seed_v2" in dm.layer2.sinais_documentais
+./relluna/services/timeline/event_builder.py:53:    timeline_seeds: List[Dict[str, Any]],
+./relluna/services/timeline/event_builder.py:60:    for seed in timeline_seeds:
+./relluna/services/deterministic_extractors/timeline_seed_v2.py:11:FONTE = "deterministic_extractors.timeline_seed_v2"
+./relluna/services/deterministic_extractors/timeline_seed_v2.py:53:def build_timeline_seeds_v2(dm: DocumentMemory) -> List[Dict[str, Any]]:
+./relluna/services/deterministic_extractors/timeline_seed_v2.py:107:    seeds = build_timeline_seeds_v2(dm)
+./relluna/services/deterministic_extractors/timeline_seed_v2.py:111:    dm.layer2.sinais_documentais["timeline_seed_v2"] = ProvenancedString(
+./relluna/services/deterministic_extractors/timeline_seed.py:44:    Persiste em layer2.sinais_documentais["timeline_seed_v1"] como JSON string.
+./relluna/services/deterministic_extractors/timeline_seed.py:102:    dm.layer2.sinais_documentais["timeline_seed_v1"] = _prov_json(
+./relluna/services/deterministic_extractors/timeline_seed.py:104:        fonte="deterministic_extractors.timeline_seed",
+./relluna/services/read_model/timeline_builder.py:60:    1. timeline_seed_v2
+./relluna/services/read_model/timeline_builder.py:61:    2. timeline_seed_v1
+./relluna/services/read_model/timeline_builder.py:66:    timeline_v2 = _load_signal_json(dm, "timeline_seed_v2") or []
+./relluna/services/read_model/timeline_builder.py:67:    timeline_v1 = _load_signal_json(dm, "timeline_seed_v1") or []
+./relluna/services/context_inference/basic.py:341:    seeds = _load_signal_json(dm, "timeline_seed_v2") or []
+./relluna/services/context_inference/basic.py:374:        source_path = seed.get("source_path", "layer2.sinais_documentais.timeline_seed_v2")
+./debug_profile_pipeline.py:25:from relluna.services.deterministic_extractors.timeline_seed_v2 import seed_timeline_v2
+./diagnostico_pipeline.txt:16:./relluna/services/timeline/event_builder.py:53:    timeline_seeds: List[Dict[str, Any]],
+./diagnostico_pipeline.txt:17:./relluna/services/timeline/event_builder.py:60:    for seed in timeline_seeds:
+./diagnostico_pipeline.txt:32:./relluna/services/timeline/timeline_pipeline.py:5:from .event_builder import build_events
+./diagnostico_pipeline.txt:33:./relluna/services/context_inference/basic.py:27:_BUILDER_VERSION = "probatory_event_builder_v5"
+./diagnostico_pipeline.txt:79:./relluna/services/timeline/event_builder.py:65:        base = f"{seed['date_iso']}_{event_hint}_{document_type}"
+./diagnostico_pipeline.txt:80:./relluna/services/timeline/event_builder.py:77:            "date_iso": seed["date_iso"],
+./diagnostico_pipeline.txt:81:./relluna/services/timeline/event_builder.py:78:            "date": seed["date_iso"],
+./diagnostico_pipeline.txt:82:./relluna/services/timeline/event_builder.py:95:    events.sort(key=lambda x: (x["date_iso"], x["event_type"], x["event_id"]))
+./diagnostico_pipeline.txt:1586:./relluna/services/timeline/event_builder.py:79:            "event_type": event_hint,
+./diagnostico_pipeline.txt:1587:./relluna/services/timeline/event_builder.py:95:    events.sort(key=lambda x: (x["date_iso"], x["event_type"], x["event_id"]))
+./diagnostico_pipeline.txt:1612:./relluna/services/timeline/event_builder.py:8:    "internacao_inicio": "Início da internação",
+./diagnostico_pipeline.txt:1613:./relluna/services/timeline/event_builder.py:9:    "internacao_fim": "Fim da internação",
+./diagnostico_pipeline.txt:1614:./relluna/services/timeline/event_builder.py:18:    "internacao_inicio": "Registro de início de internação identificado no documento.",
+./diagnostico_pipeline.txt:1615:./relluna/services/timeline/event_builder.py:19:    "internacao_fim": "Registro de fim de internação identificado no documento.",
+./diagnostico_pipeline.txt:1629:./relluna/services/timeline/event_builder.py:12:    "afastamento_inicio": "Início do afastamento",
+./diagnostico_pipeline.txt:1630:./relluna/services/timeline/event_builder.py:13:    "afastamento_fim_estimado": "Fim estimado do afastamento",
+./diagnostico_pipeline.txt:1631:./relluna/services/timeline/event_builder.py:22:    "afastamento_inicio": "Documento recomenda afastamento a partir desta data.",
+./diagnostico_pipeline.txt:1632:./relluna/services/timeline/event_builder.py:23:    "afastamento_fim_estimado": "Data estimada de término do afastamento com base na duração detectada.",
+./relluna/services/timeline/timeline_pipeline.py:5:from .event_builder import build_events
+./relluna/services/context_inference/basic.py:27:_BUILDER_VERSION = "probatory_event_builder_v5"
+\n===== ENTITIES =====
+./diagnostico_pipeline.txt:35:./relluna/services/deterministic_extractors/entities_hard.py:41:def extract_hard_entities(dm: DocumentMemory, max_text_chars: int = 300_000) -> DocumentMemory:
+./diagnostico_pipeline.txt:36:./relluna/services/deterministic_extractors/entities_hard.py:74:        fonte="deterministic_extractors.entities_hard",
+./diagnostico_pipeline.txt:37:./relluna/services/deterministic_extractors/entities_hard_v2.py:12:FONTE = "deterministic_extractors.entities_hard_v2"
+./diagnostico_pipeline.txt:38:./relluna/services/deterministic_extractors/entities_hard_v2.py:175:def extract_hard_entities_v2(dm: DocumentMemory) -> DocumentMemory:
+./diagnostico_pipeline.txt:39:./relluna/services/deterministic_extractors/basic.py:29:from relluna.services.deterministic_extractors.entities_hard_v2 import extract_hard_entities_v2
+./diagnostico_pipeline.txt:50:./relluna/services/deterministic_extractors/entities_hard.py:74:        fonte="deterministic_extractors.entities_hard",
+./diagnostico_pipeline.txt:51:./relluna/services/deterministic_extractors/entities_hard_v2.py:12:FONTE = "deterministic_extractors.entities_hard_v2"
+./diagnostico_pipeline.txt:52:./relluna/services/deterministic_extractors/basic.py:29:from relluna.services.deterministic_extractors.entities_hard_v2 import extract_hard_entities_v2
+./diagnostico_pipeline.txt:59:./relluna/services/deterministic_extractors/entities_hard.py:17:_RE_DATE_DMY = re.compile(r"\b(\d{1,2})/(\d{1,2})/(\d{4})\b")
+./diagnostico_pipeline.txt:60:./relluna/services/deterministic_extractors/entities_hard.py:67:    add("data_textual", _extract_all(_RE_DATE_DMY, text))
+./diagnostico_pipeline.txt:63:./relluna/services/deterministic_extractors/entities_hard_v2.py:16:_RE_DATE_NUMERIC = re.compile(r"\b(\d{2})/(\d{2})/(\d{4})\b")
+./diagnostico_pipeline.txt:64:./relluna/services/deterministic_extractors/entities_hard_v2.py:17:_RE_DATE_TEXTUAL = re.compile(
+./diagnostico_pipeline.txt:65:./relluna/services/deterministic_extractors/entities_hard_v2.py:85:    m = _RE_DATE_NUMERIC.fullmatch(raw)
+./diagnostico_pipeline.txt:66:./relluna/services/deterministic_extractors/entities_hard_v2.py:92:    m = _RE_DATE_TEXTUAL.fullmatch(raw)
+./diagnostico_pipeline.txt:94:./relluna/services/deterministic_extractors/entities_hard_v2.py:299:            iso = dc.get("date_iso") or _parse_date_literal(raw or "")
+./diagnostico_pipeline.txt:1620:./relluna/services/deterministic_extractors/entities_hard_v2.py:322:    # internacao range
+./diagnostico_pipeline.txt:1621:./relluna/services/deterministic_extractors/entities_hard_v2.py:331:                "role": "internacao_inicio",
+./diagnostico_pipeline.txt:1622:./relluna/services/deterministic_extractors/entities_hard_v2.py:343:                "role": "internacao_fim",
+./diagnostico_pipeline.txt:1637:./relluna/services/deterministic_extractors/entities_hard_v2.py:352:    # afastamento days from document issue
+./diagnostico_pipeline.txt:1638:./relluna/services/deterministic_extractors/entities_hard_v2.py:369:            "role": "afastamento_inicio",
+./diagnostico_pipeline.txt:1639:./relluna/services/deterministic_extractors/entities_hard_v2.py:377:            "role": "afastamento_fim_estimado",
+./diagnostico_pipeline.txt:1640:./relluna/services/deterministic_extractors/entities_hard_v2.py:385:            "role": "afastamento_dias",
+./relluna/services/deterministic_extractors/entities_hard.py:74:        fonte="deterministic_extractors.entities_hard",
+./relluna/services/deterministic_extractors/entities_hard_v2.py:12:FONTE = "deterministic_extractors.entities_hard_v2"
+./relluna/services/deterministic_extractors/basic.py:29:from relluna.services.deterministic_extractors.entities_hard_v2 import extract_hard_entities_v2
+./diagnostico_pipeline.txt:42:./relluna/services/page_extraction/page_pipeline.py:10:from relluna.services.page_extraction.page_entity_extractors import extract_basic_page_entities
+./diagnostico_pipeline.txt:45:./relluna/services/page_extraction/page_entity_extractors.py:185:def extract_basic_page_entities(page_text: str) -> Dict[str, Any]:
+./diagnostico_pipeline.txt:53:./relluna/services/page_extraction/page_pipeline.py:10:from relluna.services.page_extraction.page_entity_extractors import extract_basic_page_entities
+./relluna/services/page_extraction/page_pipeline.py:10:from relluna.services.page_extraction.page_entity_extractors import extract_basic_page_entities
+./diagnostico_pipeline.txt:41:./relluna/services/page_extraction/page_pipeline.py:9:from relluna.services.page_extraction.page_clinical_extractors import extract_clinical_page_entities
+./diagnostico_pipeline.txt:46:./relluna/services/page_extraction/page_clinical_extractors.py:172:def extract_clinical_page_entities(page_text: str) -> Dict[str, Any]:
+./diagnostico_pipeline.txt:54:./relluna/services/page_extraction/page_pipeline.py:9:from relluna.services.page_extraction.page_clinical_extractors import extract_clinical_page_entities
+./relluna/services/page_extraction/page_pipeline.py:9:from relluna.services.page_extraction.page_clinical_extractors import extract_clinical_page_entities
+\n===== CALL GRAPH =====
+./diagnostico_pipeline.txt:38:./relluna/services/deterministic_extractors/entities_hard_v2.py:175:def extract_hard_entities_v2(dm: DocumentMemory) -> DocumentMemory:
+./diagnostico_pipeline.txt:39:./relluna/services/deterministic_extractors/basic.py:29:from relluna.services.deterministic_extractors.entities_hard_v2 import extract_hard_entities_v2
+./diagnostico_pipeline.txt:40:./relluna/services/deterministic_extractors/basic.py:301:        dm = extract_hard_entities_v2(dm)
+./diagnostico_pipeline.txt:52:./relluna/services/deterministic_extractors/basic.py:29:from relluna.services.deterministic_extractors.entities_hard_v2 import extract_hard_entities_v2
+./relluna/services/deterministic_extractors/entities_hard_v2.py:175:def extract_hard_entities_v2(dm: DocumentMemory) -> DocumentMemory:
+./relluna/services/deterministic_extractors/basic.py:29:from relluna.services.deterministic_extractors.entities_hard_v2 import extract_hard_entities_v2
+./relluna/services/deterministic_extractors/basic.py:301:        dm = extract_hard_entities_v2(dm)
+./diagnostico_pipeline.txt:2:./relluna/services/timeline/timeline_pipeline.py:8:def build_timeline(layer2, layer3):
+./diagnostico_pipeline.txt:3:./relluna/services/timeline/timeline_builder.py:4:def build_timeline(layer2_entities):
+./diagnostico_pipeline.txt:4:./relluna/services/deterministic_extractors/timeline_seed_v2.py:53:def build_timeline_seeds_v2(dm: DocumentMemory) -> List[Dict[str, Any]]:
+./diagnostico_pipeline.txt:5:./relluna/services/deterministic_extractors/timeline_seed_v2.py:107:    seeds = build_timeline_seeds_v2(dm)
+./diagnostico_pipeline.txt:6:./relluna/services/derivatives/layer5.py:59:def _build_timeline_v1(dm: DocumentMemory) -> dict:
+./diagnostico_pipeline.txt:7:./relluna/services/derivatives/layer5.py:231:            "timeline_v1": _build_timeline_v1(dm),
+./diagnostico_pipeline.txt:8:./relluna/services/read_model/timeline_read_model.py:6:def build_timeline_read_model_v2(
+./diagnostico_pipeline.txt:19:./relluna/services/deterministic_extractors/timeline_seed_v2.py:53:def build_timeline_seeds_v2(dm: DocumentMemory) -> List[Dict[str, Any]]:
+./diagnostico_pipeline.txt:20:./relluna/services/deterministic_extractors/timeline_seed_v2.py:107:    seeds = build_timeline_seeds_v2(dm)
+./relluna/services/timeline/timeline_pipeline.py:8:def build_timeline(layer2, layer3):
+./relluna/services/timeline/timeline_builder.py:4:def build_timeline(layer2_entities):
+./relluna/services/deterministic_extractors/timeline_seed_v2.py:53:def build_timeline_seeds_v2(dm: DocumentMemory) -> List[Dict[str, Any]]:
+./relluna/services/deterministic_extractors/timeline_seed_v2.py:107:    seeds = build_timeline_seeds_v2(dm)
+./relluna/services/derivatives/layer5.py:59:def _build_timeline_v1(dm: DocumentMemory) -> dict:
+./relluna/services/derivatives/layer5.py:231:            "timeline_v1": _build_timeline_v1(dm),
+./relluna/services/read_model/timeline_read_model.py:6:def build_timeline_read_model_v2(
+./diagnostico_pipeline.txt:124:./tests/test_full_pipeline_no_mutation_layer2.py:49:    monkeypatch.setattr(basic_pipeline, "run_basic_pipeline", lambda dm: dm)
+./diagnostico_pipeline.txt:125:./tests/test_document_memory_canonical_pipeline.py:8:    dm_old = run_basic_pipeline(sample_file)  # DM no formato atual
+./diagnostico_pipeline.txt:126:./tests/test_videos.py:6:from relluna.core.basic_pipeline import run_basic_pipeline
+./diagnostico_pipeline.txt:127:./tests/test_videos.py:39:    dm = run_basic_pipeline(dm)
+./diagnostico_pipeline.txt:128:./tests/test_current_dm_compatibility.py:1:from relluna.core.basic_pipeline import run_basic_pipeline
+./diagnostico_pipeline.txt:129:./tests/test_current_dm_compatibility.py:5:    dm = run_basic_pipeline(sample_file)
+./diagnostico_pipeline.txt:130:./tests/test_schema_v0_2_0_migration.py:1:from relluna.core.basic_pipeline import run_basic_pipeline
+./diagnostico_pipeline.txt:131:./tests/test_schema_v0_2_0_migration.py:5:    dm = run_basic_pipeline(sample_file)
+./diagnostico_pipeline.txt:132:./tests/test_full_pipeline_stages.py:70:    monkeypatch.setattr(basic_pipeline, "run_basic_pipeline", _basic)
+./diagnostico_pipeline.txt:133:./tests/test_dm.py:5:from relluna.core.basic_pipeline import run_basic_pipeline
+./diagnostico_pipeline.txt:134:./tests/test_dm.py:51:dm = run_basic_pipeline(dm)
+./diagnostico_pipeline.txt:135:./tools/debug_image_real.py:14:from relluna.core.basic_pipeline import run_basic_pipeline
+./diagnostico_pipeline.txt:136:./tools/debug_image_real.py:60:    dm = run_basic_pipeline(dm)
+./diagnostico_pipeline.txt:137:./debug_dm_helper.py:6:from relluna.core.basic_pipeline import run_basic_pipeline
+./diagnostico_pipeline.txt:138:./debug_dm_helper.py:42:    dm2 = run_basic_pipeline(dm)
+./diagnostico_pipeline.txt:139:./fix_pipeline.py:126:    # Procura função run_basic_pipeline
+./diagnostico_pipeline.txt:140:./fix_pipeline.py:129:        if isinstance(node, ast.FunctionDef) and node.name == "run_basic_pipeline":
+./diagnostico_pipeline.txt:141:./fix_pipeline.py:131:            print("✓ Encontrou run_basic_pipeline, injetando OCR+EXIF...")
+./diagnostico_pipeline.txt:142:./fix_pipeline.py:135:    print("❌ Não encontrou run_basic_pipeline no arquivo")
+./diagnostico_pipeline.txt:143:./fix_pipeline.py:174:        from relluna.core.basic_pipeline import run_basic_pipeline
+./diagnostico_pipeline.txt:144:./fix_pipeline.py:175:        dm = run_basic_pipeline(dm)
+./diagnostico_pipeline.txt:145:./fix_pipeline.py:193:    print("\n🎉 Pronto! Agora todo run_basic_pipeline faz OCR+EXIF em imagens.")
+./diagnostico_pipeline.txt:146:./relluna/core/full_pipeline.py:20:    dm = basic_pipeline.run_basic_pipeline(dm)
+./diagnostico_pipeline.txt:147:./relluna/core/basic_pipeline.py:10:def run_basic_pipeline(dm: DocumentMemory) -> DocumentMemory:
+./diagnostico_pipeline.txt:148:./relluna/core/basic_pipeline.py.bak.20260225180241:16:def run_basic_pipeline(dm: DocumentMemory) -> DocumentMemory:
+./diagnostico_pipeline.txt:149:./relluna/scripts/debug_dm_helper.py:6:from relluna.core.basic_pipeline import run_basic_pipeline
+./diagnostico_pipeline.txt:150:./relluna/scripts/debug_dm_helper.py:42:    dm2 = run_basic_pipeline(dm)
+./diagnostico_pipeline.txt:151:./relluna/services/ingestion/service.py:10:from relluna.core.basic_pipeline import run_basic_pipeline
+./diagnostico_pipeline.txt:152:./relluna/services/ingestion/service.py:52:    dm = run_basic_pipeline(dm)
+./diagnostico_pipeline.txt:153:./relluna/services/test_ui/router.py.bak:11:from relluna.core.basic_pipeline import run_basic_pipeline
+./diagnostico_pipeline.txt:154:./relluna/services/test_ui/router.py.bak:72:    dm = run_basic_pipeline(dm)
+./diagnostico_pipeline.txt:196:./tests/test_full_pipeline_no_mutation_layer2.py:49:    monkeypatch.setattr(basic_pipeline, "run_basic_pipeline", lambda dm: dm)
+./diagnostico_pipeline.txt:205:./tests/test_document_memory_canonical_pipeline.py:8:    dm_old = run_basic_pipeline(sample_file)  # DM no formato atual
+./diagnostico_pipeline.txt:206:./tests/test_videos.py:6:from relluna.core.basic_pipeline import run_basic_pipeline
+./diagnostico_pipeline.txt:207:./tests/test_videos.py:39:    dm = run_basic_pipeline(dm)
+./diagnostico_pipeline.txt:208:./tests/test_current_dm_compatibility.py:1:from relluna.core.basic_pipeline import run_basic_pipeline
+./diagnostico_pipeline.txt:209:./tests/test_current_dm_compatibility.py:5:    dm = run_basic_pipeline(sample_file)
+./diagnostico_pipeline.txt:210:./tests/test_schema_v0_2_0_migration.py:1:from relluna.core.basic_pipeline import run_basic_pipeline
+./diagnostico_pipeline.txt:211:./tests/test_schema_v0_2_0_migration.py:5:    dm = run_basic_pipeline(sample_file)
+./diagnostico_pipeline.txt:219:./tests/test_full_pipeline_stages.py:70:    monkeypatch.setattr(basic_pipeline, "run_basic_pipeline", _basic)
+./diagnostico_pipeline.txt:229:./tests/test_dm.py:5:from relluna.core.basic_pipeline import run_basic_pipeline
+./diagnostico_pipeline.txt:231:./tests/test_dm.py:51:dm = run_basic_pipeline(dm)
+./diagnostico_pipeline.txt:266:./tools/debug_image_real.py:14:from relluna.core.basic_pipeline import run_basic_pipeline
+./diagnostico_pipeline.txt:268:./tools/debug_image_real.py:60:    dm = run_basic_pipeline(dm)
+./diagnostico_pipeline.txt:271:./debug_dm_helper.py:6:from relluna.core.basic_pipeline import run_basic_pipeline
+./diagnostico_pipeline.txt:272:./debug_dm_helper.py:42:    dm2 = run_basic_pipeline(dm)
+./diagnostico_pipeline.txt:1388:./fix_pipeline.py:126:    # Procura função run_basic_pipeline
+./diagnostico_pipeline.txt:1389:./fix_pipeline.py:129:        if isinstance(node, ast.FunctionDef) and node.name == "run_basic_pipeline":
+./diagnostico_pipeline.txt:1390:./fix_pipeline.py:131:            print("✓ Encontrou run_basic_pipeline, injetando OCR+EXIF...")
+./diagnostico_pipeline.txt:1391:./fix_pipeline.py:135:    print("❌ Não encontrou run_basic_pipeline no arquivo")
+./diagnostico_pipeline.txt:1392:./fix_pipeline.py:174:        from relluna.core.basic_pipeline import run_basic_pipeline
+./diagnostico_pipeline.txt:1393:./fix_pipeline.py:175:        dm = run_basic_pipeline(dm)
+./diagnostico_pipeline.txt:1397:./fix_pipeline.py:193:    print("\n🎉 Pronto! Agora todo run_basic_pipeline faz OCR+EXIF em imagens.")
+./diagnostico_pipeline.txt:1406:./relluna/core/full_pipeline.py:20:    dm = basic_pipeline.run_basic_pipeline(dm)
+./diagnostico_pipeline.txt:1419:./relluna/core/basic_pipeline.py:10:def run_basic_pipeline(dm: DocumentMemory) -> DocumentMemory:
+./diagnostico_pipeline.txt:1421:./relluna/core/basic_pipeline.py.bak.20260225180241:16:def run_basic_pipeline(dm: DocumentMemory) -> DocumentMemory:
+./diagnostico_pipeline.txt:1422:./relluna/scripts/debug_dm_helper.py:6:from relluna.core.basic_pipeline import run_basic_pipeline
+./diagnostico_pipeline.txt:1423:./relluna/scripts/debug_dm_helper.py:42:    dm2 = run_basic_pipeline(dm)
+./diagnostico_pipeline.txt:1448:./relluna/services/ingestion/service.py:10:from relluna.core.basic_pipeline import run_basic_pipeline
+./diagnostico_pipeline.txt:1449:./relluna/services/ingestion/service.py:52:    dm = run_basic_pipeline(dm)
+./diagnostico_pipeline.txt:1453:./relluna/services/test_ui/router.py.bak:11:from relluna.core.basic_pipeline import run_basic_pipeline
+./diagnostico_pipeline.txt:1455:./relluna/services/test_ui/router.py.bak:72:    dm = run_basic_pipeline(dm)
+./tests/test_full_pipeline_no_mutation_layer2.py:49:    monkeypatch.setattr(basic_pipeline, "run_basic_pipeline", lambda dm: dm)
+./tests/test_document_memory_canonical_pipeline.py:8:    dm_old = run_basic_pipeline(sample_file)  # DM no formato atual
+./tests/test_videos.py:6:from relluna.core.basic_pipeline import run_basic_pipeline
+./tests/test_videos.py:39:    dm = run_basic_pipeline(dm)
+./tests/test_current_dm_compatibility.py:1:from relluna.core.basic_pipeline import run_basic_pipeline
+./tests/test_current_dm_compatibility.py:5:    dm = run_basic_pipeline(sample_file)
+./tests/test_schema_v0_2_0_migration.py:1:from relluna.core.basic_pipeline import run_basic_pipeline
+./tests/test_schema_v0_2_0_migration.py:5:    dm = run_basic_pipeline(sample_file)
+./tests/test_full_pipeline_stages.py:70:    monkeypatch.setattr(basic_pipeline, "run_basic_pipeline", _basic)
+./tests/test_dm.py:5:from relluna.core.basic_pipeline import run_basic_pipeline
+./tests/test_dm.py:51:dm = run_basic_pipeline(dm)
+./tools/debug_image_real.py:14:from relluna.core.basic_pipeline import run_basic_pipeline
+./tools/debug_image_real.py:60:    dm = run_basic_pipeline(dm)
+./debug_dm_helper.py:6:from relluna.core.basic_pipeline import run_basic_pipeline
+./debug_dm_helper.py:42:    dm2 = run_basic_pipeline(dm)
+./fix_pipeline.py:126:    # Procura função run_basic_pipeline
+./fix_pipeline.py:129:        if isinstance(node, ast.FunctionDef) and node.name == "run_basic_pipeline":
+./fix_pipeline.py:131:            print("✓ Encontrou run_basic_pipeline, injetando OCR+EXIF...")
+./fix_pipeline.py:135:    print("❌ Não encontrou run_basic_pipeline no arquivo")
+./fix_pipeline.py:174:        from relluna.core.basic_pipeline import run_basic_pipeline
+./fix_pipeline.py:175:        dm = run_basic_pipeline(dm)
+./fix_pipeline.py:193:    print("\n🎉 Pronto! Agora todo run_basic_pipeline faz OCR+EXIF em imagens.")
+./relluna/core/full_pipeline.py:20:    dm = basic_pipeline.run_basic_pipeline(dm)
+./relluna/core/basic_pipeline.py:10:def run_basic_pipeline(dm: DocumentMemory) -> DocumentMemory:
+./relluna/core/basic_pipeline.py.bak.20260225180241:16:def run_basic_pipeline(dm: DocumentMemory) -> DocumentMemory:
+./relluna/scripts/debug_dm_helper.py:6:from relluna.core.basic_pipeline import run_basic_pipeline
+./relluna/scripts/debug_dm_helper.py:42:    dm2 = run_basic_pipeline(dm)
+./relluna/services/ingestion/service.py:10:from relluna.core.basic_pipeline import run_basic_pipeline
+./relluna/services/ingestion/service.py:52:    dm = run_basic_pipeline(dm)
+./relluna/services/test_ui/router.py.bak:11:from relluna.core.basic_pipeline import run_basic_pipeline
+./relluna/services/test_ui/router.py.bak:72:    dm = run_basic_pipeline(dm)
+./diagnostico_pipeline.txt:155:./tests/e2e/test_layer5_derivatives_contract.py:5:from relluna.services.derivatives.layer5 import apply_layer5
+./diagnostico_pipeline.txt:156:./tests/e2e/test_layer5_derivatives_contract.py:20:    dm_after = apply_layer5(dm)
+./diagnostico_pipeline.txt:161:./relluna/core/basic_pipeline.py:7:from relluna.services.derivatives.layer5 import apply_layer5
+./diagnostico_pipeline.txt:163:./relluna/core/basic_pipeline.py:18:    dm = apply_layer5(dm)
+./diagnostico_pipeline.txt:164:./relluna/core/basic_pipeline.py.bak.20260225180241:13:from relluna.services.derivatives.layer5 import apply_layer5
+./diagnostico_pipeline.txt:165:./relluna/core/basic_pipeline.py.bak.20260225180241:110:    dm = apply_layer5(dm)
+./diagnostico_pipeline.txt:167:./relluna/services/ingestion/api.py:32:from relluna.services.derivatives.layer5 import apply_layer5
+./diagnostico_pipeline.txt:170:./relluna/services/ingestion/api.py:485:    dm = apply_layer5(dm)
+./diagnostico_pipeline.txt:171:./relluna/services/ingestion/api.py:486:    _append_processing_event(dm, etapa="apply_layer5", engine="services.derivatives.layer5")
+./diagnostico_pipeline.txt:173:./relluna/services/ingestion/api.py.bak.processing_events:40:from relluna.services.derivatives.layer5 import apply_layer5
+./diagnostico_pipeline.txt:174:./relluna/services/ingestion/api.py.bak.processing_events:244:    dm = apply_layer5(dm)
+./diagnostico_pipeline.txt:177:./relluna/services/ingestion/api.py.bak.20260225180241:40:from relluna.services.derivatives.layer5 import apply_layer5
+./diagnostico_pipeline.txt:178:./relluna/services/ingestion/api.py.bak.20260225180241:249:    dm = apply_layer5(dm)
+./diagnostico_pipeline.txt:181:./relluna/services/ingestion/api.py.bak.juridical:40:from relluna.services.derivatives.layer5 import apply_layer5
+./diagnostico_pipeline.txt:182:./relluna/services/ingestion/api.py.bak.juridical:252:    dm = apply_layer5(dm)
+./diagnostico_pipeline.txt:186:./relluna/services/correlation/layer5.py:11:def apply_layer5(dm: DocumentMemory) -> DocumentMemory:
+./diagnostico_pipeline.txt:187:./relluna/services/derivatives/layer5.py:198:# apply_layer5
+./diagnostico_pipeline.txt:188:./relluna/services/derivatives/layer5.py:201:def apply_layer5(dm: DocumentMemory) -> DocumentMemory:
+./tests/e2e/test_layer5_derivatives_contract.py:5:from relluna.services.derivatives.layer5 import apply_layer5
+./tests/e2e/test_layer5_derivatives_contract.py:20:    dm_after = apply_layer5(dm)
+./relluna/core/basic_pipeline.py:7:from relluna.services.derivatives.layer5 import apply_layer5
+./relluna/core/basic_pipeline.py:18:    dm = apply_layer5(dm)
+./relluna/core/basic_pipeline.py.bak.20260225180241:13:from relluna.services.derivatives.layer5 import apply_layer5
+./relluna/core/basic_pipeline.py.bak.20260225180241:110:    dm = apply_layer5(dm)
+./relluna/services/ingestion/api.py:32:from relluna.services.derivatives.layer5 import apply_layer5
+./relluna/services/ingestion/api.py:485:    dm = apply_layer5(dm)
+./relluna/services/ingestion/api.py:486:    _append_processing_event(dm, etapa="apply_layer5", engine="services.derivatives.layer5")
+./relluna/services/ingestion/api.py.bak.processing_events:40:from relluna.services.derivatives.layer5 import apply_layer5
+./relluna/services/ingestion/api.py.bak.processing_events:244:    dm = apply_layer5(dm)
+./relluna/services/ingestion/api.py.bak.20260225180241:40:from relluna.services.derivatives.layer5 import apply_layer5
+./relluna/services/ingestion/api.py.bak.20260225180241:249:    dm = apply_layer5(dm)
+./relluna/services/ingestion/api.py.bak.juridical:40:from relluna.services.derivatives.layer5 import apply_layer5
+./relluna/services/ingestion/api.py.bak.juridical:252:    dm = apply_layer5(dm)
+./relluna/services/correlation/layer5.py:11:def apply_layer5(dm: DocumentMemory) -> DocumentMemory:
+./relluna/services/derivatives/layer5.py:198:# apply_layer5
+./relluna/services/derivatives/layer5.py:201:def apply_layer5(dm: DocumentMemory) -> DocumentMemory:
+\n===== EVENT TYPES =====
+./diagnostico_pipeline.txt:1602:./relluna/services/context_inference/basic.py:388:        elif event_type in {"birth_date", "internacao_inicio", "internacao_fim"}:
+./diagnostico_pipeline.txt:1612:./relluna/services/timeline/event_builder.py:8:    "internacao_inicio": "Início da internação",
+./diagnostico_pipeline.txt:1613:./relluna/services/timeline/event_builder.py:9:    "internacao_fim": "Fim da internação",
+./diagnostico_pipeline.txt:1614:./relluna/services/timeline/event_builder.py:18:    "internacao_inicio": "Registro de início de internação identificado no documento.",
+./diagnostico_pipeline.txt:1615:./relluna/services/timeline/event_builder.py:19:    "internacao_fim": "Registro de fim de internação identificado no documento.",
+./diagnostico_pipeline.txt:1616:./relluna/services/deterministic_extractors/timeline_seed_v2.py:14:    "internacao_inicio": 10,
+./diagnostico_pipeline.txt:1617:./relluna/services/deterministic_extractors/timeline_seed_v2.py:15:    "internacao_fim": 20,
+./diagnostico_pipeline.txt:1618:./relluna/services/deterministic_extractors/timeline_seed_v2.py:25:    "internacao_inicio": True,
+./diagnostico_pipeline.txt:1619:./relluna/services/deterministic_extractors/timeline_seed_v2.py:26:    "internacao_fim": True,
+./diagnostico_pipeline.txt:1620:./relluna/services/deterministic_extractors/entities_hard_v2.py:322:    # internacao range
+./diagnostico_pipeline.txt:1621:./relluna/services/deterministic_extractors/entities_hard_v2.py:331:                "role": "internacao_inicio",
+./diagnostico_pipeline.txt:1622:./relluna/services/deterministic_extractors/entities_hard_v2.py:343:                "role": "internacao_fim",
+./diagnostico_pipeline.txt:1623:./relluna/services/page_extraction/page_taxonomy.py:45:            "internacao",
+./diagnostico_pipeline.txt:1624:./relluna/services/context_inference/basic.py:275:    "internacao_inicio": "Início de internação/afastamento",
+./diagnostico_pipeline.txt:1625:./relluna/services/context_inference/basic.py:276:    "internacao_fim": "Fim de internação",
+./diagnostico_pipeline.txt:1626:./relluna/services/context_inference/basic.py:322:        return "internacao_inicio"
+./diagnostico_pipeline.txt:1627:./relluna/services/context_inference/basic.py:324:        return "internacao_fim"
+./diagnostico_pipeline.txt:1628:./relluna/services/context_inference/basic.py:388:        elif event_type in {"birth_date", "internacao_inicio", "internacao_fim"}:
+./diagnostico_pipeline.txt:1645:./relluna/services/context_inference/basic.py:275:    "internacao_inicio": "Início de internação/afastamento",
+./relluna/services/timeline/event_builder.py:8:    "internacao_inicio": "Início da internação",
+./relluna/services/timeline/event_builder.py:9:    "internacao_fim": "Fim da internação",
+./relluna/services/timeline/event_builder.py:18:    "internacao_inicio": "Registro de início de internação identificado no documento.",
+./relluna/services/timeline/event_builder.py:19:    "internacao_fim": "Registro de fim de internação identificado no documento.",
+./relluna/services/deterministic_extractors/timeline_seed_v2.py:14:    "internacao_inicio": 10,
+./relluna/services/deterministic_extractors/timeline_seed_v2.py:15:    "internacao_fim": 20,
+./relluna/services/deterministic_extractors/timeline_seed_v2.py:25:    "internacao_inicio": True,
+./relluna/services/deterministic_extractors/timeline_seed_v2.py:26:    "internacao_fim": True,
+./relluna/services/deterministic_extractors/entities_hard_v2.py:322:    # internacao range
+./relluna/services/deterministic_extractors/entities_hard_v2.py:331:                "role": "internacao_inicio",
+./relluna/services/deterministic_extractors/entities_hard_v2.py:343:                "role": "internacao_fim",
+./relluna/services/page_extraction/page_taxonomy.py:45:            "internacao",
+./relluna/services/context_inference/basic.py:275:    "internacao_inicio": "Início de internação/afastamento",
+./relluna/services/context_inference/basic.py:276:    "internacao_fim": "Fim de internação",
+./relluna/services/context_inference/basic.py:322:        return "internacao_inicio"
+./relluna/services/context_inference/basic.py:324:        return "internacao_fim"
+./relluna/services/context_inference/basic.py:388:        elif event_type in {"birth_date", "internacao_inicio", "internacao_fim"}:
+./diagnostico_pipeline.txt:1604:./relluna/services/context_inference/basic.py:466:            "crms": crms if event_type in {"document_issue_date", "afastamento_prescrito", "evento_documental"} else [],
+./diagnostico_pipeline.txt:1624:./relluna/services/context_inference/basic.py:275:    "internacao_inicio": "Início de internação/afastamento",
+./diagnostico_pipeline.txt:1629:./relluna/services/timeline/event_builder.py:12:    "afastamento_inicio": "Início do afastamento",
+./diagnostico_pipeline.txt:1630:./relluna/services/timeline/event_builder.py:13:    "afastamento_fim_estimado": "Fim estimado do afastamento",
+./diagnostico_pipeline.txt:1631:./relluna/services/timeline/event_builder.py:22:    "afastamento_inicio": "Documento recomenda afastamento a partir desta data.",
+./diagnostico_pipeline.txt:1632:./relluna/services/timeline/event_builder.py:23:    "afastamento_fim_estimado": "Data estimada de término do afastamento com base na duração detectada.",
+./diagnostico_pipeline.txt:1633:./relluna/services/deterministic_extractors/timeline_seed_v2.py:18:    "afastamento_inicio": 50,
+./diagnostico_pipeline.txt:1634:./relluna/services/deterministic_extractors/timeline_seed_v2.py:19:    "afastamento_fim_estimado": 60,
+./diagnostico_pipeline.txt:1635:./relluna/services/deterministic_extractors/timeline_seed_v2.py:29:    "afastamento_inicio": True,
+./diagnostico_pipeline.txt:1636:./relluna/services/deterministic_extractors/timeline_seed_v2.py:30:    "afastamento_fim_estimado": True,
+./diagnostico_pipeline.txt:1637:./relluna/services/deterministic_extractors/entities_hard_v2.py:352:    # afastamento days from document issue
+./diagnostico_pipeline.txt:1638:./relluna/services/deterministic_extractors/entities_hard_v2.py:369:            "role": "afastamento_inicio",
+./diagnostico_pipeline.txt:1639:./relluna/services/deterministic_extractors/entities_hard_v2.py:377:            "role": "afastamento_fim_estimado",
+./diagnostico_pipeline.txt:1640:./relluna/services/deterministic_extractors/entities_hard_v2.py:385:            "role": "afastamento_dias",
+./diagnostico_pipeline.txt:1641:./relluna/services/legal/canonical_extractors.py:20:RE_DAYS_OFF = re.compile(r"\b(\d{1,3})\s+dias?\s+de\s+afastamento\b", re.IGNORECASE)
+./diagnostico_pipeline.txt:1642:./relluna/services/legal/canonical_extractors.py:29:RE_DISMISSAL = re.compile(r"\bdata\s+de\s+(?:demiss[aã]o|afastamento)[:\s\-]*([0-9]{2}/[0-9]{2}/[0-9]{4})", re.IGNORECASE)
+./diagnostico_pipeline.txt:1643:./relluna/services/legal/classify_legal_doc.py:20:        (DocType.TRAB_TRCT, ["termo de rescisão", "rescisao", "data de afastamento", "verbas rescisórias"]),
+./diagnostico_pipeline.txt:1644:./relluna/services/legal/classify_legal_doc.py:31:        (DocType.MED_ATESTADO, ["atesto para os devidos fins", "dias de afastamento", "cid"]),
+./diagnostico_pipeline.txt:1645:./relluna/services/context_inference/basic.py:275:    "internacao_inicio": "Início de internação/afastamento",
+./diagnostico_pipeline.txt:1646:./relluna/services/context_inference/basic.py:277:    "afastamento_prescrito": "Afastamento prescrito",
+./diagnostico_pipeline.txt:1647:./relluna/services/context_inference/basic.py:328:        return "afastamento_prescrito"
+./diagnostico_pipeline.txt:1648:./relluna/services/context_inference/basic.py:466:            "crms": crms if event_type in {"document_issue_date", "afastamento_prescrito", "evento_documental"} else [],
+./relluna/services/timeline/event_builder.py:12:    "afastamento_inicio": "Início do afastamento",
+./relluna/services/timeline/event_builder.py:13:    "afastamento_fim_estimado": "Fim estimado do afastamento",
+./relluna/services/timeline/event_builder.py:22:    "afastamento_inicio": "Documento recomenda afastamento a partir desta data.",
+./relluna/services/timeline/event_builder.py:23:    "afastamento_fim_estimado": "Data estimada de término do afastamento com base na duração detectada.",
+./relluna/services/deterministic_extractors/timeline_seed_v2.py:18:    "afastamento_inicio": 50,
+./relluna/services/deterministic_extractors/timeline_seed_v2.py:19:    "afastamento_fim_estimado": 60,
+./relluna/services/deterministic_extractors/timeline_seed_v2.py:29:    "afastamento_inicio": True,
+./relluna/services/deterministic_extractors/timeline_seed_v2.py:30:    "afastamento_fim_estimado": True,
+./relluna/services/deterministic_extractors/entities_hard_v2.py:352:    # afastamento days from document issue
+./relluna/services/deterministic_extractors/entities_hard_v2.py:369:            "role": "afastamento_inicio",
+./relluna/services/deterministic_extractors/entities_hard_v2.py:377:            "role": "afastamento_fim_estimado",
+./relluna/services/deterministic_extractors/entities_hard_v2.py:385:            "role": "afastamento_dias",
+./relluna/services/legal/canonical_extractors.py:20:RE_DAYS_OFF = re.compile(r"\b(\d{1,3})\s+dias?\s+de\s+afastamento\b", re.IGNORECASE)
+./relluna/services/legal/canonical_extractors.py:29:RE_DISMISSAL = re.compile(r"\bdata\s+de\s+(?:demiss[aã]o|afastamento)[:\s\-]*([0-9]{2}/[0-9]{2}/[0-9]{4})", re.IGNORECASE)
+./relluna/services/legal/classify_legal_doc.py:20:        (DocType.TRAB_TRCT, ["termo de rescisão", "rescisao", "data de afastamento", "verbas rescisórias"]),
+./relluna/services/legal/classify_legal_doc.py:31:        (DocType.MED_ATESTADO, ["atesto para os devidos fins", "dias de afastamento", "cid"]),
+./relluna/services/context_inference/basic.py:275:    "internacao_inicio": "Início de internação/afastamento",
+./relluna/services/context_inference/basic.py:277:    "afastamento_prescrito": "Afastamento prescrito",
+./relluna/services/context_inference/basic.py:328:        return "afastamento_prescrito"
+./relluna/services/context_inference/basic.py:466:            "crms": crms if event_type in {"document_issue_date", "afastamento_prescrito", "evento_documental"} else [],
+./diagnostico_pipeline.txt:82:./relluna/services/timeline/event_builder.py:95:    events.sort(key=lambda x: (x["date_iso"], x["event_type"], x["event_id"]))
+./diagnostico_pipeline.txt:119:./relluna/services/context_inference/basic.py:404:        basis = f"{event_type}|{date_iso}|{page}|{subdoc_id}|{document_id}"
+./diagnostico_pipeline.txt:1461:./.venv/lib/python3.12/site-packages/h11/_state.py:278:        event_type: Type[Event],
+./diagnostico_pipeline.txt:1462:./.venv/lib/python3.12/site-packages/h11/_state.py:281:        _event_type: Union[Type[Event], Tuple[Type[Event], Type[Sentinel]]] = event_type
+./diagnostico_pipeline.txt:1463:./.venv/lib/python3.12/site-packages/h11/_state.py:288:            _event_type = (event_type, server_switch_event)
+./diagnostico_pipeline.txt:1464:./.venv/lib/python3.12/site-packages/h11/_state.py:289:        if server_switch_event is None and _event_type is Response:
+./diagnostico_pipeline.txt:1465:./.venv/lib/python3.12/site-packages/h11/_state.py:291:        self._fire_event_triggered_transitions(role, _event_type)
+./diagnostico_pipeline.txt:1466:./.venv/lib/python3.12/site-packages/h11/_state.py:294:        if _event_type is Request:
+./diagnostico_pipeline.txt:1467:./.venv/lib/python3.12/site-packages/h11/_state.py:302:        event_type: Union[Type[Event], Tuple[Type[Event], Type[Sentinel]]],
+./diagnostico_pipeline.txt:1468:./.venv/lib/python3.12/site-packages/h11/_state.py:306:            new_state = EVENT_TRIGGERED_TRANSITIONS[role][state][event_type]
+./diagnostico_pipeline.txt:1469:./.venv/lib/python3.12/site-packages/h11/_state.py:308:            event_type = cast(Type[Event], event_type)
+./diagnostico_pipeline.txt:1470:./.venv/lib/python3.12/site-packages/h11/_state.py:311:                    event_type.__name__, role, self.states[role]
+./diagnostico_pipeline.txt:1471:./.venv/lib/python3.12/site-packages/watchfiles/_rust_notify.pyi:71:        * Change details as a `set` of `(event_type, path)` tuples, the event types are ints which match
+./diagnostico_pipeline.txt:1472:./.venv/lib/python3.12/site-packages/fastapi/routing.py:4486:        event_type: Annotated[
+./diagnostico_pipeline.txt:1473:./.venv/lib/python3.12/site-packages/fastapi/routing.py:4505:            self.add_event_handler(event_type, func)
+./diagnostico_pipeline.txt:1474:./.venv/lib/python3.12/site-packages/fastapi/applications.py:4562:        event_type: Annotated[
+./diagnostico_pipeline.txt:1475:./.venv/lib/python3.12/site-packages/fastapi/applications.py:4579:        return self.router.on_event(event_type)
+./diagnostico_pipeline.txt:1476:./.venv/lib/python3.12/site-packages/botocore/parsers.py:974:            event_type = response['headers'].get(':event-type')
+./diagnostico_pipeline.txt:1477:./.venv/lib/python3.12/site-packages/botocore/parsers.py:975:            event_shape = shape.members.get(event_type)
+./diagnostico_pipeline.txt:1478:./.venv/lib/python3.12/site-packages/botocore/parsers.py:977:                final_parsed[event_type] = self._do_parse(
+./diagnostico_pipeline.txt:1479:./.venv/lib/python3.12/site-packages/botocore/history.py:20:    def emit(self, event_type, payload, source):
+./diagnostico_pipeline.txt:1480:./.venv/lib/python3.12/site-packages/botocore/history.py:38:    def record(self, event_type, payload, source='BOTOCORE'):
+./diagnostico_pipeline.txt:1481:./.venv/lib/python3.12/site-packages/botocore/history.py:42:                    handler.emit(event_type, payload, source)
+./diagnostico_pipeline.txt:1482:./.venv/lib/python3.12/site-packages/botocore/eventstream.py:613:            event_type = initial_event.headers.get(':event-type')
+./diagnostico_pipeline.txt:1483:./.venv/lib/python3.12/site-packages/botocore/eventstream.py:614:            if event_type == 'initial-response':
+./diagnostico_pipeline.txt:1484:./.venv/lib/python3.12/site-packages/botocore/monitoring.py:383:        event_type = self._get_event_type(event)
+./diagnostico_pipeline.txt:1485:./.venv/lib/python3.12/site-packages/botocore/monitoring.py:384:        event_dict['Type'] = event_type
+./diagnostico_pipeline.txt:1486:./.venv/lib/python3.12/site-packages/botocore/monitoring.py:389:                    value, event_dict, event_type=event_type
+./diagnostico_pipeline.txt:1487:./.venv/lib/python3.12/site-packages/botocore/monitoring.py:434:    def _serialize_latency(self, latency, event_dict, event_type):
+./diagnostico_pipeline.txt:1488:./.venv/lib/python3.12/site-packages/botocore/monitoring.py:435:        if event_type == 'ApiCall':
+./diagnostico_pipeline.txt:1489:./.venv/lib/python3.12/site-packages/botocore/monitoring.py:437:        elif event_type == 'ApiCallAttempt':
+./diagnostico_pipeline.txt:1490:./.venv/lib/python3.12/site-packages/botocore/monitoring.py:475:        self, parsed_error, event_dict, event_type, **kwargs
+./diagnostico_pipeline.txt:1491:./.venv/lib/python3.12/site-packages/botocore/monitoring.py:477:        field_prefix = 'Final' if event_type == 'ApiCall' else ''
+./diagnostico_pipeline.txt:1492:./.venv/lib/python3.12/site-packages/botocore/monitoring.py:486:        self, wire_exception, event_dict, event_type, **kwargs
+./diagnostico_pipeline.txt:1493:./.venv/lib/python3.12/site-packages/botocore/monitoring.py:488:        field_prefix = 'Final' if event_type == 'ApiCall' else ''
+./diagnostico_pipeline.txt:1494:./.venv/lib/python3.12/site-packages/botocore/monitoring.py:496:    def _get_event_type(self, event):
+./diagnostico_pipeline.txt:1495:./.venv/lib/python3.12/site-packages/sentry_sdk/integrations/rust_tracing.py:24:            event_type_mapping=event_type_mapping,
+./diagnostico_pipeline.txt:1496:./.venv/lib/python3.12/site-packages/sentry_sdk/integrations/rust_tracing.py:133:def default_event_type_mapping(metadata: "Dict[str, Any]") -> "EventTypeMapping":
+./diagnostico_pipeline.txt:1497:./.venv/lib/python3.12/site-packages/sentry_sdk/integrations/rust_tracing.py:149:        event_type_mapping: """Callable[
+./diagnostico_pipeline.txt:1498:./.venv/lib/python3.12/site-packages/sentry_sdk/integrations/rust_tracing.py:151:        ]""" = default_event_type_mapping,
+./diagnostico_pipeline.txt:1499:./.venv/lib/python3.12/site-packages/sentry_sdk/integrations/rust_tracing.py:156:        self.event_type_mapping = event_type_mapping
+./diagnostico_pipeline.txt:1500:./.venv/lib/python3.12/site-packages/sentry_sdk/integrations/rust_tracing.py:177:        event_type = self.event_type_mapping(metadata)
+./diagnostico_pipeline.txt:1501:./.venv/lib/python3.12/site-packages/sentry_sdk/integrations/rust_tracing.py:178:        if event_type == EventTypeMapping.Ignore:
+./diagnostico_pipeline.txt:1502:./.venv/lib/python3.12/site-packages/sentry_sdk/integrations/rust_tracing.py:180:        elif event_type == EventTypeMapping.Exc:
+./diagnostico_pipeline.txt:1503:./.venv/lib/python3.12/site-packages/sentry_sdk/integrations/rust_tracing.py:182:        elif event_type == EventTypeMapping.Breadcrumb:
+./diagnostico_pipeline.txt:1504:./.venv/lib/python3.12/site-packages/sentry_sdk/integrations/rust_tracing.py:184:        elif event_type == EventTypeMapping.Event:
+./diagnostico_pipeline.txt:1505:./.venv/lib/python3.12/site-packages/sentry_sdk/integrations/rust_tracing.py:267:        event_type_mapping: """Callable[
+./diagnostico_pipeline.txt:1506:./.venv/lib/python3.12/site-packages/sentry_sdk/integrations/rust_tracing.py:269:        ]""" = default_event_type_mapping,
+./diagnostico_pipeline.txt:1507:./.venv/lib/python3.12/site-packages/sentry_sdk/integrations/rust_tracing.py:276:            origin, event_type_mapping, span_filter, include_tracing_fields
+./diagnostico_pipeline.txt:1508:./.venv/lib/python3.12/site-packages/redis/event.py:129:            for event_type in mappings:
+./diagnostico_pipeline.txt:1509:./.venv/lib/python3.12/site-packages/redis/event.py:130:                if event_type in self._event_listeners_mapping:
+./diagnostico_pipeline.txt:1510:./.venv/lib/python3.12/site-packages/redis/event.py:131:                    self._event_listeners_mapping[event_type] = list(
+./diagnostico_pipeline.txt:1511:./.venv/lib/python3.12/site-packages/redis/event.py:133:                            self._event_listeners_mapping[event_type]
+./diagnostico_pipeline.txt:1512:./.venv/lib/python3.12/site-packages/redis/event.py:134:                            + mappings[event_type]
+./diagnostico_pipeline.txt:1513:./.venv/lib/python3.12/site-packages/redis/event.py:138:                    self._event_listeners_mapping[event_type] = mappings[event_type]
+./diagnostico_pipeline.txt:1514:./.venv/lib/python3.12/site-packages/starlette/routing.py:857:    def add_event_handler(self, event_type: str, func: Callable[[], Any]) -> None:  # pragma: no cover
+./diagnostico_pipeline.txt:1515:./.venv/lib/python3.12/site-packages/starlette/routing.py:858:        assert event_type in ("startup", "shutdown")
+./diagnostico_pipeline.txt:1516:./.venv/lib/python3.12/site-packages/starlette/routing.py:860:        if event_type == "startup":
+./diagnostico_pipeline.txt:1517:./.venv/lib/python3.12/site-packages/starlette/routing.py:865:    def on_event(self, event_type: str) -> Callable:  # type: ignore[type-arg]
+./diagnostico_pipeline.txt:1518:./.venv/lib/python3.12/site-packages/starlette/routing.py:873:            self.add_event_handler(event_type, func)
+./diagnostico_pipeline.txt:1519:./.venv/lib/python3.12/site-packages/starlette/applications.py:109:    def on_event(self, event_type: str) -> Callable:  # type: ignore[type-arg]
+./diagnostico_pipeline.txt:1520:./.venv/lib/python3.12/site-packages/starlette/applications.py:110:        return self.router.on_event(event_type)  # pragma: no cover
+./diagnostico_pipeline.txt:1521:./.venv/lib/python3.12/site-packages/starlette/applications.py:137:        event_type: str,
+./diagnostico_pipeline.txt:1522:./.venv/lib/python3.12/site-packages/starlette/applications.py:140:        self.router.add_event_handler(event_type, func)
+./diagnostico_pipeline.txt:1523:./.venv/lib64/python3.12/site-packages/h11/_state.py:278:        event_type: Type[Event],
+./diagnostico_pipeline.txt:1524:./.venv/lib64/python3.12/site-packages/h11/_state.py:281:        _event_type: Union[Type[Event], Tuple[Type[Event], Type[Sentinel]]] = event_type
+./diagnostico_pipeline.txt:1525:./.venv/lib64/python3.12/site-packages/h11/_state.py:288:            _event_type = (event_type, server_switch_event)
+./diagnostico_pipeline.txt:1526:./.venv/lib64/python3.12/site-packages/h11/_state.py:289:        if server_switch_event is None and _event_type is Response:
+./diagnostico_pipeline.txt:1527:./.venv/lib64/python3.12/site-packages/h11/_state.py:291:        self._fire_event_triggered_transitions(role, _event_type)
+./diagnostico_pipeline.txt:1528:./.venv/lib64/python3.12/site-packages/h11/_state.py:294:        if _event_type is Request:
+./diagnostico_pipeline.txt:1529:./.venv/lib64/python3.12/site-packages/h11/_state.py:302:        event_type: Union[Type[Event], Tuple[Type[Event], Type[Sentinel]]],
+./diagnostico_pipeline.txt:1530:./.venv/lib64/python3.12/site-packages/h11/_state.py:306:            new_state = EVENT_TRIGGERED_TRANSITIONS[role][state][event_type]
+./diagnostico_pipeline.txt:1531:./.venv/lib64/python3.12/site-packages/h11/_state.py:308:            event_type = cast(Type[Event], event_type)
+./diagnostico_pipeline.txt:1532:./.venv/lib64/python3.12/site-packages/h11/_state.py:311:                    event_type.__name__, role, self.states[role]
+./diagnostico_pipeline.txt:1533:./.venv/lib64/python3.12/site-packages/watchfiles/_rust_notify.pyi:71:        * Change details as a `set` of `(event_type, path)` tuples, the event types are ints which match
+./diagnostico_pipeline.txt:1534:./.venv/lib64/python3.12/site-packages/fastapi/routing.py:4486:        event_type: Annotated[
+./diagnostico_pipeline.txt:1535:./.venv/lib64/python3.12/site-packages/fastapi/routing.py:4505:            self.add_event_handler(event_type, func)
+./diagnostico_pipeline.txt:1536:./.venv/lib64/python3.12/site-packages/fastapi/applications.py:4562:        event_type: Annotated[
+./diagnostico_pipeline.txt:1537:./.venv/lib64/python3.12/site-packages/fastapi/applications.py:4579:        return self.router.on_event(event_type)
+./diagnostico_pipeline.txt:1538:./.venv/lib64/python3.12/site-packages/botocore/parsers.py:974:            event_type = response['headers'].get(':event-type')
+./diagnostico_pipeline.txt:1539:./.venv/lib64/python3.12/site-packages/botocore/parsers.py:975:            event_shape = shape.members.get(event_type)
+./diagnostico_pipeline.txt:1540:./.venv/lib64/python3.12/site-packages/botocore/parsers.py:977:                final_parsed[event_type] = self._do_parse(
+./diagnostico_pipeline.txt:1541:./.venv/lib64/python3.12/site-packages/botocore/history.py:20:    def emit(self, event_type, payload, source):
+./diagnostico_pipeline.txt:1542:./.venv/lib64/python3.12/site-packages/botocore/history.py:38:    def record(self, event_type, payload, source='BOTOCORE'):
+./diagnostico_pipeline.txt:1543:./.venv/lib64/python3.12/site-packages/botocore/history.py:42:                    handler.emit(event_type, payload, source)
+./diagnostico_pipeline.txt:1544:./.venv/lib64/python3.12/site-packages/botocore/eventstream.py:613:            event_type = initial_event.headers.get(':event-type')
+./diagnostico_pipeline.txt:1545:./.venv/lib64/python3.12/site-packages/botocore/eventstream.py:614:            if event_type == 'initial-response':
+./diagnostico_pipeline.txt:1546:./.venv/lib64/python3.12/site-packages/botocore/monitoring.py:383:        event_type = self._get_event_type(event)
+./diagnostico_pipeline.txt:1547:./.venv/lib64/python3.12/site-packages/botocore/monitoring.py:384:        event_dict['Type'] = event_type
+./diagnostico_pipeline.txt:1548:./.venv/lib64/python3.12/site-packages/botocore/monitoring.py:389:                    value, event_dict, event_type=event_type
+./diagnostico_pipeline.txt:1549:./.venv/lib64/python3.12/site-packages/botocore/monitoring.py:434:    def _serialize_latency(self, latency, event_dict, event_type):
+./diagnostico_pipeline.txt:1550:./.venv/lib64/python3.12/site-packages/botocore/monitoring.py:435:        if event_type == 'ApiCall':
+./diagnostico_pipeline.txt:1551:./.venv/lib64/python3.12/site-packages/botocore/monitoring.py:437:        elif event_type == 'ApiCallAttempt':
+./diagnostico_pipeline.txt:1552:./.venv/lib64/python3.12/site-packages/botocore/monitoring.py:475:        self, parsed_error, event_dict, event_type, **kwargs
+./diagnostico_pipeline.txt:1553:./.venv/lib64/python3.12/site-packages/botocore/monitoring.py:477:        field_prefix = 'Final' if event_type == 'ApiCall' else ''
+./diagnostico_pipeline.txt:1554:./.venv/lib64/python3.12/site-packages/botocore/monitoring.py:486:        self, wire_exception, event_dict, event_type, **kwargs
+./diagnostico_pipeline.txt:1555:./.venv/lib64/python3.12/site-packages/botocore/monitoring.py:488:        field_prefix = 'Final' if event_type == 'ApiCall' else ''
+./diagnostico_pipeline.txt:1556:./.venv/lib64/python3.12/site-packages/botocore/monitoring.py:496:    def _get_event_type(self, event):
+./diagnostico_pipeline.txt:1557:./.venv/lib64/python3.12/site-packages/sentry_sdk/integrations/rust_tracing.py:24:            event_type_mapping=event_type_mapping,
+./diagnostico_pipeline.txt:1558:./.venv/lib64/python3.12/site-packages/sentry_sdk/integrations/rust_tracing.py:133:def default_event_type_mapping(metadata: "Dict[str, Any]") -> "EventTypeMapping":
+./diagnostico_pipeline.txt:1559:./.venv/lib64/python3.12/site-packages/sentry_sdk/integrations/rust_tracing.py:149:        event_type_mapping: """Callable[
+./diagnostico_pipeline.txt:1560:./.venv/lib64/python3.12/site-packages/sentry_sdk/integrations/rust_tracing.py:151:        ]""" = default_event_type_mapping,
+./diagnostico_pipeline.txt:1561:./.venv/lib64/python3.12/site-packages/sentry_sdk/integrations/rust_tracing.py:156:        self.event_type_mapping = event_type_mapping
+./diagnostico_pipeline.txt:1562:./.venv/lib64/python3.12/site-packages/sentry_sdk/integrations/rust_tracing.py:177:        event_type = self.event_type_mapping(metadata)
+./diagnostico_pipeline.txt:1563:./.venv/lib64/python3.12/site-packages/sentry_sdk/integrations/rust_tracing.py:178:        if event_type == EventTypeMapping.Ignore:
+./diagnostico_pipeline.txt:1564:./.venv/lib64/python3.12/site-packages/sentry_sdk/integrations/rust_tracing.py:180:        elif event_type == EventTypeMapping.Exc:
+./diagnostico_pipeline.txt:1565:./.venv/lib64/python3.12/site-packages/sentry_sdk/integrations/rust_tracing.py:182:        elif event_type == EventTypeMapping.Breadcrumb:
+./diagnostico_pipeline.txt:1566:./.venv/lib64/python3.12/site-packages/sentry_sdk/integrations/rust_tracing.py:184:        elif event_type == EventTypeMapping.Event:
+./diagnostico_pipeline.txt:1567:./.venv/lib64/python3.12/site-packages/sentry_sdk/integrations/rust_tracing.py:267:        event_type_mapping: """Callable[
+./diagnostico_pipeline.txt:1568:./.venv/lib64/python3.12/site-packages/sentry_sdk/integrations/rust_tracing.py:269:        ]""" = default_event_type_mapping,
+./diagnostico_pipeline.txt:1569:./.venv/lib64/python3.12/site-packages/sentry_sdk/integrations/rust_tracing.py:276:            origin, event_type_mapping, span_filter, include_tracing_fields
+./diagnostico_pipeline.txt:1570:./.venv/lib64/python3.12/site-packages/redis/event.py:129:            for event_type in mappings:
+./diagnostico_pipeline.txt:1571:./.venv/lib64/python3.12/site-packages/redis/event.py:130:                if event_type in self._event_listeners_mapping:
+./diagnostico_pipeline.txt:1572:./.venv/lib64/python3.12/site-packages/redis/event.py:131:                    self._event_listeners_mapping[event_type] = list(
+./diagnostico_pipeline.txt:1573:./.venv/lib64/python3.12/site-packages/redis/event.py:133:                            self._event_listeners_mapping[event_type]
+./diagnostico_pipeline.txt:1574:./.venv/lib64/python3.12/site-packages/redis/event.py:134:                            + mappings[event_type]
+./diagnostico_pipeline.txt:1575:./.venv/lib64/python3.12/site-packages/redis/event.py:138:                    self._event_listeners_mapping[event_type] = mappings[event_type]
+./diagnostico_pipeline.txt:1576:./.venv/lib64/python3.12/site-packages/starlette/routing.py:857:    def add_event_handler(self, event_type: str, func: Callable[[], Any]) -> None:  # pragma: no cover
+./diagnostico_pipeline.txt:1577:./.venv/lib64/python3.12/site-packages/starlette/routing.py:858:        assert event_type in ("startup", "shutdown")
+./diagnostico_pipeline.txt:1578:./.venv/lib64/python3.12/site-packages/starlette/routing.py:860:        if event_type == "startup":
+./diagnostico_pipeline.txt:1579:./.venv/lib64/python3.12/site-packages/starlette/routing.py:865:    def on_event(self, event_type: str) -> Callable:  # type: ignore[type-arg]
+./diagnostico_pipeline.txt:1580:./.venv/lib64/python3.12/site-packages/starlette/routing.py:873:            self.add_event_handler(event_type, func)
+./diagnostico_pipeline.txt:1581:./.venv/lib64/python3.12/site-packages/starlette/applications.py:109:    def on_event(self, event_type: str) -> Callable:  # type: ignore[type-arg]
+./diagnostico_pipeline.txt:1582:./.venv/lib64/python3.12/site-packages/starlette/applications.py:110:        return self.router.on_event(event_type)  # pragma: no cover
+./diagnostico_pipeline.txt:1583:./.venv/lib64/python3.12/site-packages/starlette/applications.py:137:        event_type: str,
+./diagnostico_pipeline.txt:1584:./.venv/lib64/python3.12/site-packages/starlette/applications.py:140:        self.router.add_event_handler(event_type, func)
+./diagnostico_pipeline.txt:1585:./relluna/core/document_memory/layer3.py:58:    event_type: Optional[str] = None
+./diagnostico_pipeline.txt:1586:./relluna/services/timeline/event_builder.py:79:            "event_type": event_hint,
+./diagnostico_pipeline.txt:1587:./relluna/services/timeline/event_builder.py:95:    events.sort(key=lambda x: (x["date_iso"], x["event_type"], x["event_id"]))
+./diagnostico_pipeline.txt:1588:./relluna/services/derivatives/layer5.py:68:        event_type = getattr(event, "event_type", None)
+./diagnostico_pipeline.txt:1589:./relluna/services/derivatives/layer5.py:69:        if not event_type:
+./diagnostico_pipeline.txt:1590:./relluna/services/derivatives/layer5.py:71:            event_type = getattr(tipo_ev, "valor", None) if tipo_ev else None
+./diagnostico_pipeline.txt:1591:./relluna/services/derivatives/layer5.py:91:        if not title and event_type:
+./diagnostico_pipeline.txt:1592:./relluna/services/derivatives/layer5.py:92:            title = str(event_type).replace("_", " ").capitalize()
+./diagnostico_pipeline.txt:1593:./relluna/services/derivatives/layer5.py:100:            "event_type": event_type,
+./diagnostico_pipeline.txt:1594:./relluna/services/read_model/timeline_read_model.py:23:            "event_type": e["event_type"],
+./diagnostico_pipeline.txt:1595:./relluna/services/read_model/timeline_builder.py:33:        event_type = item.get("event_type") or "evento_detectado"
+./diagnostico_pipeline.txt:1596:./relluna/services/read_model/timeline_builder.py:46:                "label": event_type,
+./diagnostico_pipeline.txt:1597:./relluna/services/read_model/timeline_builder.py:47:                "event_type": event_type,
+./diagnostico_pipeline.txt:1598:./relluna/services/context_inference/basic.py:314:def _infer_event_type_from_seed(seed: Dict[str, Any], snippet: str) -> str:
+./diagnostico_pipeline.txt:1599:./relluna/services/context_inference/basic.py:379:        event_type = _infer_event_type_from_seed(seed, snippet or "")
+./diagnostico_pipeline.txt:1600:./relluna/services/context_inference/basic.py:380:        doc_tipo = event_type if event_type != "evento_documental" else default_doc_tipo
+./diagnostico_pipeline.txt:1601:./relluna/services/context_inference/basic.py:386:        elif event_type == "document_issue_date":
+./diagnostico_pipeline.txt:1602:./relluna/services/context_inference/basic.py:388:        elif event_type in {"birth_date", "internacao_inicio", "internacao_fim"}:
+./diagnostico_pipeline.txt:1603:./relluna/services/context_inference/basic.py:404:        basis = f"{event_type}|{date_iso}|{page}|{subdoc_id}|{document_id}"
+./diagnostico_pipeline.txt:1604:./relluna/services/context_inference/basic.py:466:            "crms": crms if event_type in {"document_issue_date", "afastamento_prescrito", "evento_documental"} else [],
+./diagnostico_pipeline.txt:1605:./relluna/services/context_inference/basic.py:472:            valor=event_type,
+./diagnostico_pipeline.txt:1606:./relluna/services/context_inference/basic.py:484:                event_type=event_type,
+./diagnostico_pipeline.txt:1607:./relluna/services/context_inference/basic.py:485:                title=_event_title(event_type, provider_name if event_type != "birth_date" else None, contextual_cids),
+./diagnostico_pipeline.txt:1608:./relluna/services/context_inference/basic.py:487:                    doc_tipo=event_type,
+./diagnostico_pipeline.txt:1609:./relluna/services/context_inference/basic.py:489:                    provider_name=provider_name if event_type != "birth_date" else None,
+./diagnostico_pipeline.txt:1610:./relluna/services/context_inference/basic.py:503:                    doc_tipo=event_type,
+./diagnostico_pipeline.txt:1611:./relluna/services/context_inference/basic.py:505:                    provider_name=provider_name if event_type != "birth_date" else None,
+./diagnostico_pipeline.txt:1628:./relluna/services/context_inference/basic.py:388:        elif event_type in {"birth_date", "internacao_inicio", "internacao_fim"}:
+./diagnostico_pipeline.txt:1648:./relluna/services/context_inference/basic.py:466:            "crms": crms if event_type in {"document_issue_date", "afastamento_prescrito", "evento_documental"} else [],
+./.venv/lib/python3.12/site-packages/h11/_state.py:278:        event_type: Type[Event],
+./.venv/lib/python3.12/site-packages/h11/_state.py:281:        _event_type: Union[Type[Event], Tuple[Type[Event], Type[Sentinel]]] = event_type
+./.venv/lib/python3.12/site-packages/h11/_state.py:288:            _event_type = (event_type, server_switch_event)
+./.venv/lib/python3.12/site-packages/h11/_state.py:289:        if server_switch_event is None and _event_type is Response:
+./.venv/lib/python3.12/site-packages/h11/_state.py:291:        self._fire_event_triggered_transitions(role, _event_type)
+./.venv/lib/python3.12/site-packages/h11/_state.py:294:        if _event_type is Request:
+./.venv/lib/python3.12/site-packages/h11/_state.py:302:        event_type: Union[Type[Event], Tuple[Type[Event], Type[Sentinel]]],
+./.venv/lib/python3.12/site-packages/h11/_state.py:306:            new_state = EVENT_TRIGGERED_TRANSITIONS[role][state][event_type]
+./.venv/lib/python3.12/site-packages/h11/_state.py:308:            event_type = cast(Type[Event], event_type)
+./.venv/lib/python3.12/site-packages/h11/_state.py:311:                    event_type.__name__, role, self.states[role]
+./.venv/lib/python3.12/site-packages/watchfiles/_rust_notify.pyi:71:        * Change details as a `set` of `(event_type, path)` tuples, the event types are ints which match
+./.venv/lib/python3.12/site-packages/fastapi/routing.py:4486:        event_type: Annotated[
+./.venv/lib/python3.12/site-packages/fastapi/routing.py:4505:            self.add_event_handler(event_type, func)
+./.venv/lib/python3.12/site-packages/fastapi/applications.py:4562:        event_type: Annotated[
+./.venv/lib/python3.12/site-packages/fastapi/applications.py:4579:        return self.router.on_event(event_type)
+./.venv/lib/python3.12/site-packages/botocore/parsers.py:974:            event_type = response['headers'].get(':event-type')
+./.venv/lib/python3.12/site-packages/botocore/parsers.py:975:            event_shape = shape.members.get(event_type)
+./.venv/lib/python3.12/site-packages/botocore/parsers.py:977:                final_parsed[event_type] = self._do_parse(
+./.venv/lib/python3.12/site-packages/botocore/history.py:20:    def emit(self, event_type, payload, source):
+./.venv/lib/python3.12/site-packages/botocore/history.py:38:    def record(self, event_type, payload, source='BOTOCORE'):
+./.venv/lib/python3.12/site-packages/botocore/history.py:42:                    handler.emit(event_type, payload, source)
+./.venv/lib/python3.12/site-packages/botocore/eventstream.py:613:            event_type = initial_event.headers.get(':event-type')
+./.venv/lib/python3.12/site-packages/botocore/eventstream.py:614:            if event_type == 'initial-response':
+./.venv/lib/python3.12/site-packages/botocore/monitoring.py:383:        event_type = self._get_event_type(event)
+./.venv/lib/python3.12/site-packages/botocore/monitoring.py:384:        event_dict['Type'] = event_type
+./.venv/lib/python3.12/site-packages/botocore/monitoring.py:389:                    value, event_dict, event_type=event_type
+./.venv/lib/python3.12/site-packages/botocore/monitoring.py:434:    def _serialize_latency(self, latency, event_dict, event_type):
+./.venv/lib/python3.12/site-packages/botocore/monitoring.py:435:        if event_type == 'ApiCall':
+./.venv/lib/python3.12/site-packages/botocore/monitoring.py:437:        elif event_type == 'ApiCallAttempt':
+./.venv/lib/python3.12/site-packages/botocore/monitoring.py:475:        self, parsed_error, event_dict, event_type, **kwargs
+./.venv/lib/python3.12/site-packages/botocore/monitoring.py:477:        field_prefix = 'Final' if event_type == 'ApiCall' else ''
+./.venv/lib/python3.12/site-packages/botocore/monitoring.py:486:        self, wire_exception, event_dict, event_type, **kwargs
+./.venv/lib/python3.12/site-packages/botocore/monitoring.py:488:        field_prefix = 'Final' if event_type == 'ApiCall' else ''
+./.venv/lib/python3.12/site-packages/botocore/monitoring.py:496:    def _get_event_type(self, event):
+./.venv/lib/python3.12/site-packages/sentry_sdk/integrations/rust_tracing.py:24:            event_type_mapping=event_type_mapping,
+./.venv/lib/python3.12/site-packages/sentry_sdk/integrations/rust_tracing.py:133:def default_event_type_mapping(metadata: "Dict[str, Any]") -> "EventTypeMapping":
+./.venv/lib/python3.12/site-packages/sentry_sdk/integrations/rust_tracing.py:149:        event_type_mapping: """Callable[
+./.venv/lib/python3.12/site-packages/sentry_sdk/integrations/rust_tracing.py:151:        ]""" = default_event_type_mapping,
+./.venv/lib/python3.12/site-packages/sentry_sdk/integrations/rust_tracing.py:156:        self.event_type_mapping = event_type_mapping
+./.venv/lib/python3.12/site-packages/sentry_sdk/integrations/rust_tracing.py:177:        event_type = self.event_type_mapping(metadata)
+./.venv/lib/python3.12/site-packages/sentry_sdk/integrations/rust_tracing.py:178:        if event_type == EventTypeMapping.Ignore:
+./.venv/lib/python3.12/site-packages/sentry_sdk/integrations/rust_tracing.py:180:        elif event_type == EventTypeMapping.Exc:
+./.venv/lib/python3.12/site-packages/sentry_sdk/integrations/rust_tracing.py:182:        elif event_type == EventTypeMapping.Breadcrumb:
+./.venv/lib/python3.12/site-packages/sentry_sdk/integrations/rust_tracing.py:184:        elif event_type == EventTypeMapping.Event:
+./.venv/lib/python3.12/site-packages/sentry_sdk/integrations/rust_tracing.py:267:        event_type_mapping: """Callable[
+./.venv/lib/python3.12/site-packages/sentry_sdk/integrations/rust_tracing.py:269:        ]""" = default_event_type_mapping,
+./.venv/lib/python3.12/site-packages/sentry_sdk/integrations/rust_tracing.py:276:            origin, event_type_mapping, span_filter, include_tracing_fields
+./.venv/lib/python3.12/site-packages/redis/event.py:129:            for event_type in mappings:
+./.venv/lib/python3.12/site-packages/redis/event.py:130:                if event_type in self._event_listeners_mapping:
+./.venv/lib/python3.12/site-packages/redis/event.py:131:                    self._event_listeners_mapping[event_type] = list(
+./.venv/lib/python3.12/site-packages/redis/event.py:133:                            self._event_listeners_mapping[event_type]
+./.venv/lib/python3.12/site-packages/redis/event.py:134:                            + mappings[event_type]
+./.venv/lib/python3.12/site-packages/redis/event.py:138:                    self._event_listeners_mapping[event_type] = mappings[event_type]
+./.venv/lib/python3.12/site-packages/starlette/routing.py:857:    def add_event_handler(self, event_type: str, func: Callable[[], Any]) -> None:  # pragma: no cover
+./.venv/lib/python3.12/site-packages/starlette/routing.py:858:        assert event_type in ("startup", "shutdown")
+./.venv/lib/python3.12/site-packages/starlette/routing.py:860:        if event_type == "startup":
+./.venv/lib/python3.12/site-packages/starlette/routing.py:865:    def on_event(self, event_type: str) -> Callable:  # type: ignore[type-arg]
+./.venv/lib/python3.12/site-packages/starlette/routing.py:873:            self.add_event_handler(event_type, func)
+./.venv/lib/python3.12/site-packages/starlette/applications.py:109:    def on_event(self, event_type: str) -> Callable:  # type: ignore[type-arg]
+./.venv/lib/python3.12/site-packages/starlette/applications.py:110:        return self.router.on_event(event_type)  # pragma: no cover
+./.venv/lib/python3.12/site-packages/starlette/applications.py:137:        event_type: str,
+./.venv/lib/python3.12/site-packages/starlette/applications.py:140:        self.router.add_event_handler(event_type, func)
+./.venv/lib64/python3.12/site-packages/h11/_state.py:278:        event_type: Type[Event],
+./.venv/lib64/python3.12/site-packages/h11/_state.py:281:        _event_type: Union[Type[Event], Tuple[Type[Event], Type[Sentinel]]] = event_type
+./.venv/lib64/python3.12/site-packages/h11/_state.py:288:            _event_type = (event_type, server_switch_event)
+./.venv/lib64/python3.12/site-packages/h11/_state.py:289:        if server_switch_event is None and _event_type is Response:
+./.venv/lib64/python3.12/site-packages/h11/_state.py:291:        self._fire_event_triggered_transitions(role, _event_type)
+./.venv/lib64/python3.12/site-packages/h11/_state.py:294:        if _event_type is Request:
+./.venv/lib64/python3.12/site-packages/h11/_state.py:302:        event_type: Union[Type[Event], Tuple[Type[Event], Type[Sentinel]]],
+./.venv/lib64/python3.12/site-packages/h11/_state.py:306:            new_state = EVENT_TRIGGERED_TRANSITIONS[role][state][event_type]
+./.venv/lib64/python3.12/site-packages/h11/_state.py:308:            event_type = cast(Type[Event], event_type)
+./.venv/lib64/python3.12/site-packages/h11/_state.py:311:                    event_type.__name__, role, self.states[role]
+./.venv/lib64/python3.12/site-packages/watchfiles/_rust_notify.pyi:71:        * Change details as a `set` of `(event_type, path)` tuples, the event types are ints which match
+./.venv/lib64/python3.12/site-packages/fastapi/routing.py:4486:        event_type: Annotated[
+./.venv/lib64/python3.12/site-packages/fastapi/routing.py:4505:            self.add_event_handler(event_type, func)
+./.venv/lib64/python3.12/site-packages/fastapi/applications.py:4562:        event_type: Annotated[
+./.venv/lib64/python3.12/site-packages/fastapi/applications.py:4579:        return self.router.on_event(event_type)
+./.venv/lib64/python3.12/site-packages/botocore/parsers.py:974:            event_type = response['headers'].get(':event-type')
+./.venv/lib64/python3.12/site-packages/botocore/parsers.py:975:            event_shape = shape.members.get(event_type)
+./.venv/lib64/python3.12/site-packages/botocore/parsers.py:977:                final_parsed[event_type] = self._do_parse(
+./.venv/lib64/python3.12/site-packages/botocore/history.py:20:    def emit(self, event_type, payload, source):
+./.venv/lib64/python3.12/site-packages/botocore/history.py:38:    def record(self, event_type, payload, source='BOTOCORE'):
+./.venv/lib64/python3.12/site-packages/botocore/history.py:42:                    handler.emit(event_type, payload, source)
+./.venv/lib64/python3.12/site-packages/botocore/eventstream.py:613:            event_type = initial_event.headers.get(':event-type')
+./.venv/lib64/python3.12/site-packages/botocore/eventstream.py:614:            if event_type == 'initial-response':
+./.venv/lib64/python3.12/site-packages/botocore/monitoring.py:383:        event_type = self._get_event_type(event)
+./.venv/lib64/python3.12/site-packages/botocore/monitoring.py:384:        event_dict['Type'] = event_type
+./.venv/lib64/python3.12/site-packages/botocore/monitoring.py:389:                    value, event_dict, event_type=event_type
+./.venv/lib64/python3.12/site-packages/botocore/monitoring.py:434:    def _serialize_latency(self, latency, event_dict, event_type):
+./.venv/lib64/python3.12/site-packages/botocore/monitoring.py:435:        if event_type == 'ApiCall':
+./.venv/lib64/python3.12/site-packages/botocore/monitoring.py:437:        elif event_type == 'ApiCallAttempt':
+./.venv/lib64/python3.12/site-packages/botocore/monitoring.py:475:        self, parsed_error, event_dict, event_type, **kwargs
+./.venv/lib64/python3.12/site-packages/botocore/monitoring.py:477:        field_prefix = 'Final' if event_type == 'ApiCall' else ''
+./.venv/lib64/python3.12/site-packages/botocore/monitoring.py:486:        self, wire_exception, event_dict, event_type, **kwargs
+./.venv/lib64/python3.12/site-packages/botocore/monitoring.py:488:        field_prefix = 'Final' if event_type == 'ApiCall' else ''
+./.venv/lib64/python3.12/site-packages/botocore/monitoring.py:496:    def _get_event_type(self, event):
+./.venv/lib64/python3.12/site-packages/sentry_sdk/integrations/rust_tracing.py:24:            event_type_mapping=event_type_mapping,
+./.venv/lib64/python3.12/site-packages/sentry_sdk/integrations/rust_tracing.py:133:def default_event_type_mapping(metadata: "Dict[str, Any]") -> "EventTypeMapping":
+./.venv/lib64/python3.12/site-packages/sentry_sdk/integrations/rust_tracing.py:149:        event_type_mapping: """Callable[
+./.venv/lib64/python3.12/site-packages/sentry_sdk/integrations/rust_tracing.py:151:        ]""" = default_event_type_mapping,
+./.venv/lib64/python3.12/site-packages/sentry_sdk/integrations/rust_tracing.py:156:        self.event_type_mapping = event_type_mapping
+./.venv/lib64/python3.12/site-packages/sentry_sdk/integrations/rust_tracing.py:177:        event_type = self.event_type_mapping(metadata)
+./.venv/lib64/python3.12/site-packages/sentry_sdk/integrations/rust_tracing.py:178:        if event_type == EventTypeMapping.Ignore:
+./.venv/lib64/python3.12/site-packages/sentry_sdk/integrations/rust_tracing.py:180:        elif event_type == EventTypeMapping.Exc:
+./.venv/lib64/python3.12/site-packages/sentry_sdk/integrations/rust_tracing.py:182:        elif event_type == EventTypeMapping.Breadcrumb:
+./.venv/lib64/python3.12/site-packages/sentry_sdk/integrations/rust_tracing.py:184:        elif event_type == EventTypeMapping.Event:
+./.venv/lib64/python3.12/site-packages/sentry_sdk/integrations/rust_tracing.py:267:        event_type_mapping: """Callable[
+./.venv/lib64/python3.12/site-packages/sentry_sdk/integrations/rust_tracing.py:269:        ]""" = default_event_type_mapping,
+./.venv/lib64/python3.12/site-packages/sentry_sdk/integrations/rust_tracing.py:276:            origin, event_type_mapping, span_filter, include_tracing_fields
+./.venv/lib64/python3.12/site-packages/redis/event.py:129:            for event_type in mappings:
+./.venv/lib64/python3.12/site-packages/redis/event.py:130:                if event_type in self._event_listeners_mapping:
+./.venv/lib64/python3.12/site-packages/redis/event.py:131:                    self._event_listeners_mapping[event_type] = list(
+./.venv/lib64/python3.12/site-packages/redis/event.py:133:                            self._event_listeners_mapping[event_type]
+./.venv/lib64/python3.12/site-packages/redis/event.py:134:                            + mappings[event_type]
+./.venv/lib64/python3.12/site-packages/redis/event.py:138:                    self._event_listeners_mapping[event_type] = mappings[event_type]
+./.venv/lib64/python3.12/site-packages/starlette/routing.py:857:    def add_event_handler(self, event_type: str, func: Callable[[], Any]) -> None:  # pragma: no cover
+./.venv/lib64/python3.12/site-packages/starlette/routing.py:858:        assert event_type in ("startup", "shutdown")
+./.venv/lib64/python3.12/site-packages/starlette/routing.py:860:        if event_type == "startup":
+./.venv/lib64/python3.12/site-packages/starlette/routing.py:865:    def on_event(self, event_type: str) -> Callable:  # type: ignore[type-arg]
+./.venv/lib64/python3.12/site-packages/starlette/routing.py:873:            self.add_event_handler(event_type, func)
+./.venv/lib64/python3.12/site-packages/starlette/applications.py:109:    def on_event(self, event_type: str) -> Callable:  # type: ignore[type-arg]
+./.venv/lib64/python3.12/site-packages/starlette/applications.py:110:        return self.router.on_event(event_type)  # pragma: no cover
+./.venv/lib64/python3.12/site-packages/starlette/applications.py:137:        event_type: str,
+./.venv/lib64/python3.12/site-packages/starlette/applications.py:140:        self.router.add_event_handler(event_type, func)
+./relluna/core/document_memory/layer3.py:58:    event_type: Optional[str] = None
+./relluna/services/timeline/event_builder.py:79:            "event_type": event_hint,
+./relluna/services/timeline/event_builder.py:95:    events.sort(key=lambda x: (x["date_iso"], x["event_type"], x["event_id"]))
+./relluna/services/derivatives/layer5.py:68:        event_type = getattr(event, "event_type", None)
+./relluna/services/derivatives/layer5.py:69:        if not event_type:
+./relluna/services/derivatives/layer5.py:71:            event_type = getattr(tipo_ev, "valor", None) if tipo_ev else None
+./relluna/services/derivatives/layer5.py:91:        if not title and event_type:
+./relluna/services/derivatives/layer5.py:92:            title = str(event_type).replace("_", " ").capitalize()
+./relluna/services/derivatives/layer5.py:100:            "event_type": event_type,
+./relluna/services/read_model/timeline_read_model.py:23:            "event_type": e["event_type"],
+./relluna/services/read_model/timeline_builder.py:33:        event_type = item.get("event_type") or "evento_detectado"
+./relluna/services/read_model/timeline_builder.py:46:                "label": event_type,
+./relluna/services/read_model/timeline_builder.py:47:                "event_type": event_type,
+./relluna/services/context_inference/basic.py:314:def _infer_event_type_from_seed(seed: Dict[str, Any], snippet: str) -> str:
+./relluna/services/context_inference/basic.py:379:        event_type = _infer_event_type_from_seed(seed, snippet or "")
+./relluna/services/context_inference/basic.py:380:        doc_tipo = event_type if event_type != "evento_documental" else default_doc_tipo
+./relluna/services/context_inference/basic.py:386:        elif event_type == "document_issue_date":
+./relluna/services/context_inference/basic.py:388:        elif event_type in {"birth_date", "internacao_inicio", "internacao_fim"}:
+./relluna/services/context_inference/basic.py:404:        basis = f"{event_type}|{date_iso}|{page}|{subdoc_id}|{document_id}"
+./relluna/services/context_inference/basic.py:466:            "crms": crms if event_type in {"document_issue_date", "afastamento_prescrito", "evento_documental"} else [],
+./relluna/services/context_inference/basic.py:472:            valor=event_type,
+./relluna/services/context_inference/basic.py:484:                event_type=event_type,
+./relluna/services/context_inference/basic.py:485:                title=_event_title(event_type, provider_name if event_type != "birth_date" else None, contextual_cids),
+./relluna/services/context_inference/basic.py:487:                    doc_tipo=event_type,
+./relluna/services/context_inference/basic.py:489:                    provider_name=provider_name if event_type != "birth_date" else None,
+./relluna/services/context_inference/basic.py:503:                    doc_tipo=event_type,
+./relluna/services/context_inference/basic.py:505:                    provider_name=provider_name if event_type != "birth_date" else None,

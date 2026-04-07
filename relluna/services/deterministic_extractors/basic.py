@@ -12,19 +12,22 @@ import wave
 
 from PIL import Image, ExifTags
 from pypdf import PdfReader
+
 from relluna.services.ocr import make_layer2_ocr_field
 
 from relluna.core.document_memory import (
     DocumentMemory,
     MediaType,
-    InferredString,
     ConfidenceState,
     ProvenancedNumber,
     ProvenancedString,
     QualidadeSinal,
 )
-from relluna.services.deterministic_extractors.base import extract_base
 
+from relluna.services.deterministic_extractors.base import extract_base
+from relluna.services.deterministic_extractors.pdf_layout import extract_pdf_layout_spans
+from relluna.services.deterministic_extractors.entities_hard_v2 import extract_hard_entities_v2
+from relluna.services.deterministic_extractors.structured_block import extract_structured_contract_block
 
 FONTE = "deterministic_extractors.basic"
 
@@ -38,7 +41,6 @@ def _make_number(valor: Optional[float], metodo: str) -> ProvenancedNumber:
             estado=ConfidenceState.confirmado,
             confianca=1.0,
         )
-
     return ProvenancedNumber(
         valor=None,
         fonte=FONTE,
@@ -49,7 +51,6 @@ def _make_number(valor: Optional[float], metodo: str) -> ProvenancedNumber:
 
 
 def _make_string(valor: Optional[str], metodo: str) -> Optional[ProvenancedString]:
-    """Helper para criar ProvenancedString quando há valor."""
     if valor is not None and str(valor).strip():
         return ProvenancedString(
             valor=str(valor),
@@ -72,7 +73,6 @@ def _make_empty_date() -> ProvenancedString:
 
 
 def _make_empty_ocr() -> ProvenancedString:
-    # Usado para PDFs sem texto (ex.: páginas em branco)
     return ProvenancedString(
         valor=None,
         fonte=FONTE,
@@ -97,7 +97,6 @@ def _audio_wav_duration_seconds(path: Path) -> Optional[float]:
 def _video_duration_seconds(path: Path) -> Optional[float]:
     if shutil.which("ffprobe") is None:
         return None
-
     try:
         cmd = [
             "ffprobe",
@@ -120,10 +119,8 @@ def _video_duration_seconds(path: Path) -> Optional[float]:
 
 
 def _extract_full_video_metadata(path: Path) -> Optional[dict]:
-    """Extrai metadados completos de vídeo via ffprobe."""
     if shutil.which("ffprobe") is None:
         return None
-
     try:
         cmd = [
             "ffprobe",
@@ -146,10 +143,6 @@ def _extract_full_video_metadata(path: Path) -> Optional[dict]:
 
 
 def _extract_exif_datetime_str(path: Path) -> Optional[str]:
-    """Lê DateTimeOriginal (ou DateTime) do EXIF e devolve como 'YYYYMMDD HHMMSS'.
-
-    Mantido por compatibilidade; o fluxo novo usa metadados_exif.data_captura.
-    """
     try:
         with Image.open(path) as img:
             exif = img.getexif()
@@ -176,28 +169,23 @@ def _extract_exif_datetime_str(path: Path) -> Optional[str]:
                 return raw_str
     except Exception:
         return None
+    return None
 
 
 def _extract_full_exif(path: Path) -> Optional[dict]:
-    """Extrai TODOS os metadados EXIF disponíveis da imagem.
-
-    Retorna dicionário com valores brutos ou None se não existir EXIF.
-    """
     try:
         with Image.open(path) as img:
             exif = img.getexif()
             if not exif:
                 return None
 
-            # Mapear todos os tags NAME -> valor
-            exif_data = {}
+            exif_data: dict = {}
             for tag_id, value in exif.items():
                 tag_name = ExifTags.TAGS.get(tag_id, f"Unknown_{tag_id}")
                 exif_data[tag_name] = value
 
-            # Tentar pegar EXIF GPSInfo (tags numéricos)
             try:
-                gps_info = exif.get(34853)  # GPSInfo tag
+                gps_info = exif.get(34853)  # GPSInfo
                 if gps_info:
                     from PIL.ExifTags import GPSTAGS
 
@@ -215,13 +203,7 @@ def _extract_full_exif(path: Path) -> Optional[dict]:
 
 
 def _parse_gps_coordinates(gps_data: dict) -> tuple[Optional[float], Optional[float]]:
-    """Converte coordenadas GPS do formato EXIF para decimal.
-
-    Retorna (latitude, longitude) ou (None, None).
-    """
-
     def convert_to_degrees(value):
-        """Converte tupla (graus, minutos, segundos) para decimal."""
         if not value:
             return None
         try:
@@ -263,9 +245,6 @@ _iso6709_re = re.compile(
 
 
 def _parse_iso6709_location(value: str) -> tuple[Optional[float], Optional[float]]:
-    """Converte string ISO6709 (QuickTime), ex.: '-34.6048-058.3859+023.127/'
-    em (latitude, longitude). Ignora altitude.
-    """
     if not value:
         return None, None
     m = _iso6709_re.match(value.strip())
@@ -280,11 +259,9 @@ def _parse_iso6709_location(value: str) -> tuple[Optional[float], Optional[float
 
 
 def _extract_video_frame_for_ocr(path: Path) -> Optional[Path]:
-    """Extrai um frame do vídeo para OCR usando ffmpeg e retorna o caminho da imagem."""
     if shutil.which("ffmpeg") is None:
         return None
 
-    # Salva o frame na mesma pasta, com sufixo específico
     out_path = path.with_suffix(".frame_ocr.jpg")
     try:
         cmd = [
@@ -309,6 +286,30 @@ def _extract_video_frame_for_ocr(path: Path) -> Optional[Path]:
     return None
 
 
+def _populate_pdf_structural_signals(dm: DocumentMemory) -> DocumentMemory:
+    """
+    Para PDFs, este extractor deve produzir apenas sinais estruturais baratos e determinísticos.
+    O OCR textual principal do PDF deve ficar concentrado em decompose_pdf_into_subdocuments()
+    para evitar trabalho duplicado.
+    """
+    try:
+        dm = extract_pdf_layout_spans(dm)
+    except Exception:
+        pass
+
+    try:
+        dm = extract_hard_entities_v2(dm)
+    except Exception:
+        pass
+
+    try:
+        dm = extract_structured_contract_block(dm)
+    except Exception:
+        pass
+
+    return dm
+
+
 def extract_basic(dm: DocumentMemory) -> DocumentMemory:
     dm = extract_base(dm)
 
@@ -319,9 +320,8 @@ def extract_basic(dm: DocumentMemory) -> DocumentMemory:
     path = Path(artefato.uri)
     layer2 = dm.layer2
 
-    # ---------------- IMAGEM ----------------
+    # ─── IMAGEM ────────────────────────────────────────────────────────────────
     if dm.layer1.midia == MediaType.imagem:
-        # Garante objeto de qualidade_sinal
         if layer2.qualidade_sinal is None:
             layer2.qualidade_sinal = QualidadeSinal()
 
@@ -336,25 +336,18 @@ def extract_basic(dm: DocumentMemory) -> DocumentMemory:
             except Exception:
                 pass
 
-        # Dimensões básicas (já estavam corretas)
         layer2.largura_px = _make_number(width, "Pillow.size")
         layer2.altura_px = _make_number(height, "Pillow.size")
 
-        # qualidade_sinal.resolucao -> ProvenancedString("3264x2448", ...)
         if width is not None and height is not None:
             layer2.qualidade_sinal.resolucao = _make_string(
                 f"{int(width)}x{int(height)}",
                 "resolution_from_dimensions",
             )
 
-        # foco (stub) -> ProvenancedNumber(float, ...)
         if layer2.qualidade_sinal.foco is None:
-            # qualquer valor float > 0 atende o teste; 1.0 é um stub simples
             layer2.qualidade_sinal.foco = _make_number(1.0, "focus_stub")
 
-        # data_exif:
-        # - se houver EXIF: ProvenancedString com valor != None, estado=confirmado
-        # - se não houver EXIF: objeto com valor=None, estado=insuficiente
         if layer2.data_exif is None:
             exif_str = _extract_exif_datetime_str(path)
             if exif_str is not None:
@@ -362,14 +355,13 @@ def extract_basic(dm: DocumentMemory) -> DocumentMemory:
             else:
                 layer2.data_exif = _make_empty_date()
 
-        # OCR literal (mantém lógica existente)
         if layer2.texto_ocr_literal is None:
             ocr_field = make_layer2_ocr_field(path)
-            layer2.texto_ocr_literal = make_layer2_ocr_field(path)
+            layer2.texto_ocr_literal = ocr_field
 
         return dm
 
-        # ---------------- PDF ----------------
+    # ─── PDF / DOCUMENTO ───────────────────────────────────────────────────────
     elif dm.layer1.midia == MediaType.documento and path.suffix.lower() == ".pdf":
         num: float | None = None
         if path.exists():
@@ -379,30 +371,36 @@ def extract_basic(dm: DocumentMemory) -> DocumentMemory:
             except Exception:
                 num = None
 
-        # num_paginas sempre como ProvenancedNumber (nunca None bruto)
         layer2.num_paginas = _make_number(num, "pypdf")
 
-        # texto_ocr_literal sempre como ProvenancedString (mesmo vazio)
-        if layer2.texto_ocr_literal is None:
-            ocr_field = make_layer2_ocr_field(path)
-            layer2.texto_ocr_literal = ocr_field or _make_empty_ocr()
+        # IMPORTANTE:
+        # Não popular texto_ocr_literal aqui para PDF.
+        # O OCR textual completo será gerado em decompose_pdf_into_subdocuments(),
+        # evitando duplicidade de OCR no caminho standard/forensic.
+        dm = _populate_pdf_structural_signals(dm)
 
         return dm
 
-    # ---------------- ÁUDIO ----------------
+    # ─── DOCUMENTO NÃO PDF ─────────────────────────────────────────────────────
+    elif dm.layer1.midia == MediaType.documento:
+        if layer2.texto_ocr_literal is None and path.exists():
+            ocr_field = make_layer2_ocr_field(path)
+            layer2.texto_ocr_literal = ocr_field or _make_empty_ocr()
+        return dm
+
+    # ─── ÁUDIO ─────────────────────────────────────────────────────────────────
     elif dm.layer1.midia == MediaType.audio:
         dur = _audio_wav_duration_seconds(path) if path.exists() else None
         layer2.duracao_segundos = _make_number(dur, "audio_probe")
         return dm
 
-    # ---------------- VÍDEO ----------------
+    # ─── VÍDEO ─────────────────────────────────────────────────────────────────
     elif dm.layer1.midia == MediaType.video:
         if path.exists():
             dur = _video_duration_seconds(path)
             layer2.duracao_segundos = _make_number(dur, "video_probe")
         else:
             layer2.duracao_segundos = _make_number(None, "video_probe")
-
         return dm
 
     return dm

@@ -1,0 +1,36 @@
+{
+  "text": "EE mana e qa - =—. 2 SS Ex > É VESTE = Ree E A A 24 EV NS sI5 RNA es, Vi VI SS ne GV uv SSS ZA NS SS SA ANS Met SS A BIA ZA ZA x Nw SS EA m ES, Yk ITO UVOROd .. ee ee -. wand > Se oo ON a uw AH { Ê — wai? - - — E SMA ————— 1> Dra a A oa - 2 o ma =o n= > bt o 2a Ww A> we co og NC “e ms É 28 20 = Eu >= O« a m> a Ale on “ zy E: ve no gs >» a) =F ae n> 4 So an m a ts ne E ça DM ui aee “td —— + não me me e o a “ss",
+  "doc_type": "scanned_pdf",
+  "pages": 1,
+  "engine": "tesseract_pdf_fallback",
+  "confidence": 46.92,
+  "status": "review",
+  "reasons": [],
+  "warnings": [],
+  "metrics": {
+    "total_chars": 412,
+    "non_space_chars": 273,
+    "word_count": 119,
+    "long_word_count": 18,
+    "alnum_ratio": 0.8242,
+    "alpha_ratio": 0.7802,
+    "digit_ratio": 0.044,
+    "single_char_ratio": 0.3193,
+    "repeated_symbol_ratio": 0.0084,
+    "printable_ratio": 1.0,
+    "confidence": 46.92,
+    "score": 57.76
+  },
+  "candidates": [
+    {
+      "page": 1,
+      "engine": "tesseract:adaptive:psm11",
+      "variant": "adaptive",
+      "psm": 11,
+      "confidence": 46.92,
+      "status": "review",
+      "score": 57.76,
+      "reasons": []
+    }
+  ]
+}

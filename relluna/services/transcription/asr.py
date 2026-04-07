@@ -7,14 +7,15 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Optional, List
 
-from relluna.core.document_memory.types_basic import ConfidenceState
-from relluna.core.document_memory.types_basic import EvidenceRef
-from relluna.core.document_memory.models import (
-    DocumentMemory,
-    ProvenancedString,
-)
-from relluna.core.document_memory.transcription import TranscriptionSegment
+from relluna.core.document_memory import DocumentMemory
 from relluna.core.document_memory.layer1 import MediaType
+from relluna.core.document_memory.layer3 import ContextualTranscription, Layer3Evidence
+from relluna.core.document_memory.transcription import TranscriptionSegment
+from relluna.core.document_memory.types_basic import (
+    ConfidenceState,
+    EvidenceRef,
+    InferenceMeta,
+)
 
 _SOURCE = "asr.whisper"
 _METHOD = "whisper.transcribe"
@@ -23,9 +24,9 @@ _METHOD = "whisper.transcribe"
 @dataclass(frozen=True)
 class ASROptions:
     enabled: bool = False
-    language: Optional[str] = None  # ex: "pt"
-    model_name: str = "base"        # tiny/base/small/medium/large
-    diarization: bool = False       # preparado, mas opcional
+    language: Optional[str] = None
+    model_name: str = "base"
+    diarization: bool = False
     min_text_len: int = 1
 
 
@@ -51,10 +52,6 @@ def _ensure_ffmpeg_available() -> bool:
 
 
 def _extract_audio_from_video_to_wav(video_path: Path) -> Optional[Path]:
-    """
-    Extrai áudio do vídeo para WAV mono 16kHz (bom para ASR).
-    Retorna o caminho do wav temporário ou None se falhar.
-    """
     if not _ensure_ffmpeg_available():
         return None
 
@@ -86,9 +83,6 @@ def _extract_audio_from_video_to_wav(video_path: Path) -> Optional[Path]:
 
 
 def _transcribe_with_whisper(audio_path: Path, opts: ASROptions) -> tuple[Optional[str], List[TranscriptionSegment], str]:
-    """
-    Retorna: (texto_total | None, segmentos, engine_label)
-    """
     try:
         import whisper  # type: ignore
     except Exception:
@@ -114,7 +108,7 @@ def _transcribe_with_whisper(audio_path: Path, opts: ASROptions) -> tuple[Option
                     start=float(seg.get("start", 0.0)),
                     end=float(seg.get("end", 0.0)),
                     text=seg_text,
-                    speaker=None,  # diarização opcional depois
+                    speaker=None,
                 )
             )
 
@@ -127,10 +121,6 @@ def _transcribe_with_whisper(audio_path: Path, opts: ASROptions) -> tuple[Option
 
 
 def _pick_primary_artifact_path(dm: DocumentMemory) -> Optional[Path]:
-    """
-    Seleciona o artefato bruto 'original' se existir; senão o primeiro.
-    Espera que uri seja um caminho local (nos testes e no fluxo atual).
-    """
     try:
         arts = dm.layer1.artefatos or []
     except Exception:
@@ -155,12 +145,9 @@ def _pick_primary_artifact_path(dm: DocumentMemory) -> Optional[Path]:
 
 def apply_transcription_to_layer2(dm: DocumentMemory, opts: Optional[ASROptions] = None) -> DocumentMemory:
     """
-    Atualiza dm.layer2 com:
-      - transcricao_literal: ProvenancedString
-      - transcricao_segmentada: List[TranscriptionSegment]
-    Sem alterar contratos antigos: campos são opcionais.
-
-    Regra: só roda para midia audio/video.
+    Compatibilidade de nome.
+    O pipeline novo não grava mais transcrição na Layer2.
+    Grava em Layer3.transcricao_contextual.
     """
     opts = opts or get_asr_options_from_env()
     if not opts.enabled:
@@ -169,78 +156,49 @@ def apply_transcription_to_layer2(dm: DocumentMemory, opts: Optional[ASROptions]
     if not dm.layer1 or dm.layer1.midia not in {MediaType.audio, MediaType.video}:
         return dm
 
-    if dm.layer2 is None:
-        # Sem layer2, não aplica transcrição aqui
-        return dm
-
     media_path = _pick_primary_artifact_path(dm)
     if not media_path or not media_path.exists():
-        # Sem arquivo local: marca insuficiente (sem inventar texto)
-        dm.layer2.transcricao_literal = ProvenancedString(
-            valor=None,
-            fonte=_SOURCE,
-            metodo="missing_media_path",
-            estado=ConfidenceState.insuficiente,
-            confianca=None,
-            lastro=[],
-        )
-        dm.layer2.transcricao_segmentada = []
         return dm
 
-    # Se for vídeo, extrai áudio primeiro
-    audio_path: Optional[Path] = None
+    if dm.layer3 is None:
+        dm.layer3 = Layer3Evidence()
+
+    audio_path: Optional[Path]
     if dm.layer1.midia == MediaType.video:
         audio_path = _extract_audio_from_video_to_wav(media_path)
         if not audio_path:
-            dm.layer2.transcricao_literal = ProvenancedString(
-                valor=None,
-                fonte=_SOURCE,
+            dm.layer3.transcricao_contextual = ContextualTranscription(
+                engine=_SOURCE,
                 metodo="ffmpeg_extract_failed",
-                estado=ConfidenceState.insuficiente,
+                texto=None,
+                segmentos=[],
                 confianca=None,
                 lastro=[],
+                meta=InferenceMeta(engine=_SOURCE),
             )
-            dm.layer2.transcricao_segmentada = []
             return dm
     else:
         audio_path = media_path
 
     text, segments, engine_label = _transcribe_with_whisper(audio_path, opts)
 
-    # lastro aponta para o artefato e (se houver) janela temporal geral
     lastro = [
         EvidenceRef(
             kind="artefato",
             uri=str(media_path),
-            note="ASR transcription",
-            path="layer1.artefatos[?].uri",
+            note="ASR contextual transcription",
+            path="layer1.artefatos[0].uri",
         )
     ]
 
-    if text is None:
-        dm.layer2.transcricao_literal = ProvenancedString(
-            valor=None,
-            fonte=_SOURCE,
-            metodo=engine_label,
-            estado=ConfidenceState.insuficiente,
-            confianca=None,
-            lastro=lastro,
-        )
-        dm.layer2.transcricao_segmentada = []
-        return dm
-
-    dm.layer2.transcricao_literal = ProvenancedString(
-        valor=text,
-        fonte=_SOURCE,
+    dm.layer3.transcricao_contextual = ContextualTranscription(
+        engine=_SOURCE,
         metodo=engine_label,
-        estado=ConfidenceState.inferido,
+        texto=text,
+        segmentos=segments,
         confianca=None,
         lastro=lastro,
+        meta=InferenceMeta(engine=_SOURCE),
     )
-
-    dm.layer2.transcricao_segmentada = segments
-
-    # meta opcional: número de falantes (ainda não diarizado → 1 se há segmentos)
-    dm.layer2.num_falantes = 1 if segments else None
 
     return dm

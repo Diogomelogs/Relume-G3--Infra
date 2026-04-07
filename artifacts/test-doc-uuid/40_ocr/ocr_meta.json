@@ -1,0 +1,6 @@
+{
+  "source_path": "/tmp/pytest-of-codespace/pytest-4/test_extract_basic_image_popul0/imagem_teste.jpg",
+  "method": "tesseract.image_to_string+preprocess",
+  "text_len": 0,
+  "has_text": false
+}

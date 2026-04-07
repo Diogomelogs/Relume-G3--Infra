@@ -1,0 +1,614 @@
+
+================================================================================
+STAGE: initial
+================================================================================
+layer3.tipo_documento: None
+
+================================================================================
+STAGE: extract_basic
+================================================================================
+layer3.tipo_documento: None
+
+================================================================================
+STAGE: decompose_pdf_into_subdocuments
+================================================================================
+layer3.tipo_documento: None
+
+================================================================================
+STAGE: apply_page_analysis
+================================================================================
+layer3.tipo_documento: None
+
+page_evidence_v1[0] summary:
+{
+  "page": 1,
+  "subdoc_id": "subdoc_001",
+  "page_text": "| eee\nAtendimento 52931300\nNome Diogo de Melo Gomes Silva Prontuário 8095225\nPata Nascto, | 24/02/1987 Idade 39a 9d\nFiliação || Mercilia Belarmina de Melo\nConvênio \\ Porto Saude Categoria Porto Seguro - Prata Garteirinha | 4663929300000126\nDECLARAÇÃO DE ATESTADO\nDeclaro para devidos fins, que o(a) Sr.(a) Diogo de Melo Gomes Silva esteve internado(a) neste serviço do dia\n04/03/2026 ao dia 05/03/2026, devendo permanecer afastado(a) por 15 dia(s), a partir desta data.\nDiagnostico (CID): K80\nSAO PAULO, 5 de março de 2026.\nAssinatura do Paciente ou Responsável\nDra. Mariana Mayumi Toda Mourao - CRM 151928\n(Médico)\n| “ariana Mayumi Toda Mourão\nCirurgia Geral e Yrologia\nCRSP: 15928\nAgende suas consultas e exames em nosso portal\n| https:/www.hospitalhsi.com.br/ |\n| oho\nHes\n|\n|\n“Mariana Mayumi Toda Mourao (CRM - 151928) _\nHospital Santa Isabel\nRua Dr Cesario Mota Junior, 112 - Sao Paulo - SP - CEP 01221900 - Fone:\nImpresso em: 05/03/2026 18:34:27 CNPJ: 43808692000101 - INSCR. MUNICIPAL: 70899886 mariana mayumi CATE3633",
+  "page_taxonomy": {
+    "value": "documento_composto",
+    "confidence": 0.92,
+    "c
+... [TRUNCADO]
+
+================================================================================
+STAGE: apply_legal_extraction
+================================================================================
+layer3.tipo_documento: None
+
+page_evidence_v1[0] summary:
+{
+  "page": 1,
+  "subdoc_id": "subdoc_001",
+  "page_text": "| eee\nAtendimento 52931300\nNome Diogo de Melo Gomes Silva Prontuário 8095225\nPata Nascto, | 24/02/1987 Idade 39a 9d\nFiliação || Mercilia Belarmina de Melo\nConvênio \\ Porto Saude Categoria Porto Seguro - Prata Garteirinha | 4663929300000126\nDECLARAÇÃO DE ATESTADO\nDeclaro para devidos fins, que o(a) Sr.(a) Diogo de Melo Gomes Silva esteve internado(a) neste serviço do dia\n04/03/2026 ao dia 05/03/2026, devendo permanecer afastado(a) por 15 dia(s), a partir desta data.\nDiagnostico (CID): K80\nSAO PAULO, 5 de março de 2026.\nAssinatura do Paciente ou Responsável\nDra. Mariana Mayumi Toda Mourao - CRM 151928\n(Médico)\n| “ariana Mayumi Toda Mourão\nCirurgia Geral e Yrologia\nCRSP: 15928\nAgende suas consultas e exames em nosso portal\n| https:/www.hospitalhsi.com.br/ |\n| oho\nHes\n|\n|\n“Mariana Mayumi Toda Mourao (CRM - 151928) _\nHospital Santa Isabel\nRua Dr Cesario Mota Junior, 112 - Sao Paulo - SP - CEP 01221900 - Fone:\nImpresso em: 05/03/2026 18:34:27 CNPJ: 43808692000101 - INSCR. MUNICIPAL: 70899886 mariana mayumi CATE3633",
+  "page_taxonomy": {
+    "value": "documento_composto",
+    "confidence": 0.92,
+    "c
+... [TRUNCADO]
+
+================================================================================
+STAGE: apply_entities_canonical_v1
+================================================================================
+layer3.tipo_documento: None
+
+entities_canonical_v1:
+{
+  "document_type": "atestado_medico",
+  "patient": {
+    "name": "Diogo de Melo Gomes Silva",
+    "confidence": 0.98,
+    "review_state": "auto_confirmed",
+    "evidence": {
+      "page": 1,
+      "bbox": null,
+      "snippet": "Paciente: Diogo de Melo Gomes Silva",
+      "source_path": "layer2.texto_ocr_literal.valor",
+      "provenance_status": "text_fallback"
+    }
+  },
+  "provider": {
+    "name": "Mariana Mayumi Toda Mourao",
+    "role": null,
+    "confidence": 0.92,
+    "review_state": "auto_confirmed",
+    "crm": {
+      "number": "151928",
+      "uf": null,
+      "display": "CRM 151928"
+    },
+    "evidence": {
+      "page": 1,
+      "bbox": null,
+      "snippet": "Mariana Mayumi Toda Mourao / CRM 151928",
+      "source_path": "layer2.sinais_documentais.page_evidence_v1",
+      "provenance_status": "snippet_only"
+    }
+  },
+  "clinical": {
+    "cids": [
+      {
+        "code": "K80",
+        "evidence": {
+          "page": 1,
+          "bbox": [
+            768.0,
+            1561.0,
+            889.0,
+            1613.0
+          ],
+          "snippet": "K80"
+        }
+      }
+    ],
+    "reason_text": null,
+    "service_text": "Cirurgia Geral"
+  },
+  "document_date": {
+ 
+... [TRUNCADO]
+
+page_evidence_v1[0] summary:
+{
+  "page": 1,
+  "subdoc_id": "subdoc_001",
+  "page_text": "| eee\nAtendimento 52931300\nNome Diogo de Melo Gomes Silva Prontuário 8095225\nPata Nascto, | 24/02/1987 Idade 39a 9d\nFiliação || Mercilia Belarmina de Melo\nConvênio \\ Porto Saude Categoria Porto Seguro - Prata Garteirinha | 4663929300000126\nDECLARAÇÃO DE ATESTADO\nDeclaro para devidos fins, que o(a) Sr.(a) Diogo de Melo Gomes Silva esteve internado(a) neste serviço do dia\n04/03/2026 ao dia 05/03/2026, devendo permanecer afastado(a) por 15 dia(s), a partir desta data.\nDiagnostico (CID): K80\nSAO PAULO, 5 de março de 2026.\nAssinatura do Paciente ou Responsável\nDra. Mariana Mayumi Toda Mourao - CRM 151928\n(Médico)\n| “ariana Mayumi Toda Mourão\nCirurgia Geral e Yrologia\nCRSP: 15928\nAgende suas consultas e exames em nosso portal\n| https:/www.hospitalhsi.com.br/ |\n| oho\nHes\n|\n|\n“Mariana Mayumi Toda Mourao (CRM - 151928) _\nHospital Santa Isabel\nRua Dr Cesario Mota Junior, 112 - Sao Paulo - SP - CEP 01221900 - Fone:\nImpresso em: 05/03/2026 18:34:27 CNPJ: 43808692000101 - INSCR. MUNICIPAL: 70899886 mariana mayumi CATE3633",
+  "page_taxonomy": {
+    "value": "documento_composto",
+    "confidence": 0.92,
+    "c
+... [TRUNCADO]
+
+================================================================================
+STAGE: timeline_seed_v2
+================================================================================
+layer3.tipo_documento: None
+
+entities_canonical_v1:
+{
+  "document_type": "atestado_medico",
+  "patient": {
+    "name": "Diogo de Melo Gomes Silva",
+    "confidence": 0.98,
+    "review_state": "auto_confirmed",
+    "evidence": {
+      "page": 1,
+      "bbox": null,
+      "snippet": "Paciente: Diogo de Melo Gomes Silva",
+      "source_path": "layer2.texto_ocr_literal.valor",
+      "provenance_status": "text_fallback"
+    }
+  },
+  "provider": {
+    "name": "Mariana Mayumi Toda Mourao",
+    "role": null,
+    "confidence": 0.92,
+    "review_state": "auto_confirmed",
+    "crm": {
+      "number": "151928",
+      "uf": null,
+      "display": "CRM 151928"
+    },
+    "evidence": {
+      "page": 1,
+      "bbox": null,
+      "snippet": "Mariana Mayumi Toda Mourao / CRM 151928",
+      "source_path": "layer2.sinais_documentais.page_evidence_v1",
+      "provenance_status": "snippet_only"
+    }
+  },
+  "clinical": {
+    "cids": [
+      {
+        "code": "K80",
+        "evidence": {
+          "page": 1,
+          "bbox": [
+            768.0,
+            1561.0,
+            889.0,
+            1613.0
+          ],
+          "snippet": "K80"
+        }
+      }
+    ],
+    "reason_text": null,
+    "service_text": "Cirurgia Geral"
+  },
+  "document_date": {
+ 
+... [TRUNCADO]
+
+timeline_seed_v2:
+[
+  {
+    "seed_id": "7d181496d5f69ebf",
+    "date_iso": "2026-03-04",
+    "date_literal": "04/03/2026",
+    "event_hint": "internacao_inicio",
+    "include_in_timeline": true,
+    "page": 1,
+    "bbox": null,
+    "snippet": "internado(a) do dia 04/03/2026 ao dia 05/03/2026",
+    "source": "entities_canonical_v1",
+    "source_path": "layer2.sinais_documentais.entities_canonical_v1",
+    "confidence": 0.96,
+    "review_state": "auto_confirmed",
+    "provenance_status": "inferred",
+    "priority": 10,
+    "document_type": "atestado_medico",
+    "provider_name": "Mariana Mayumi Toda Mourao"
+  },
+  {
+    "seed_id": "14db5a0d7f23efc4",
+    "date_iso": "2026-03-05",
+    "date_literal": "05/03/2026",
+    "event_hint": "internacao_fim",
+    "include_in_timeline": true,
+    "page": 1,
+    "bbox": null,
+    "snippet": "internado(a) do dia 04/03/2026 ao dia 05/03/2026",
+    "source": "entities_canonical_v1",
+    "source_path": "layer2.sinais_documentais.entities_canonical_v1",
+    "confidence": 0.96,
+    "review_state": "auto_confirmed",
+    "provenance_status": "inferred",
+    "priority": 20,
+    "document_type": "atestado_medico",
+    "provider_name": "Mariana Mayumi Toda Mourao"
+  },
+  {
+ 
+... [TRUNCADO]
+
+page_evidence_v1[0] summary:
+{
+  "page": 1,
+  "subdoc_id": "subdoc_001",
+  "page_text": "| eee\nAtendimento 52931300\nNome Diogo de Melo Gomes Silva Prontuário 8095225\nPata Nascto, | 24/02/1987 Idade 39a 9d\nFiliação || Mercilia Belarmina de Melo\nConvênio \\ Porto Saude Categoria Porto Seguro - Prata Garteirinha | 4663929300000126\nDECLARAÇÃO DE ATESTADO\nDeclaro para devidos fins, que o(a) Sr.(a) Diogo de Melo Gomes Silva esteve internado(a) neste serviço do dia\n04/03/2026 ao dia 05/03/2026, devendo permanecer afastado(a) por 15 dia(s), a partir desta data.\nDiagnostico (CID): K80\nSAO PAULO, 5 de março de 2026.\nAssinatura do Paciente ou Responsável\nDra. Mariana Mayumi Toda Mourao - CRM 151928\n(Médico)\n| “ariana Mayumi Toda Mourão\nCirurgia Geral e Yrologia\nCRSP: 15928\nAgende suas consultas e exames em nosso portal\n| https:/www.hospitalhsi.com.br/ |\n| oho\nHes\n|\n|\n“Mariana Mayumi Toda Mourao (CRM - 151928) _\nHospital Santa Isabel\nRua Dr Cesario Mota Junior, 112 - Sao Paulo - SP - CEP 01221900 - Fone:\nImpresso em: 05/03/2026 18:34:27 CNPJ: 43808692000101 - INSCR. MUNICIPAL: 70899886 mariana mayumi CATE3633",
+  "page_taxonomy": {
+    "value": "documento_composto",
+    "confidence": 0.92,
+    "c
+... [TRUNCADO]
+
+================================================================================
+STAGE: infer_layer3
+================================================================================
+layer3.tipo_documento: atestado_medico
+
+entities_canonical_v1:
+{
+  "document_type": "atestado_medico",
+  "patient": {
+    "name": "Diogo de Melo Gomes Silva",
+    "confidence": 0.98,
+    "review_state": "auto_confirmed",
+    "evidence": {
+      "page": 1,
+      "bbox": null,
+      "snippet": "Paciente: Diogo de Melo Gomes Silva",
+      "source_path": "layer2.texto_ocr_literal.valor",
+      "provenance_status": "text_fallback"
+    }
+  },
+  "provider": {
+    "name": "Mariana Mayumi Toda Mourao",
+    "role": null,
+    "confidence": 0.92,
+    "review_state": "auto_confirmed",
+    "crm": {
+      "number": "151928",
+      "uf": null,
+      "display": "CRM 151928"
+    },
+    "evidence": {
+      "page": 1,
+      "bbox": null,
+      "snippet": "Mariana Mayumi Toda Mourao / CRM 151928",
+      "source_path": "layer2.sinais_documentais.page_evidence_v1",
+      "provenance_status": "snippet_only"
+    }
+  },
+  "clinical": {
+    "cids": [
+      {
+        "code": "K80",
+        "evidence": {
+          "page": 1,
+          "bbox": [
+            768.0,
+            1561.0,
+            889.0,
+            1613.0
+          ],
+          "snippet": "K80"
+        }
+      }
+    ],
+    "reason_text": null,
+    "service_text": "Cirurgia Geral"
+  },
+  "document_date": {
+ 
+... [TRUNCADO]
+
+timeline_seed_v2:
+[
+  {
+    "seed_id": "7d181496d5f69ebf",
+    "date_iso": "2026-03-04",
+    "date_literal": "04/03/2026",
+    "event_hint": "internacao_inicio",
+    "include_in_timeline": true,
+    "page": 1,
+    "bbox": null,
+    "snippet": "internado(a) do dia 04/03/2026 ao dia 05/03/2026",
+    "source": "entities_canonical_v1",
+    "source_path": "layer2.sinais_documentais.entities_canonical_v1",
+    "confidence": 0.96,
+    "review_state": "auto_confirmed",
+    "provenance_status": "inferred",
+    "priority": 10,
+    "document_type": "atestado_medico",
+    "provider_name": "Mariana Mayumi Toda Mourao"
+  },
+  {
+    "seed_id": "14db5a0d7f23efc4",
+    "date_iso": "2026-03-05",
+    "date_literal": "05/03/2026",
+    "event_hint": "internacao_fim",
+    "include_in_timeline": true,
+    "page": 1,
+    "bbox": null,
+    "snippet": "internado(a) do dia 04/03/2026 ao dia 05/03/2026",
+    "source": "entities_canonical_v1",
+    "source_path": "layer2.sinais_documentais.entities_canonical_v1",
+    "confidence": 0.96,
+    "review_state": "auto_confirmed",
+    "provenance_status": "inferred",
+    "priority": 20,
+    "document_type": "atestado_medico",
+    "provider_name": "Mariana Mayumi Toda Mourao"
+  },
+  {
+ 
+... [TRUNCADO]
+
+page_evidence_v1[0] summary:
+{
+  "page": 1,
+  "subdoc_id": "subdoc_001",
+  "page_text": "| eee\nAtendimento 52931300\nNome Diogo de Melo Gomes Silva Prontuário 8095225\nPata Nascto, | 24/02/1987 Idade 39a 9d\nFiliação || Mercilia Belarmina de Melo\nConvênio \\ Porto Saude Categoria Porto Seguro - Prata Garteirinha | 4663929300000126\nDECLARAÇÃO DE ATESTADO\nDeclaro para devidos fins, que o(a) Sr.(a) Diogo de Melo Gomes Silva esteve internado(a) neste serviço do dia\n04/03/2026 ao dia 05/03/2026, devendo permanecer afastado(a) por 15 dia(s), a partir desta data.\nDiagnostico (CID): K80\nSAO PAULO, 5 de março de 2026.\nAssinatura do Paciente ou Responsável\nDra. Mariana Mayumi Toda Mourao - CRM 151928\n(Médico)\n| “ariana Mayumi Toda Mourão\nCirurgia Geral e Yrologia\nCRSP: 15928\nAgende suas consultas e exames em nosso portal\n| https:/www.hospitalhsi.com.br/ |\n| oho\nHes\n|\n|\n“Mariana Mayumi Toda Mourao (CRM - 151928) _\nHospital Santa Isabel\nRua Dr Cesario Mota Junior, 112 - Sao Paulo - SP - CEP 01221900 - Fone:\nImpresso em: 05/03/2026 18:34:27 CNPJ: 43808692000101 - INSCR. MUNICIPAL: 70899886 mariana mayumi CATE3633",
+  "page_taxonomy": {
+    "value": "documento_composto",
+    "confidence": 0.92,
+    "c
+... [TRUNCADO]
+
+================================================================================
+STAGE: apply_layer4
+================================================================================
+layer3.tipo_documento: atestado_medico
+
+entities_canonical_v1:
+{
+  "document_type": "atestado_medico",
+  "patient": {
+    "name": "Diogo de Melo Gomes Silva",
+    "confidence": 0.98,
+    "review_state": "auto_confirmed",
+    "evidence": {
+      "page": 1,
+      "bbox": null,
+      "snippet": "Paciente: Diogo de Melo Gomes Silva",
+      "source_path": "layer2.texto_ocr_literal.valor",
+      "provenance_status": "text_fallback"
+    }
+  },
+  "provider": {
+    "name": "Mariana Mayumi Toda Mourao",
+    "role": null,
+    "confidence": 0.92,
+    "review_state": "auto_confirmed",
+    "crm": {
+      "number": "151928",
+      "uf": null,
+      "display": "CRM 151928"
+    },
+    "evidence": {
+      "page": 1,
+      "bbox": null,
+      "snippet": "Mariana Mayumi Toda Mourao / CRM 151928",
+      "source_path": "layer2.sinais_documentais.page_evidence_v1",
+      "provenance_status": "snippet_only"
+    }
+  },
+  "clinical": {
+    "cids": [
+      {
+        "code": "K80",
+        "evidence": {
+          "page": 1,
+          "bbox": [
+            768.0,
+            1561.0,
+            889.0,
+            1613.0
+          ],
+          "snippet": "K80"
+        }
+      }
+    ],
+    "reason_text": null,
+    "service_text": "Cirurgia Geral"
+  },
+  "document_date": {
+ 
+... [TRUNCADO]
+
+timeline_seed_v2:
+[
+  {
+    "seed_id": "7d181496d5f69ebf",
+    "date_iso": "2026-03-04",
+    "date_literal": "04/03/2026",
+    "event_hint": "internacao_inicio",
+    "include_in_timeline": true,
+    "page": 1,
+    "bbox": null,
+    "snippet": "internado(a) do dia 04/03/2026 ao dia 05/03/2026",
+    "source": "entities_canonical_v1",
+    "source_path": "layer2.sinais_documentais.entities_canonical_v1",
+    "confidence": 0.96,
+    "review_state": "auto_confirmed",
+    "provenance_status": "inferred",
+    "priority": 10,
+    "document_type": "atestado_medico",
+    "provider_name": "Mariana Mayumi Toda Mourao"
+  },
+  {
+    "seed_id": "14db5a0d7f23efc4",
+    "date_iso": "2026-03-05",
+    "date_literal": "05/03/2026",
+    "event_hint": "internacao_fim",
+    "include_in_timeline": true,
+    "page": 1,
+    "bbox": null,
+    "snippet": "internado(a) do dia 04/03/2026 ao dia 05/03/2026",
+    "source": "entities_canonical_v1",
+    "source_path": "layer2.sinais_documentais.entities_canonical_v1",
+    "confidence": 0.96,
+    "review_state": "auto_confirmed",
+    "provenance_status": "inferred",
+    "priority": 20,
+    "document_type": "atestado_medico",
+    "provider_name": "Mariana Mayumi Toda Mourao"
+  },
+  {
+ 
+... [TRUNCADO]
+
+page_evidence_v1[0] summary:
+{
+  "page": 1,
+  "subdoc_id": "subdoc_001",
+  "page_text": "| eee\nAtendimento 52931300\nNome Diogo de Melo Gomes Silva Prontuário 8095225\nPata Nascto, | 24/02/1987 Idade 39a 9d\nFiliação || Mercilia Belarmina de Melo\nConvênio \\ Porto Saude Categoria Porto Seguro - Prata Garteirinha | 4663929300000126\nDECLARAÇÃO DE ATESTADO\nDeclaro para devidos fins, que o(a) Sr.(a) Diogo de Melo Gomes Silva esteve internado(a) neste serviço do dia\n04/03/2026 ao dia 05/03/2026, devendo permanecer afastado(a) por 15 dia(s), a partir desta data.\nDiagnostico (CID): K80\nSAO PAULO, 5 de março de 2026.\nAssinatura do Paciente ou Responsável\nDra. Mariana Mayumi Toda Mourao - CRM 151928\n(Médico)\n| “ariana Mayumi Toda Mourão\nCirurgia Geral e Yrologia\nCRSP: 15928\nAgende suas consultas e exames em nosso portal\n| https:/www.hospitalhsi.com.br/ |\n| oho\nHes\n|\n|\n“Mariana Mayumi Toda Mourao (CRM - 151928) _\nHospital Santa Isabel\nRua Dr Cesario Mota Junior, 112 - Sao Paulo - SP - CEP 01221900 - Fone:\nImpresso em: 05/03/2026 18:34:27 CNPJ: 43808692000101 - INSCR. MUNICIPAL: 70899886 mariana mayumi CATE3633",
+  "page_taxonomy": {
+    "value": "documento_composto",
+    "confidence": 0.92,
+    "c
+... [TRUNCADO]
+
+================================================================================
+STAGE: apply_layer5
+================================================================================
+layer3.tipo_documento: atestado_medico
+
+entities_canonical_v1:
+{
+  "document_type": "atestado_medico",
+  "patient": {
+    "name": "Diogo de Melo Gomes Silva",
+    "confidence": 0.98,
+    "review_state": "auto_confirmed",
+    "evidence": {
+      "page": 1,
+      "bbox": null,
+      "snippet": "Paciente: Diogo de Melo Gomes Silva",
+      "source_path": "layer2.texto_ocr_literal.valor",
+      "provenance_status": "text_fallback"
+    }
+  },
+  "provider": {
+    "name": "Mariana Mayumi Toda Mourao",
+    "role": null,
+    "confidence": 0.92,
+    "review_state": "auto_confirmed",
+    "crm": {
+      "number": "151928",
+      "uf": null,
+      "display": "CRM 151928"
+    },
+    "evidence": {
+      "page": 1,
+      "bbox": null,
+      "snippet": "Mariana Mayumi Toda Mourao / CRM 151928",
+      "source_path": "layer2.sinais_documentais.page_evidence_v1",
+      "provenance_status": "snippet_only"
+    }
+  },
+  "clinical": {
+    "cids": [
+      {
+        "code": "K80",
+        "evidence": {
+          "page": 1,
+          "bbox": [
+            768.0,
+            1561.0,
+            889.0,
+            1613.0
+          ],
+          "snippet": "K80"
+        }
+      }
+    ],
+    "reason_text": null,
+    "service_text": "Cirurgia Geral"
+  },
+  "document_date": {
+ 
+... [TRUNCADO]
+
+timeline_seed_v2:
+[
+  {
+    "seed_id": "7d181496d5f69ebf",
+    "date_iso": "2026-03-04",
+    "date_literal": "04/03/2026",
+    "event_hint": "internacao_inicio",
+    "include_in_timeline": true,
+    "page": 1,
+    "bbox": null,
+    "snippet": "internado(a) do dia 04/03/2026 ao dia 05/03/2026",
+    "source": "entities_canonical_v1",
+    "source_path": "layer2.sinais_documentais.entities_canonical_v1",
+    "confidence": 0.96,
+    "review_state": "auto_confirmed",
+    "provenance_status": "inferred",
+    "priority": 10,
+    "document_type": "atestado_medico",
+    "provider_name": "Mariana Mayumi Toda Mourao"
+  },
+  {
+    "seed_id": "14db5a0d7f23efc4",
+    "date_iso": "2026-03-05",
+    "date_literal": "05/03/2026",
+    "event_hint": "internacao_fim",
+    "include_in_timeline": true,
+    "page": 1,
+    "bbox": null,
+    "snippet": "internado(a) do dia 04/03/2026 ao dia 05/03/2026",
+    "source": "entities_canonical_v1",
+    "source_path": "layer2.sinais_documentais.entities_canonical_v1",
+    "confidence": 0.96,
+    "review_state": "auto_confirmed",
+    "provenance_status": "inferred",
+    "priority": 20,
+    "document_type": "atestado_medico",
+    "provider_name": "Mariana Mayumi Toda Mourao"
+  },
+  {
+ 
+... [TRUNCADO]
+
+page_evidence_v1[0] summary:
+{
+  "page": 1,
+  "subdoc_id": "subdoc_001",
+  "page_text": "| eee\nAtendimento 52931300\nNome Diogo de Melo Gomes Silva Prontuário 8095225\nPata Nascto, | 24/02/1987 Idade 39a 9d\nFiliação || Mercilia Belarmina de Melo\nConvênio \\ Porto Saude Categoria Porto Seguro - Prata Garteirinha | 4663929300000126\nDECLARAÇÃO DE ATESTADO\nDeclaro para devidos fins, que o(a) Sr.(a) Diogo de Melo Gomes Silva esteve internado(a) neste serviço do dia\n04/03/2026 ao dia 05/03/2026, devendo permanecer afastado(a) por 15 dia(s), a partir desta data.\nDiagnostico (CID): K80\nSAO PAULO, 5 de março de 2026.\nAssinatura do Paciente ou Responsável\nDra. Mariana Mayumi Toda Mourao - CRM 151928\n(Médico)\n| “ariana Mayumi Toda Mourão\nCirurgia Geral e Yrologia\nCRSP: 15928\nAgende suas consultas e exames em nosso portal\n| https:/www.hospitalhsi.com.br/ |\n| oho\nHes\n|\n|\n“Mariana Mayumi Toda Mourao (CRM - 151928) _\nHospital Santa Isabel\nRua Dr Cesario Mota Junior, 112 - Sao Paulo - SP - CEP 01221900 - Fone:\nImpresso em: 05/03/2026 18:34:27 CNPJ: 43808692000101 - INSCR. MUNICIPAL: 70899886 mariana mayumi CATE3633",
+  "page_taxonomy": {
+    "value": "documento_composto",
+    "confidence": 0.92,
+    "c
+... [TRUNCADO]
+
+layer5.read_models.timeline_v1:
+{
+  "version": "layer5_read_model_v3",
+  "document_id": "debug-doc",
+  "document_type": "atestado_medico",
+  "generated_at": "2026-04-01T16:37:51.285886+00:00",
+  "total_events": 4,
+  "needs_review_count": 0,
+  "events": [
+    {
+      "event_id": "1f3b46537cbe8d161a40",
+      "event_type": "internacao_inicio",
+      "title": "Início da internação — Mariana Mayumi Toda Mourao",
+      "description": "Início da internação | em 2026-03-04 | referente a Diogo de Melo Gomes Silva | por Mariana Mayumi Toda Mourao | CIDs: K80 | Evidência: \"internado(a) do dia 04/03/2026 ao dia 05/03/2026\"",
+      "date_iso": "2026-03-04",
+      "confidence": 1.0,
+      "review_state": "auto_confirmed",
+      "provenance_status": "snippet_only",
+      "derivation_rule": "probatory_event_builder_v6",
+      "tags": [
+        "cid:K80"
+      ],
+      "entities": {
+        "patient": "Diogo de Melo Gomes Silva",
+        "mother": null,
+        "provider": "Mariana Mayumi Toda Mourao",
+        "cids": [
+          "K80"
+        ],
+        "crms": [
+          "CRM 151928"
+        ]
+      },
+      "citations": [
+        {
+          "document_id": "debug-doc",
+          "source_path": "layer2.sinais_documentais.en
+... [TRUNCADO]

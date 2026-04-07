@@ -1,161 +1,377 @@
 <!DOCTYPE html>
-<html>
+<html lang="pt-BR">
 <head>
-    <title>Relluna Pipeline Tester</title>
-    <style>
-        body { font-family: system-ui, sans-serif; margin: 40px; max-width: 1200px; }
-        .upload-zone { 
-            border: 3px dashed #ccc; 
-            padding: 40px; 
-            text-align: center; 
-            border-radius: 8px;
-            margin-bottom: 30px;
-            background: #fafafa;
-            transition: all 0.3s;
-        }
-        .upload-zone:hover { border-color: #007bff; background: #f0f8ff; }
-        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 20px; }
-        .layer-box { 
-            border: 1px solid #ddd; 
-            border-radius: 8px; 
-            padding: 15px; 
-            background: white;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-        }
-        .layer-box h3 { margin-top: 0; color: #333; border-bottom: 2px solid #007bff; padding-bottom: 8px; }
-        .status { display: inline-block; padding: 4px 8px; border-radius: 4px; font-size: 12px; font-weight: bold; }
-        .status-ok { background: #d4edda; color: #155724; }
-        .status-pending { background: #fff3cd; color: #856404; }
-        .status-error { background: #f8d7da; color: #721c24; }
-        pre { 
-            background: #f8f9fa; 
-            padding: 10px; 
-            overflow-x: auto; 
-            font-size: 12px;
-            border-radius: 4px;
-            max-height: 300px;
-            border: 1px solid #e9ecef;
-        }
-        .metadata { font-size: 13px; color: #666; margin-bottom: 10px; }
-        .error-box { background: #f8d7da; border: 1px solid #f5c6cb; padding: 10px; border-radius: 4px; color: #721c24; }
-        button { 
-            background: #007bff; 
-            color: white; 
-            border: none; 
-            padding: 12px 24px; 
-            border-radius: 4px; 
-            cursor: pointer;
-            font-size: 16px;
-        }
-        button:hover { background: #0056b3; }
-        input[type="file"] { margin-bottom: 15px; }
-    </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Relluna Pipeline Tester</title>
+  <style>
+    :root { --bg:#f6f8fb; --panel:#fff; --text:#1f2937; --muted:#6b7280; --line:#dbe3ef; --primary:#2563eb; --primary-soft:#eaf2ff; --success:#15803d; --success-soft:#dcfce7; --warn:#b45309; --warn-soft:#fef3c7; --danger:#b91c1c; --danger-soft:#fee2e2; --shadow:0 10px 30px rgba(15,23,42,.08); --radius:14px; }
+    *{box-sizing:border-box} body{margin:0;font-family:Inter,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:linear-gradient(180deg,#f9fbff 0%,var(--bg) 100%);color:var(--text)}
+    .page{max-width:1500px;margin:0 auto;padding:28px}.hero{display:grid;grid-template-columns:1.4fr 1fr;gap:18px;margin-bottom:22px}.panel{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow)}
+    .hero-main{padding:24px}.hero-main h1{margin:0 0 8px;font-size:30px;line-height:1.15}.hero-main p{margin:0;color:var(--muted);line-height:1.55;font-size:15px}.hero-side{padding:22px;display:grid;gap:12px;align-content:start}
+    .mini-kpi{display:grid;grid-template-columns:1fr 1fr;gap:12px}.kpi{border:1px solid var(--line);border-radius:12px;padding:14px;background:#fbfdff}.kpi .label{color:var(--muted);font-size:12px;margin-bottom:6px}.kpi .value{font-size:20px;font-weight:700}
+    .hint{background:var(--primary-soft);border:1px solid #cfe0ff;color:#184c8c;padding:14px 16px;border-radius:12px;font-size:14px;line-height:1.5}.workspace{display:grid;grid-template-columns:420px 1fr;gap:18px;align-items:start}.left-stack{display:grid;gap:18px;position:sticky;top:18px}
+    .upload-card,.status-card,.tips-card{padding:20px}.section-title{margin:0 0 14px;font-size:17px;font-weight:700}.section-subtitle{margin:-6px 0 14px;color:var(--muted);font-size:13px;line-height:1.45}
+    .dropzone{border:2px dashed #b9c9e6;background:#fbfdff;border-radius:14px;padding:24px 18px;text-align:center;transition:.2s ease;cursor:pointer}.dropzone.dragover{border-color:var(--primary);background:var(--primary-soft)}.dropzone strong{display:block;margin-bottom:6px;font-size:16px}.dropzone span{color:var(--muted);font-size:13px}
+    .file-meta{margin-top:14px;display:none;padding:12px;border:1px solid var(--line);border-radius:12px;background:#fafcff;font-size:13px;line-height:1.55}.file-meta.visible{display:block} input[type=file]{display:none}
+    .actions{display:flex;gap:10px;margin-top:14px;flex-wrap:wrap} button{border:none;border-radius:10px;padding:11px 16px;font-size:14px;font-weight:600;cursor:pointer;transition:.2s ease}.btn-primary{background:var(--primary);color:#fff}.btn-primary:hover{background:#1d4ed8}.btn-secondary{background:#eef2f7;color:#334155;border:1px solid #d7dfeb}.btn-secondary:hover{background:#e8edf5} button:disabled{opacity:.6;cursor:not-allowed}
+    .status-list{display:grid;gap:10px}.step{border:1px solid var(--line);border-radius:12px;padding:12px 14px;display:flex;align-items:center;gap:12px;background:#fcfdff}.step-icon{width:28px;height:28px;border-radius:999px;display:inline-flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;background:#e5e7eb;color:#475569;flex:0 0 auto}.step.pending .step-icon{background:#e5e7eb}.step.running .step-icon{background:#dbeafe;color:#1d4ed8}.step.success .step-icon{background:var(--success-soft);color:var(--success)}.step.error .step-icon{background:var(--danger-soft);color:var(--danger)}.step-text{min-width:0}.step-title{font-weight:600;font-size:14px}.step-desc{color:var(--muted);font-size:12px;margin-top:2px}
+    .banner{border-radius:12px;padding:14px 16px;margin-top:14px;font-size:14px;line-height:1.5;display:none}.banner.visible{display:block}.banner.error{background:var(--danger-soft);color:#7f1d1d;border:1px solid #fecaca}.banner.info{background:var(--primary-soft);color:#1e3a8a;border:1px solid #cfe0ff}.banner.success{background:var(--success-soft);color:#166534;border:1px solid #bbf7d0}
+    .error-detail{margin-top:10px;padding:10px;border-radius:10px;background:rgba(255,255,255,.65);border:1px solid rgba(127,29,29,.18);font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12px;white-space:pre-wrap;word-break:break-word}
+    .tips-card ul{padding-left:18px;margin:0;color:var(--muted);font-size:14px;line-height:1.55}.results{display:grid;gap:18px}.summary-card{padding:20px}.summary-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin-top:14px}.summary-item{border:1px solid var(--line);border-radius:12px;padding:14px;background:#fbfdff;min-width:0}.summary-item .label{color:var(--muted);font-size:12px;margin-bottom:6px}.summary-item .value{font-size:14px;font-weight:700;overflow-wrap:anywhere}.meta-row{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px}.pill{display:inline-flex;align-items:center;gap:8px;padding:8px 12px;border-radius:999px;font-size:12px;font-weight:700;border:1px solid transparent}.pill.success{background:var(--success-soft);color:var(--success);border-color:#bbf7d0}.pill.warn{background:var(--warn-soft);color:var(--warn);border-color:#fde68a}.pill.info{background:var(--primary-soft);color:#1d4ed8;border-color:#bfdbfe}
+    .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(390px,1fr));gap:18px}.layer-box{padding:16px}.layer-box h3{margin:0 0 10px;font-size:15px;border-bottom:2px solid var(--primary);padding-bottom:8px}.toolbar{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:10px}.toolbar button{padding:7px 10px;font-size:12px}pre{background:#f8fafc;padding:12px;overflow-x:auto;font-size:12px;border-radius:10px;max-height:420px;border:1px solid #e5eaf2;white-space:pre-wrap;word-break:break-word;margin:0;line-height:1.45}.hidden{display:none!important}
+    @media (max-width:1100px){.hero,.workspace{grid-template-columns:1fr}.left-stack{position:static}.summary-grid{grid-template-columns:repeat(2,minmax(0,1fr))}} @media (max-width:700px){.page{padding:16px}.summary-grid{grid-template-columns:1fr}.grid{grid-template-columns:1fr}.mini-kpi{grid-template-columns:1fr}}
+  </style>
 </head>
 <body>
-
-<h1>🧪 Relluna Pipeline Tester</h1>
-
-<form action="/test-ui/upload" method="post" enctype="multipart/form-data" class="upload-zone">
-    <h3>📁 Upload de Documento</h3>
-    <input type="file" name="file" accept=".pdf,.jpg,.jpeg,.png,.mp4,.mov,.mp3,.wav,.m4a" required>
-    <br><br>
-    <button type="submit">Processar Pipeline</button>
-    <p style="font-size: 12px; color: #666; margin-top: 10px;">
-        Suporta: PDF, Imagens (JPG/PNG), Vídeos (MP4/MOV), Áudio (MP3/WAV/M4A)
-    </p>
-</form>
-
-{% if result %}
-
-<div style="margin-bottom: 20px;">
-    <strong>Document ID:</strong> {{ result.layer0.documentid }}<br>
-    <strong>Timestamp:</strong> {{ result.layer0.ingestiontimestamp }}<br>
-    <span class="status status-ok">✓ Processamento Concluído</span>
-</div>
-
-<div class="grid">
-
-    <!-- Layer 0 -->
-    <div class="layer-box">
-        <h3>L0 - Custódia</h3>
-        <div class="metadata">
-            ID: {{ result.layer0.documentid }}<br>
-            Timestamp: {{ result.layer0.ingestiontimestamp.strftime('%Y-%m-%d %H:%M:%S') if result.layer0.ingestiontimestamp else '-' }}
+  <div class="page">
+    <section class="hero">
+      <div class="panel hero-main">
+        <h1>Relluna Pipeline Tester</h1>
+        <p>Envie o arquivo, acompanhe o processamento por etapas e visualize a timeline e o DocumentMemory completo. A interface usa o fluxo <strong>ingest → extract → infer → leitura</strong>, reduzindo risco de timeout e expondo o stage real quando houver falha.</p>
+      </div>
+      <div class="panel hero-side">
+        <div class="mini-kpi">
+          <div class="kpi"><div class="label">Fluxo</div><div class="value">4 etapas</div></div>
+          <div class="kpi"><div class="label">Saída</div><div class="value">Timeline + camadas</div></div>
         </div>
-        <pre>{{ result.layer0.model_dump_json(indent=2) }}</pre>
-    </div>
+        <div class="hint">Sugestão de produto: no dashboard final, o advogado deve ver primeiro a <strong>timeline</strong> e o <strong>resumo de entidades</strong>. As camadas técnicas ficam como modo avançado para auditoria.</div>
+      </div>
+    </section>
 
-    <!-- Layer 1 -->
-    <div class="layer-box">
-        <h3>L1 - Artefatos</h3>
-        {% if result.layer1 %}
-        <span class="status status-ok">✓ OK</span>
-        <div class="metadata">
-            Tipo: {{ result.layer1.midia }}<br>
-            Path: {{ result.layer1.path }}
+    <section class="workspace">
+      <div class="left-stack">
+        <div class="panel upload-card">
+          <h2 class="section-title">Upload de documento</h2>
+          <p class="section-subtitle">PDFs escaneados, imagens, áudio e vídeo. Para documentos grandes, o fluxo em etapas melhora robustez e transparência.</p>
+          <form id="upload-form">
+            <label class="dropzone" id="dropzone" for="file-input">
+              <strong>Arraste o arquivo aqui ou clique para selecionar</strong>
+              <span>Formatos: PDF, JPG, PNG, MP4, MOV, MP3, WAV, M4A</span>
+            </label>
+            <input type="file" id="file-input" name="file" accept=".pdf,.jpg,.jpeg,.png,.mp4,.mov,.mp3,.wav,.m4a" required />
+            <div id="file-meta" class="file-meta"></div>
+            <div class="actions">
+              <button type="submit" id="submit-btn" class="btn-primary">Processar pipeline</button>
+              <button type="button" id="reset-btn" class="btn-secondary">Limpar</button>
+            </div>
+          </form>
+          <div id="banner" class="banner"></div>
         </div>
-        {% else %}
-        <span class="status status-pending">○ Pendente</span>
-        {% endif %}
-    </div>
 
-    <!-- Layer 2 -->
-    <div class="layer-box">
-        <h3>L2 - Extração/OCR</h3>
-        {% if result.layer2 %}
-        <span class="status status-ok">✓ OK</span>
-        <div class="metadata">
-            {% if result.layer2.texto_ocr_literal %}
-            Confiança OCR: {{ result.layer2.texto_ocr_literal.confiança or '-' }}<br>
-            {% endif %}
+        <div class="panel status-card">
+          <h2 class="section-title">Status do processamento</h2>
+          <p class="section-subtitle">Cada etapa responde separadamente para evitar travamentos longos.</p>
+          <div id="status-list" class="status-list"></div>
         </div>
-        <pre>{{ result.layer2.texto_ocr_literal.valor if result.layer2.texto_ocr_literal else "Sem texto extraível" }}</pre>
-        {% else %}
-        <span class="status status-pending">○ Pendente</span>
-        {% endif %}
-    </div>
 
-    <!-- Layer 3 -->
-    <div class="layer-box">
-        <h3>L3 - Inferência de Contexto</h3>
-        {% if result.layer3 %}
-        <span class="status status-ok">✓ OK</span>
-        <pre>{{ result.layer3.model_dump_json(indent=2) if result.layer3 else {} }}</pre>
-        {% else %}
-        <span class="status status-pending">○ Pendente</span>
-        {% endif %}
-    </div>
+        <div class="panel tips-card">
+          <h2 class="section-title">Sugestões para o projeto</h2>
+          <ul>
+            <li>Deixar a <strong>timeline como tela principal</strong> e as camadas como painel técnico.</li>
+            <li>Mostrar <strong>warnings semânticos</strong> em destaque quando a confiança estiver baixa.</li>
+            <li>Adicionar no futuro um <strong>resumo executivo para advogado</strong> acima do JSON bruto.</li>
+            <li>Persistir o <strong>document ID</strong> para reabrir o caso sem novo upload.</li>
+          </ul>
+        </div>
+      </div>
 
-    <!-- Layer 4 -->
-    <div class="layer-box">
-        <h3>L4 - Normalização</h3>
-        {% if result.layer4 %}
-        <span class="status status-ok">✓ OK</span>
-        <pre>{{ result.layer4.model_dump_json(indent=2) if result.layer4 else {} }}</pre>
-        {% else %}
-        <span class="status status-pending">○ Pendente</span>
-        {% endif %}
-    </div>
+      <div class="results">
+        <div id="results" class="hidden">
+          <div class="panel summary-card">
+            <h2 class="section-title">Resumo do processamento</h2>
+            <div class="summary-grid">
+              <div class="summary-item"><div class="label">Document ID</div><div class="value" id="document-id">-</div></div>
+              <div class="summary-item"><div class="label">Hash</div><div class="value" id="document-hash">-</div></div>
+              <div class="summary-item"><div class="label">Deduplicado</div><div class="value" id="document-dedup">-</div></div>
+              <div class="summary-item"><div class="label">Tempo total</div><div class="value" id="elapsed-time">-</div></div>
+            </div>
+            <div class="meta-row">
+              <span class="pill success">Pipeline concluído</span>
+              <span class="pill info" id="summary-note">Fluxo em etapas executado com sucesso</span>
+            </div>
+          </div>
 
-    <!-- Layer 5 -->
-    <div class="layer-box">
-        <h3>L5 - Derivados</h3>
-        {% if result.layer5 %}
-        <span class="status status-ok">✓ OK</span>
-        <pre>{{ result.layer5.model_dump_json(indent=2) if result.layer5 else {} }}</pre>
-        {% else %}
-        <span class="status status-pending">○ Pendente</span>
-        {% endif %}
-    </div>
+          <div class="grid">
+            <div class="panel layer-box"><div class="toolbar"><h3>L0 - Custódia</h3><button class="btn-secondary" data-copy="layer0-json">Copiar</button></div><pre id="layer0-json"></pre></div>
+            <div class="panel layer-box"><div class="toolbar"><h3>L1 - Artefatos</h3><button class="btn-secondary" data-copy="layer1-json">Copiar</button></div><pre id="layer1-json"></pre></div>
+            <div class="panel layer-box"><div class="toolbar"><h3>L2 - Extração/OCR</h3><button class="btn-secondary" data-copy="layer2-json">Copiar</button></div><pre id="layer2-json"></pre></div>
+            <div class="panel layer-box"><div class="toolbar"><h3>L3 - Inferência de contexto</h3><button class="btn-secondary" data-copy="layer3-json">Copiar</button></div><pre id="layer3-json"></pre></div>
+            <div class="panel layer-box"><div class="toolbar"><h3>L4 - Normalização</h3><button class="btn-secondary" data-copy="layer4-json">Copiar</button></div><pre id="layer4-json"></pre></div>
+            <div class="panel layer-box"><div class="toolbar"><h3>L5 - Derivados</h3><button class="btn-secondary" data-copy="layer5-json">Copiar</button></div><pre id="layer5-json"></pre></div>
+            <div class="panel layer-box"><div class="toolbar"><h3>Timeline</h3><button class="btn-secondary" data-copy="timeline-json">Copiar</button></div><pre id="timeline-json"></pre></div>
+            <div class="panel layer-box"><div class="toolbar"><h3>DocumentMemory completo</h3><button class="btn-secondary" data-copy="document-json">Copiar</button></div><pre id="document-json"></pre></div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
 
-</div>
+  <script>
+    const form = document.getElementById("upload-form");
+    const fileInput = document.getElementById("file-input");
+    const dropzone = document.getElementById("dropzone");
+    const fileMeta = document.getElementById("file-meta");
+    const banner = document.getElementById("banner");
+    const results = document.getElementById("results");
+    const submitBtn = document.getElementById("submit-btn");
+    const resetBtn = document.getElementById("reset-btn");
+    const statusList = document.getElementById("status-list");
 
-<div style="margin-top: 30px; padding: 20px; background: #f8f9fa; border-radius: 8px;">
-    <h3>📊 JSON Completo (DocumentMemory)</h3>
-    <pre>{{ result.model_dump_json(indent=2) }}</pre>
-</div>
+    const steps = [
+      { key: "ingest", title: "Ingest", desc: "Upload e registro do documento" },
+      { key: "extract", title: "Extract", desc: "Extração, OCR e evidências" },
+      { key: "infer", title: "Inferência", desc: "Contexto, normalização e derivados" },
+      { key: "read", title: "Leitura", desc: "Busca do documento e timeline" },
+    ];
 
-{% endif %}
+    const stepState = new Map();
+    let startTime = null;
 
+    function pretty(value) { return JSON.stringify(value, null, 2); }
+
+    function formatBytes(bytes) {
+      if (!Number.isFinite(bytes)) return "-";
+      const units = ["B", "KB", "MB", "GB"];
+      let value = bytes;
+      let index = 0;
+      while (value >= 1024 && index < units.length - 1) { value /= 1024; index += 1; }
+      return `${value.toFixed(value >= 10 || index === 0 ? 0 : 1)} ${units[index]}`;
+    }
+
+    function formatElapsed(ms) {
+      if (!Number.isFinite(ms)) return "-";
+      if (ms < 1000) return `${ms} ms`;
+      const seconds = (ms / 1000).toFixed(1);
+      return `${seconds}s`;
+    }
+
+    function setBanner(type, message, detail = null) {
+      banner.className = `banner visible ${type}`;
+      const detailHtml = detail ? `<div class="error-detail">${escapeHtml(detail)}</div>` : "";
+      banner.innerHTML = `<div>${escapeHtml(message)}</div>${detailHtml}`;
+    }
+
+    function clearBanner() {
+      banner.className = "banner";
+      banner.innerHTML = "";
+    }
+
+    function escapeHtml(value) {
+      return String(value || "")
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+    }
+
+    function initSteps() {
+      stepState.clear();
+      statusList.innerHTML = "";
+      steps.forEach(step => {
+        stepState.set(step.key, { ...step, state: "pending", note: "" });
+      });
+      renderSteps();
+    }
+
+    function updateStep(key, state, note = "") {
+      const current = stepState.get(key);
+      if (!current) return;
+      current.state = state;
+      current.note = note;
+      renderSteps();
+    }
+
+    function renderSteps() {
+      statusList.innerHTML = "";
+      steps.forEach(step => {
+        const current = stepState.get(step.key);
+        const icon = current.state === "success" ? "✓" : current.state === "error" ? "!" : current.state === "running" ? "…" : "•";
+        const row = document.createElement("div");
+        row.className = `step ${current.state}`;
+        row.innerHTML = `
+          <div class="step-icon">${icon}</div>
+          <div class="step-text">
+            <div class="step-title">${current.title}</div>
+            <div class="step-desc">${escapeHtml(current.note || current.desc)}</div>
+          </div>
+        `;
+        statusList.appendChild(row);
+      });
+    }
+
+    function fillFileMeta(file) {
+      if (!file) {
+        fileMeta.classList.remove("visible");
+        fileMeta.innerHTML = "";
+        return;
+      }
+      fileMeta.classList.add("visible");
+      fileMeta.innerHTML = `
+        <strong>Arquivo selecionado</strong><br>
+        Nome: ${escapeHtml(file.name)}<br>
+        Tipo: ${escapeHtml(file.type || "desconhecido")}<br>
+        Tamanho: ${formatBytes(file.size)}
+      `;
+    }
+
+    function resetUI() {
+      form.reset();
+      fillFileMeta(null);
+      clearBanner();
+      results.classList.add("hidden");
+      document.getElementById("elapsed-time").textContent = "-";
+      initSteps();
+    }
+
+    fileInput.addEventListener("change", () => fillFileMeta(fileInput.files[0]));
+    resetBtn.addEventListener("click", resetUI);
+
+    ["dragenter", "dragover"].forEach(evt => {
+      dropzone.addEventListener(evt, e => { e.preventDefault(); dropzone.classList.add("dragover"); });
+    });
+    ["dragleave", "drop"].forEach(evt => {
+      dropzone.addEventListener(evt, e => { e.preventDefault(); dropzone.classList.remove("dragover"); });
+    });
+    dropzone.addEventListener("drop", e => {
+      const files = e.dataTransfer.files;
+      if (files?.length) {
+        fileInput.files = files;
+        fillFileMeta(files[0]);
+      }
+    });
+
+    async function parseResponse(response) {
+      const raw = await response.text();
+      let data = null;
+      try { data = raw ? JSON.parse(raw) : null; }
+      catch { data = { detail: raw || `HTTP ${response.status}` }; }
+      return { raw, data };
+    }
+
+    function errorDetailFromParsed(parsed) {
+      if (!parsed) return "Erro sem payload";
+      const detail = parsed.data?.detail ?? parsed.data;
+      if (typeof detail === "string") return detail;
+      try { return JSON.stringify(detail, null, 2); }
+      catch { return String(detail); }
+    }
+
+    async function postStep(url, key, runningNote, successNote) {
+      updateStep(key, "running", runningNote);
+      const response = await fetch(url, { method: "POST" });
+      const parsed = await parseResponse(response);
+      if (!response.ok) {
+        updateStep(key, "error", "Falha na etapa");
+        throw new Error(JSON.stringify({ key, parsed }));
+      }
+      updateStep(key, "success", successNote);
+      return parsed.data;
+    }
+
+    async function fetchJson(url) {
+      const response = await fetch(url);
+      const parsed = await parseResponse(response);
+      if (!response.ok) throw new Error(JSON.stringify({ key: "read", parsed }));
+      return parsed.data;
+    }
+
+    function renderResults(ingestData, docData, timelineData, startedAt) {
+      document.getElementById("document-id").textContent = ingestData.documentid || "-";
+      document.getElementById("document-hash").textContent = ingestData.hash || "-";
+      document.getElementById("document-dedup").textContent = String(ingestData.deduplicated);
+      document.getElementById("elapsed-time").textContent = formatElapsed(Date.now() - startedAt);
+      document.getElementById("summary-note").textContent = "Fluxo em etapas executado com sucesso";
+
+      document.getElementById("layer0-json").textContent = pretty(docData?.layer0 || {});
+      document.getElementById("layer1-json").textContent = pretty(docData?.layer1 || {});
+      document.getElementById("layer2-json").textContent = pretty(docData?.layer2 || {});
+      document.getElementById("layer3-json").textContent = pretty(docData?.layer3 || {});
+      document.getElementById("layer4-json").textContent = pretty(docData?.layer4 || {});
+      document.getElementById("layer5-json").textContent = pretty(docData?.layer5 || {});
+      document.getElementById("timeline-json").textContent = pretty(timelineData || {});
+      document.getElementById("document-json").textContent = pretty(docData || {});
+
+      results.classList.remove("hidden");
+      setBanner("success", "Pipeline concluído com sucesso.");
+    }
+
+    form.addEventListener("submit", async (event) => {
+      event.preventDefault();
+      clearBanner();
+      results.classList.add("hidden");
+      submitBtn.disabled = true;
+      submitBtn.textContent = "Processando...";
+      startTime = Date.now();
+      initSteps();
+
+      try {
+        const file = fileInput.files[0];
+        if (!file) throw new Error("Selecione um arquivo.");
+
+        const formData = new FormData();
+        formData.append("file", file);
+
+        updateStep("ingest", "running", "Enviando e registrando documento...");
+        const ingestResp = await fetch("/ingest", { method: "POST", body: formData });
+        const ingestParsed = await parseResponse(ingestResp);
+        if (!ingestResp.ok) {
+          updateStep("ingest", "error", "Falha no upload");
+          throw new Error(JSON.stringify({ key: "ingest", parsed: ingestParsed }));
+        }
+
+        const ingestData = ingestParsed.data;
+        const documentId = ingestData?.documentid;
+        if (!documentId) throw new Error("Ingest respondeu sem documentid.");
+        updateStep("ingest", "success", `Documento registrado: ${documentId}`);
+
+        await postStep(`/extract/${documentId}`, "extract", "Executando extração...", "Extração concluída");
+        await postStep(`/infer_context/${documentId}`, "infer", "Executando inferência...", "Inferência concluída");
+
+        updateStep("read", "running", "Buscando documento e timeline...");
+        const [docData, timelineData] = await Promise.all([
+          fetchJson(`/documents/${documentId}`),
+          fetchJson(`/documents/${documentId}/timeline`)
+        ]);
+        updateStep("read", "success", "Documento e timeline carregados");
+
+        renderResults(ingestData, docData, timelineData, startTime);
+      } catch (error) {
+        let parsedError = null;
+        try { parsedError = JSON.parse(error.message); } catch {}
+
+        if (parsedError?.key) {
+          const detail = errorDetailFromParsed(parsedError.parsed);
+          const detailObj = parsedError.parsed?.data?.detail;
+          const stage = typeof detailObj === "object" && detailObj?.stage ? detailObj.stage : parsedError.key;
+          const message = typeof detailObj === "object" && detailObj?.message ? detailObj.message : "Erro na etapa.";
+          setBanner("error", `Falha em ${stage}: ${message}`, detail);
+        } else {
+          setBanner("error", error.message || "Erro inesperado.");
+        }
+      } finally {
+        submitBtn.disabled = false;
+        submitBtn.textContent = "Processar pipeline";
+      }
+    });
+
+    document.addEventListener("click", async (event) => {
+      const button = event.target.closest("[data-copy]");
+      if (!button) return;
+      const targetId = button.getAttribute("data-copy");
+      const content = document.getElementById(targetId)?.textContent || "";
+      try {
+        await navigator.clipboard.writeText(content);
+        button.textContent = "Copiado";
+        setTimeout(() => (button.textContent = "Copiar"), 1200);
+      } catch {
+        button.textContent = "Falhou";
+        setTimeout(() => (button.textContent = "Copiar"), 1200);
+      }
+    });
+
+    initSteps();
+  </script>
 </body>
 </html>
