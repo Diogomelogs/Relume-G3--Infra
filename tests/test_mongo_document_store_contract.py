@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from datetime import datetime, timezone
 from dataclasses import dataclass
 from typing import Any, Optional
 
@@ -42,8 +43,8 @@ class FakeDB:
 def _dm_min(docid: str) -> DocumentMemory:
     layer0 = Layer0Custodia(
         documentid=docid,
-        contentfingerprint="abc",
-        ingestiontimestamp=__import__("datetime").datetime.utcnow(),
+        contentfingerprint="f" * 64,
+        ingestiontimestamp=datetime.now(timezone.utc),
         ingestionagent="test",
         authenticitystate=None,
         custodychain=[],

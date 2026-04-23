@@ -1,0 +1,71 @@
+{
+  "id": "010_divergencia_seed_layer3",
+  "title": "Divergencia entre seed e Layer3 deve aparecer no benchmark",
+  "expected": {
+    "document_type": "parecer_medico",
+    "entities": {
+      "patient": "CLARA MELO",
+      "provider": "DR. IVAN RIBEIRO",
+      "document_date": "2024-10-21"
+    },
+    "events": [
+      {"event_type": "document_issue_date", "date_iso": "2024-10-21"}
+    ],
+    "legally_useful_event_types": ["document_issue_date"]
+  },
+  "actual": {
+    "document_type": "parecer_medico",
+    "entities": {
+      "patient": {
+        "value": "CLARA MELO",
+        "provenance_status": "observed",
+        "confidence": 0.95,
+        "evidence": {"page": 1, "snippet": "Paciente: CLARA MELO", "bbox": [70, 120, 240, 140]}
+      },
+      "provider": {
+        "value": "DR. IVAN RIBEIRO",
+        "provenance_status": "observed",
+        "confidence": 0.92,
+        "evidence": {"page": 1, "snippet": "Dr. Ivan Ribeiro CRM 66778 PR", "bbox": [70, 612, 346, 634]}
+      },
+      "document_date": {
+        "value": "2024-10-21",
+        "date_iso": "2024-10-21",
+        "provenance_status": "observed",
+        "confidence": 0.93,
+        "evidence": {"page": 1, "snippet": "Curitiba, 21/10/2024", "bbox": [316, 580, 505, 602]}
+      }
+    },
+    "events": [
+      {
+        "event_type": "document_issue_date",
+        "title": "Data de emissao",
+        "description": "Layer3 promoveu a data errada na timeline.",
+        "date_iso": "2024-10-22",
+        "provenance_status": "observed",
+        "review_state": "needs_review",
+        "confidence": 0.74,
+        "entities": {"patient": "CLARA MELO", "provider": "DR. IVAN RIBEIRO"},
+        "evidence": {"page": 1, "snippet": "Curitiba, 21/10/2024", "bbox": [316, 580, 505, 602]}
+      }
+    ],
+    "review_items": [
+      {
+        "field": "timeline_seed_vs_layer3",
+        "value": {"seed_dates": ["2024-10-21"], "layer3_dates": ["2024-10-22"]},
+        "review_state": "needs_review",
+        "provenance_status": "conflict"
+      }
+    ],
+    "warnings": [
+      {
+        "code": "timeline_seed_v2_layer3_divergence",
+        "severity": "warning",
+        "message": "timeline_seed_v2 diverge de Layer3.eventos_probatorios em contagem de eventos ou datas principais."
+      }
+    ],
+    "timeline_consistency": {
+      "score": 0.0
+    }
+  }
+}

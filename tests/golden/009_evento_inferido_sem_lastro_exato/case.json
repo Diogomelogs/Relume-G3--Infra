@@ -1,0 +1,62 @@
+{
+  "id": "009_evento_inferido_sem_lastro_exato",
+  "title": "Evento inferido sem lastro exato deve continuar util e revisavel",
+  "expected": {
+    "document_type": "parecer_medico",
+    "entities": {
+      "patient": "BRUNO ALVES",
+      "provider": "DRA. LILIAN BARROS",
+      "document_date": "2024-09-09"
+    },
+    "events": [
+      {"event_type": "parecer_emitido", "date_iso": "2024-09-09"}
+    ],
+    "legally_useful_event_types": ["parecer_emitido"]
+  },
+  "actual": {
+    "document_type": "parecer_medico",
+    "entities": {
+      "patient": {
+        "value": "BRUNO ALVES",
+        "provenance_status": "observed",
+        "confidence": 0.94,
+        "evidence": {"page": 1, "snippet": "Paciente: BRUNO ALVES", "bbox": [70, 120, 230, 140]}
+      },
+      "provider": {
+        "value": "DRA. LILIAN BARROS",
+        "provenance_status": "observed",
+        "confidence": 0.92,
+        "evidence": {"page": 1, "snippet": "Dra. Lilian Barros CRM 98765 SP", "bbox": [70, 610, 360, 632]}
+      },
+      "document_date": {
+        "value": "2024-09-09",
+        "date_iso": "2024-09-09",
+        "provenance_status": "text_fallback",
+        "confidence": 0.82,
+        "evidence": {"page": 1, "snippet": "São Paulo, 09/09/2024", "bbox": null}
+      }
+    },
+    "events": [
+      {
+        "event_type": "parecer_emitido",
+        "title": "Emissao de parecer medico",
+        "description": "Parecer inferido a partir da data documental e do tipo do documento; exige confirmacao com evidencia exata se houver disputa.",
+        "date_iso": "2024-09-09",
+        "provenance_status": "inferred",
+        "review_state": "review_recommended",
+        "confidence": 0.84,
+        "entities": {"patient": "BRUNO ALVES", "provider": "DRA. LILIAN BARROS"},
+        "evidence": {"page": 1, "snippet": "São Paulo, 09/09/2024", "bbox": null}
+      }
+    ],
+    "review_items": [
+      {
+        "field": "parecer_emitido",
+        "value": "2024-09-09",
+        "review_state": "review_recommended",
+        "provenance_status": "inferred"
+      }
+    ],
+    "warnings": []
+  }
+}

@@ -7,9 +7,22 @@ import re
 
 from relluna.core.document_memory import DocumentMemory, Layer4SemanticNormalization
 from relluna.core.document_memory.layer4_canonical import EntidadeCanonica
+from relluna.services.evidence.signals import load_critical_signal_json
+from relluna.services.entities.document_date_resolver import DocumentDateResolver
+
+_BIRTH_DATE_MARKERS = (
+    "nascimento",
+    "nascto",
+    "data de nascimento",
+    "idade",
+)
+
+_DOCUMENT_DATE_RESOLVER = DocumentDateResolver()
 
 
 def _load_signal_json(dm: DocumentMemory, key: str) -> Any:
+    if key in {"page_evidence_v1", "entities_canonical_v1", "timeline_seed_v2"}:
+        return load_critical_signal_json(dm, key)
     if dm.layer2 is None:
         return None
     sig = dm.layer2.sinais_documentais.get(key)
@@ -34,32 +47,130 @@ def _to_datetime(value: str) -> Optional[datetime]:
             return None
 
 
+def _canonical_date_str(value: Any) -> Optional[str]:
+    if isinstance(value, datetime):
+        return value.date().isoformat()
+    if not isinstance(value, str):
+        return None
+
+    dt = _to_datetime(value)
+    if dt is not None:
+        return dt.date().isoformat()
+
+    if re.fullmatch(r"\d{4}-\d{2}-\d{2}", value):
+        return value
+    return None
+
+
+def _looks_like_birth_date_candidate(candidate: dict[str, Any], page_item: dict[str, Any]) -> bool:
+    literal = str(candidate.get("literal") or candidate.get("date_iso") or "").lower()
+    page_text = str(page_item.get("page_text") or "").lower()
+
+    snippet = str(candidate.get("snippet") or "").lower()
+    for anchor in page_item.get("anchors") or []:
+        if anchor.get("label") != "date":
+            continue
+        if anchor.get("value") == candidate.get("date_iso") or anchor.get("snippet") == candidate.get("literal"):
+            snippet = f"{snippet} {anchor.get('snippet') or ''}".strip()
+            break
+
+    if any(marker in snippet for marker in _BIRTH_DATE_MARKERS):
+        return True
+
+    idx = page_text.find(literal)
+    if idx < 0:
+        return False
+
+    line_start = page_text.rfind("\n", 0, idx) + 1
+    line_end = page_text.find("\n", idx)
+    if line_end < 0:
+        line_end = len(page_text)
+    window = page_text[line_start:line_end]
+    return any(marker in window for marker in _BIRTH_DATE_MARKERS)
+
+
+def _is_birth_date_value(dm: DocumentMemory, value: Any) -> bool:
+    candidate_iso = _canonical_date_str(value)
+    if not candidate_iso:
+        return False
+
+    canonical = _load_signal_json(dm, "entities_canonical_v1") or {}
+    if isinstance(canonical, dict):
+        document_date = canonical.get("document_date") or {}
+        quality = canonical.get("quality") or {}
+        snippet = str(
+            (document_date.get("evidence") or {}).get("snippet")
+            or document_date.get("literal")
+            or ""
+        ).lower()
+        warnings = {
+            str(item)
+            for item in (quality.get("warnings") or [])
+            if isinstance(item, str)
+        }
+        if (
+            _canonical_date_str(document_date.get("date_iso")) == candidate_iso
+            and (
+                "document_date_looks_like_birth_date" in warnings
+                or any(marker in snippet for marker in _BIRTH_DATE_MARKERS)
+            )
+        ):
+            return True
+
+    page_evidence = _load_signal_json(dm, "page_evidence_v1") or []
+    if not isinstance(page_evidence, list):
+        return False
+
+    for item in page_evidence:
+        if not isinstance(item, dict):
+            continue
+        for date_candidate in item.get("date_candidates") or []:
+            if not isinstance(date_candidate, dict):
+                continue
+            if _canonical_date_str(date_candidate.get("date_iso")) != candidate_iso:
+                continue
+            if _looks_like_birth_date_candidate(date_candidate, item):
+                return True
+
+    return False
+
+
 def _extract_temporal_str(dm: DocumentMemory) -> Optional[str]:
     if dm.layer3 is not None:
         temporalidades = getattr(dm.layer3, "temporalidades_inferidas", None) or []
         for t in temporalidades:
             inicio = getattr(t, "inicio", None)
             valor = getattr(inicio, "valor", None) if inicio is not None else None
-            if isinstance(valor, str) and valor:
+            if isinstance(valor, str) and valor and not _is_birth_date_value(dm, valor):
                 return valor
 
         est = getattr(dm.layer3, "estimativa_temporal", None)
         if est is not None:
             if isinstance(est, str):
-                return est
+                if not _is_birth_date_value(dm, est):
+                    return est
+                return None
             if isinstance(est, dict):
                 v = est.get("valor")
                 if isinstance(v, str):
-                    return v
+                    if not _is_birth_date_value(dm, v):
+                        return v
+                    return None
                 if isinstance(v, datetime):
-                    return v.isoformat()
+                    if not _is_birth_date_value(dm, v):
+                        return v.isoformat()
+                    return None
                 return None
 
             v = getattr(est, "valor", None)
             if isinstance(v, str):
-                return v
+                if not _is_birth_date_value(dm, v):
+                    return v
+                return None
             if isinstance(v, datetime):
-                return v.isoformat()
+                if not _is_birth_date_value(dm, v):
+                    return v.isoformat()
+                return None
 
     if dm.layer2 is not None:
         exif = getattr(dm.layer2, "data_exif", None)
@@ -81,10 +192,26 @@ def _extract_temporal_str(dm: DocumentMemory) -> Optional[str]:
             if isinstance(v, datetime):
                 return v.isoformat()
 
+    canonical = _load_signal_json(dm, "entities_canonical_v1") or {}
+    if isinstance(canonical, dict):
+        document_date = canonical.get("document_date") or {}
+        evidence = document_date.get("evidence") or {}
+        snippet = str(evidence.get("snippet") or document_date.get("literal") or "").lower()
+        if document_date.get("date_iso") and not any(
+            marker in snippet for marker in _BIRTH_DATE_MARKERS
+        ) and not _is_birth_date_value(dm, document_date.get("date_iso")):
+            return str(document_date["date_iso"])
+
     page_evidence = _load_signal_json(dm, "page_evidence_v1") or []
     if isinstance(page_evidence, list):
+        resolved = _DOCUMENT_DATE_RESOLVER.resolve(page_evidence)
+        if resolved and resolved.get("date_iso"):
+            return str(resolved["date_iso"])
+
         for item in page_evidence:
             for d in item.get("date_candidates") or []:
+                if _looks_like_birth_date_candidate(d, item):
+                    continue
                 date_iso = d.get("date_iso")
                 if date_iso:
                     return date_iso

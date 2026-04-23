@@ -4,7 +4,10 @@ import re
 from typing import Any, Dict, List, Optional
 
 RE_PATIENT = re.compile(
-    r"nome\s+paciente[:;\s]+([A-ZÁÀÃÂÉÊÍÓÔÕÚÇ][A-ZÁÀÃÂÉÊÍÓÔÕÚÇ\s]{5,}?)(?=\s+Nascimento[:;\s]|\s+Sexo[:;\s]|\n|$)",
+    r"(?:nome\s+paciente|nome\s+do\s+paciente|paciente|nome(?!\s+da\s+m[aã]e))[:;\s]+"
+    r"(?:(?:sr(?:a)?|sr\.?\(a\)?|sra\.?)\.?\s+)?"
+    r"([A-ZÁÀÃÂÉÊÍÓÔÕÚÇ][A-ZÁÀÃÂÉÊÍÓÔÕÚÇ\s]{5,}?)"
+    r"(?=\s+(?:Nome\s+da\s+m[aã]e|M[aã]e|Genitora|Filia[cç][aã]o|Nascimento|Sexo|RGHC|RG|CPF|Data(?:/Hora)?|Idade|Prontu[aá]rio|Prestador)[:;\s]|\n|$)",
     re.IGNORECASE,
 )
 RE_MOTHER = re.compile(
@@ -47,6 +50,7 @@ def _clean(value: Optional[str]) -> Optional[str]:
     if not value:
         return None
     value = " ".join(value.split()).strip(" |:;,.\t")
+    value = re.sub(r"(?i)^(?:sr(?:a)?|sr\.?\(a\)?|sra\.?)\.?\s+", "", value).strip()
     return value or None
 
 

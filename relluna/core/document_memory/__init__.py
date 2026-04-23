@@ -58,8 +58,13 @@ class DocumentMemory(BaseModel):
     layer6: Optional[Layer6Optimization] = None
 
 
+from .models_v0_2_0 import DocumentMemoryCanonical, DocumentMemory_v0_2_0
+
+
 __all__ = [
     "DocumentMemory",
+    "DocumentMemoryCanonical",
+    "DocumentMemory_v0_2_0",
     # Layers
     "Layer0",
     "Layer1",

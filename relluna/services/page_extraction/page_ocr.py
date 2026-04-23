@@ -1,11 +1,13 @@
 from __future__ import annotations
 
-from dataclasses import dataclass, asdict
-from typing import List, Dict, Any, Optional
+from dataclasses import dataclass, field
+from typing import List, Dict, Any
 import re
 
 from PIL import Image
 import pytesseract
+
+OCR_PAGE_TIMEOUT_SECONDS = 8
 
 
 @dataclass
@@ -22,6 +24,7 @@ class OCRPage:
     spans: List[OCRSpan]
     width: int
     height: int
+    warnings: List[Dict[str, Any]] = field(default_factory=list)
 
 
 def _clean_text(text: str) -> str:
@@ -31,19 +34,66 @@ def _clean_text(text: str) -> str:
     return text.strip()
 
 
+def _is_tesseract_timeout(exc: RuntimeError) -> bool:
+    return "timeout" in str(exc).lower()
+
+
+def _ocr_timeout_warning(page_number: int, step: str, exc: RuntimeError) -> Dict[str, Any]:
+    return {
+        "code": "ocr_page_timeout",
+        "severity": "warning",
+        "message": "OCR principal excedeu o timeout; página mantida em modo degradado.",
+        "engine": "tesseract",
+        "page": page_number,
+        "step": step,
+        "timeout_seconds": OCR_PAGE_TIMEOUT_SECONDS,
+        "cause_message": str(exc) or exc.__class__.__name__,
+    }
+
+
 def ocr_image_page(image_path: str, page_number: int) -> OCRPage:
     img = Image.open(image_path).convert("RGB")
     width, height = img.size
 
-    raw_text = pytesseract.image_to_string(img, lang="por+eng", config="--psm 6")
+    try:
+        raw_text = pytesseract.image_to_string(
+            img,
+            lang="por+eng",
+            config="--psm 6",
+            timeout=OCR_PAGE_TIMEOUT_SECONDS,
+        )
+    except RuntimeError as exc:
+        if _is_tesseract_timeout(exc):
+            return OCRPage(
+                page=page_number,
+                text="",
+                spans=[],
+                width=width,
+                height=height,
+                warnings=[_ocr_timeout_warning(page_number, "image_to_string", exc)],
+            )
+        raise
     raw_text = _clean_text(raw_text)
 
-    data = pytesseract.image_to_data(
-        img,
-        lang="por+eng",
-        config="--psm 6",
-        output_type=pytesseract.Output.DICT,
-    )
+    try:
+        data = pytesseract.image_to_data(
+            img,
+            lang="por+eng",
+            config="--psm 6",
+            output_type=pytesseract.Output.DICT,
+            timeout=OCR_PAGE_TIMEOUT_SECONDS,
+        )
+    except RuntimeError as exc:
+        if _is_tesseract_timeout(exc):
+            return OCRPage(
+                page=page_number,
+                text=raw_text,
+                spans=[],
+                width=width,
+                height=height,
+                warnings=[_ocr_timeout_warning(page_number, "image_to_data", exc)],
+            )
+        raise
 
     spans: List[OCRSpan] = []
     n = len(data["text"])

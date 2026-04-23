@@ -3,8 +3,15 @@ import sys
 from pathlib import Path
 import hashlib
 from datetime import datetime, UTC
+import pytest
 from relluna.core.basic_pipeline import run_basic_pipeline
 from relluna.core.document_memory import DocumentMemory, Layer0Custodia as Layer0, Layer1, MediaType, OriginType, ArtefatoBruto
+
+pytestmark = pytest.mark.xfail(
+    reason="script legado de teste manual; depende de fixture video_path não definida",
+    run=False,
+    strict=False,
+)
 
 def test_video(video_path: str):
     p = Path(video_path)

@@ -1,0 +1,16 @@
+model = "gpt-5.4"
+reasoning_effort = "medium"
+
+# Configuracao local do Codex para este repositorio.
+# Mantenha diffs pequenos e rode `make test` / `make benchmark`
+# quando alterar benchmark, goldens ou regras de confiabilidade.
+
+project_root_markers = [".git"]
+
+[profiles.default]
+model = "gpt-5.4"
+reasoning_effort = "medium"
+
+[profiles.deep]
+model = "gpt-5.4"
+reasoning_effort = "high"

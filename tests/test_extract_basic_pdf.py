@@ -12,14 +12,14 @@ from relluna.core.document_memory import (
     ConfidenceState,
 )
 from relluna.services.deterministic_extractors.basic import extract_basic
-from datetime import datetime
+from datetime import datetime, timezone
 
 
 def _build_minimal_pdf_dm(pdf_path: Path) -> DocumentMemory:
     layer0 = Layer0Custodia(
         documentid="test-pdf-docid",
-        contentfingerprint="dummy-hash-pdf",
-        ingestiontimestamp=datetime.utcnow(),
+        contentfingerprint="6" * 64,
+        ingestiontimestamp=datetime.now(timezone.utc),
         ingestionagent="test_ingest_pdf",
     )
 
@@ -66,7 +66,5 @@ def test_extract_basic_pdf_populates_layer2(tmp_path: Path):
     assert layer2.num_paginas.valor == 2.0
     assert layer2.num_paginas.estado == ConfidenceState.confirmado
 
-    # 5) Como o PDF é só páginas em branco, texto_ocr_literal deve ser insuficiente
-    assert layer2.texto_ocr_literal is not None
-    assert layer2.texto_ocr_literal.valor in (None, "")
-    assert layer2.texto_ocr_literal.estado == ConfidenceState.insuficiente
+    # 5) OCR textual completo de PDF é responsabilidade de decompose_pdf_into_subdocuments.
+    assert layer2.texto_ocr_literal is None

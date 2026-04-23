@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import Optional
+from typing import Optional, TypeAlias
 
 from pydantic import BaseModel, ConfigDict, Field
 
@@ -22,17 +22,17 @@ from .layer0 import (
     IntegrityProof,
     ProcessingEvent,
     CustodyEvent,
-    StorageURI,
-    HashAlgorithm,
-    StorageKind,
-    DocumentSource,
     VersionEdge,
 )
-from .layer1 import Layer1, ArtefatoBruto
+from .layer1 import Layer1, ArtefatoBruto, StorageKind
 from .layer2 import Layer2Evidence
 from .layer3 import Layer3Evidence
 from .layer4_canonical import Layer4SemanticNormalization
 from .layer6 import Layer6Optimization
+from relluna.core.contracts.document_memory_contract import StorageURI
+
+HashAlgorithm: TypeAlias = str
+DocumentSource: TypeAlias = str
 
 
 class DocumentMemoryCanonical(BaseModel):

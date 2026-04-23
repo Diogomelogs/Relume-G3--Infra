@@ -1,12 +1,12 @@
 from __future__ import annotations
 
-import json
 import re
 from hashlib import sha256
 from typing import Any, Dict, List, Optional, Tuple
 
 from relluna.services.context_inference.document_taxonomy.signals import extract_document_signals
 from relluna.services.context_inference.document_taxonomy.rules.engine import infer_document_type
+from relluna.services.evidence.signals import load_critical_signal_json
 
 from relluna.core.document_memory import DocumentMemory, MediaType
 from relluna.core.document_memory.layer3 import (
@@ -65,15 +65,7 @@ def _ocr_text(dm: DocumentMemory) -> str:
 
 
 def _load_signal_json(dm: DocumentMemory, key: str) -> Any:
-    if dm.layer2 is None:
-        return None
-    sig = dm.layer2.sinais_documentais.get(key)
-    if not sig or not getattr(sig, "valor", None):
-        return None
-    try:
-        return json.loads(sig.valor)
-    except Exception:
-        return None
+    return load_critical_signal_json(dm, key)
 
 
 def _canonical(dm: DocumentMemory) -> Dict[str, Any]:
@@ -382,25 +374,22 @@ _DOC_LABELS: Dict[str, str] = {
 }
 
 
-def _best_provenance_from_citations(citations: List[EvidenceRef]) -> str:
-    for c in citations:
-        if getattr(c, "bbox", None):
-            return "exact"
-    for c in citations:
-        if getattr(c, "provenance_status", None) == "exact":
-            return "exact"
-    for c in citations:
-        if getattr(c, "snippet", None):
-            return "snippet_only"
-    return "missing"
-
-
 def _best_review_state_from_citations(citations: List[EvidenceRef], fallback: str) -> str:
     if any(getattr(c, "bbox", None) for c in citations):
         return "auto_confirmed"
     if any(getattr(c, "provenance_status", None) == "exact" for c in citations):
         return "auto_confirmed"
     return fallback
+
+
+def _event_provenance_status(event_type: str, citations: List[EvidenceRef]) -> str:
+    if any(getattr(c, "bbox", None) for c in citations):
+        return "exact"
+    if any(getattr(c, "provenance_status", None) == "exact" for c in citations):
+        return "exact"
+    if event_type in {"afastamento_fim_estimado"} or "estimado" in event_type:
+        return "estimated"
+    return "inferred"
 
 
 def _event_title(event_type: Optional[str], provider_name: Optional[str], cids: List[str]) -> str:
@@ -488,6 +477,21 @@ def _event_entities_from_seed(seed: Dict[str, Any], canonical: Dict[str, Any], h
     return entities
 
 
+def _canonical_for_subdoc(canonical: Dict[str, Any], subdoc_id: Optional[str]) -> Dict[str, Any]:
+    if not subdoc_id:
+        return canonical
+
+    subdocuments = canonical.get("subdocuments") or []
+    if not isinstance(subdocuments, list):
+        return canonical
+
+    for subdoc in subdocuments:
+        if isinstance(subdoc, dict) and subdoc.get("subdoc_id") == subdoc_id:
+            return subdoc
+
+    return canonical
+
+
 def _build_probatory_events(dm: DocumentMemory, l3: Layer3Evidence) -> List[ProbatoryEvent]:
     seeds = _load_signal_json(dm, "timeline_seed_v2") or []
     if not isinstance(seeds, list) or not seeds:
@@ -497,8 +501,6 @@ def _build_probatory_events(dm: DocumentMemory, l3: Layer3Evidence) -> List[Prob
     hard = _extract_hard_entities(dm)
     canonical = _canonical(dm)
 
-    patient_name = _extract_patient_name(dm)
-    provider_name = _extract_provider_name(dm)
     default_doc_tipo = canonical.get("document_type") or getattr(
         getattr(l3, "tipo_documento", None), "valor", None
     )
@@ -524,14 +526,18 @@ def _build_probatory_events(dm: DocumentMemory, l3: Layer3Evidence) -> List[Prob
         snippet = seed.get("snippet")
         seed_id = seed.get("seed_id")
         seed_confidence = seed.get("confidence")
+        subdoc_id = seed.get("subdoc_id")
         source_path = seed.get(
             "source_path", "layer2.sinais_documentais.timeline_seed_v2"
         )
+        event_canonical = _canonical_for_subdoc(canonical, subdoc_id)
+        patient_name = _trim_name((event_canonical.get("patient") or {}).get("name")) or _extract_patient_name(dm)
+        provider_name = _trim_name((event_canonical.get("provider") or {}).get("name")) or _extract_provider_name(dm)
 
         core_zones = _extract_signal_zones_for_page(page_evidence, page)
-        doc_tipo = seed.get("document_type") or default_doc_tipo
+        doc_tipo = seed.get("document_type") or event_canonical.get("document_type") or default_doc_tipo
 
-        entities = _event_entities_from_seed(seed, canonical, hard)
+        entities = _event_entities_from_seed(seed, event_canonical, hard)
         cids = entities.get("cids") or base_cids
 
         confidence = _confidence_for_event(
@@ -552,11 +558,13 @@ def _build_probatory_events(dm: DocumentMemory, l3: Layer3Evidence) -> List[Prob
                 source_path=source_path,
                 page=page,
                 bbox=bbox,
-                snippet=snippet,
+                snippet=snippet or seed.get("date_literal"),
                 confidence=seed_confidence,
-                provenance_status=seed.get("provenance_status"),
+                provenance_status=seed.get("provenance_status")
+                or ("exact" if bbox else "inferred"),
                 review_state=seed.get("review_state"),
                 note=f"seed_id:{seed_id}" if seed_id else None,
+                subdoc_id=subdoc_id,
             )
         ]
 
@@ -571,16 +579,20 @@ def _build_probatory_events(dm: DocumentMemory, l3: Layer3Evidence) -> List[Prob
                     provenance_status=zone.get("provenance_status"),
                     review_state=zone.get("review_state"),
                     note=f"signal_zone:core_probative|label:{zone.get('label')}",
+                    subdoc_id=subdoc_id,
                 )
             )
 
-        event_provenance = _best_provenance_from_citations(citations)
+        event_provenance = _event_provenance_status(event_type, citations)
         event_review_state = _best_review_state_from_citations(
             citations, review_state
         )
         event_confidence = (
             confidence if event_provenance != "exact" else max(confidence, 0.95)
         )
+        assertion_level = seed.get("assertion_level")
+        if assertion_level not in {"observed", "inferred", "unknown"}:
+            assertion_level = "observed" if event_provenance == "exact" else "inferred" if event_provenance in {"inferred", "estimated"} else "unknown"
 
         tipo_legado = InferredString(
             valor=event_type,
@@ -611,7 +623,11 @@ def _build_probatory_events(dm: DocumentMemory, l3: Layer3Evidence) -> List[Prob
                 confidence=event_confidence,
                 review_state=event_review_state,
                 provenance_status=event_provenance,
+                subdoc_id=subdoc_id,
                 derivation_rule=_BUILDER_VERSION,
+                assertion_level=assertion_level,
+                warnings=seed.get("warnings") or [],
+                uncertainties=seed.get("uncertainties") or [],
                 tipo_evento=tipo_legado,
                 descricao_curta=_event_description(
                     event_type=event_type,
@@ -627,6 +643,7 @@ def _build_probatory_events(dm: DocumentMemory, l3: Layer3Evidence) -> List[Prob
                     "entities_canonical_v1, seleção de signal_zone e "
                     "projeção controlada de entidades."
                 ),
+                contradiction_candidates=seed.get("contradiction_candidates") or [],
                 confianca=event_confidence,
                 meta=InferenceMeta(engine=_SOURCE),
             )

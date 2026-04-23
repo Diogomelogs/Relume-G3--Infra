@@ -48,7 +48,7 @@ def test_layer6_noop_when_no_text_and_no_entities(monkeypatch):
     out = run_semantic_pipeline(dm)
 
     assert called["n"] == 0
-    assert getattr(out, "layer6", None) is None or getattr(out.layer6, "embedding_vector", None) in (None, [])
+    assert getattr(out, "layer6", None) is None or getattr(out.layer6, "embeddings_base", None) in (None, [])
 
 
 def test_layer6_embeds_when_ocr_text_exists(monkeypatch):
@@ -81,4 +81,4 @@ def test_layer6_embeds_when_ocr_text_exists(monkeypatch):
 
     assert called["n"] == 1
     assert out.layer6 is not None
-    assert getattr(out.layer6, "embedding_vector", None) == [1.0, 2.0, 3.0]
+    assert getattr(out.layer6, "embeddings_base", None) == [1.0, 2.0, 3.0]

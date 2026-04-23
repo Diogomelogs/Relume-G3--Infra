@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timezone
 
 from relluna.core.document_memory import (
     DocumentMemory,
@@ -23,8 +23,8 @@ def test_extract_signals_from_pdf_with_ocr():
         version="v0.1.0",
         layer0=Layer0Custodia(
             documentid="doc1",
-            contentfingerprint="hash",
-            ingestiontimestamp=datetime.utcnow(),
+            contentfingerprint="1" * 64,
+            ingestiontimestamp=datetime.now(timezone.utc),
             ingestionagent="test",
         ),
         layer1=Layer1Artefatos(
@@ -71,8 +71,8 @@ def test_extract_signals_from_image():
         version="v0.1.0",
         layer0=Layer0Custodia(
             documentid="doc2",
-            contentfingerprint="hash",
-            ingestiontimestamp=datetime.utcnow(),
+            contentfingerprint="2" * 64,
+            ingestiontimestamp=datetime.now(timezone.utc),
             ingestionagent="test",
         ),
         layer1=Layer1Artefatos(

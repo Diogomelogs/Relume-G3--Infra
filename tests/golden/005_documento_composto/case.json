@@ -1,0 +1,76 @@
+{
+  "id": "005_documento_composto",
+  "title": "Documento composto com timeline util e consistente",
+  "expected": {
+    "document_type": "documento_composto",
+    "entities": {
+      "patient": "CARLA FERNANDA NUNES",
+      "provider": "DR. MAURO PINTO",
+      "cids": ["M51.1"],
+      "document_date": "2024-05-18"
+    },
+    "events": [
+      {"event_type": "document_issue_date", "date_iso": "2024-05-18"},
+      {"event_type": "registro_condicao_clinica", "date_iso": "2024-05-18"}
+    ],
+    "legally_useful_event_types": ["document_issue_date", "registro_condicao_clinica"]
+  },
+  "actual": {
+    "document_type": "documento_composto",
+    "entities": {
+      "patient": {
+        "value": "CARLA FERNANDA NUNES",
+        "provenance_status": "observed",
+        "confidence": 0.95,
+        "evidence": {"page": 1, "snippet": "Paciente: CARLA FERNANDA NUNES", "bbox": [66, 118, 324, 140]}
+      },
+      "provider": {
+        "value": "DR. MAURO PINTO",
+        "provenance_status": "observed",
+        "confidence": 0.92,
+        "evidence": {"page": 2, "snippet": "Dr. Mauro Pinto CRM 77881 SP", "bbox": [70, 612, 338, 636]}
+      },
+      "cids": [
+        {
+          "value": "M51.1",
+          "provenance_status": "observed",
+          "confidence": 0.93,
+          "evidence": {"page": 2, "snippet": "CID M51.1", "bbox": [76, 286, 150, 306]}
+        }
+      ],
+      "document_date": {
+        "value": "2024-05-18",
+        "date_iso": "2024-05-18",
+        "provenance_status": "observed",
+        "confidence": 0.91,
+        "evidence": {"page": 2, "snippet": "Campinas, 18/05/2024", "bbox": [320, 580, 506, 604]}
+      }
+    },
+    "events": [
+      {
+        "event_type": "document_issue_date",
+        "title": "Emissao do documento",
+        "description": "Documento composto consolidado em 2024-05-18.",
+        "date_iso": "2024-05-18",
+        "provenance_status": "observed",
+        "review_state": "auto_confirmed",
+        "confidence": 0.91,
+        "entities": {"patient": "CARLA FERNANDA NUNES", "provider": "DR. MAURO PINTO", "cids": ["M51.1"]},
+        "evidence": {"page": 2, "snippet": "Campinas, 18/05/2024", "bbox": [320, 580, 506, 604]}
+      },
+      {
+        "event_type": "registro_condicao_clinica",
+        "title": "Registro de condicao clinica",
+        "description": "CID M51.1 consolidado no documento composto.",
+        "date_iso": "2024-05-18",
+        "provenance_status": "observed",
+        "review_state": "auto_confirmed",
+        "confidence": 0.9,
+        "entities": {"patient": "CARLA FERNANDA NUNES", "provider": "DR. MAURO PINTO", "cids": ["M51.1"]},
+        "evidence": {"page": 2, "snippet": "CID M51.1", "bbox": [76, 286, 150, 306]}
+      }
+    ],
+    "warnings": [],
+    "review_items": []
+  }
+}

@@ -1,5 +1,5 @@
 from pathlib import Path
-from datetime import datetime
+from datetime import datetime, timezone
 import wave
 import struct
 
@@ -31,8 +31,8 @@ def _create_dummy_wav(path: Path, duration_sec: float = 1.0, sample_rate: int = 
 def _build_minimal_audio_dm(wav_path: Path) -> DocumentMemory:
     layer0 = Layer0Custodia(
         documentid="test-audio-docid",
-        contentfingerprint="dummy-hash-audio",
-        ingestiontimestamp=datetime.utcnow(),
+        contentfingerprint="4" * 64,
+        ingestiontimestamp=datetime.now(timezone.utc),
         ingestionagent="test_ingest_audio",
     )
 

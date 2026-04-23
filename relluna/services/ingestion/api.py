@@ -1,17 +1,16 @@
 from __future__ import annotations
 
-from dataclasses import dataclass, asdict
 from datetime import datetime, timezone
 from hashlib import sha256
 from pathlib import Path
-from typing import List, Optional, Literal, Callable, Awaitable
+from typing import List, Optional, Callable, Awaitable
 from uuid import uuid4
+import json
 import traceback
+from time import perf_counter
 
 from fastapi import FastAPI, File, Form, HTTPException, UploadFile
 from pydantic import BaseModel
-from pypdf import PdfReader
-
 from relluna.core.contracts.mappers import to_contract
 from relluna.core.document_memory import (
     ArtefatoBruto,
@@ -36,10 +35,23 @@ from relluna.services.deterministic_extractors.timeline_seed_v2 import seed_time
 from relluna.services.entities.entities_canonical_v1 import apply_entities_canonical_v1
 from relluna.services.forensics.layer6 import generate_factual_narrative
 from relluna.services.legal.legal_pipeline import apply_legal_extraction
+from relluna.services.observability import append_processing_event, elapsed_ms, sanitize_processing_details
+from relluna.services.orchestration.decision import (
+    ProcessingDecision,
+    build_escalation_details,
+    build_processing_decision_details,
+    decide_processing_mode,
+    needs_escalation_after_extract,
+)
+from relluna.services.orchestration.preflight import (
+    PreflightSignals,
+    collect_preflight_signals,
+)
 from relluna.services.page_extraction.page_pipeline import apply_page_analysis
 from relluna.services.pdf_decomposition.decompose_pdf import decompose_pdf_into_subdocuments
 from relluna.services.read_model import documents_router
 from relluna.services.read_model.endpoints import router as read_model_router
+from relluna.services.read_model.case_builder import build_document_case_read_model
 from relluna.services.read_model.timeline_builder import build_document_timeline_read_model
 from relluna.services.test_ui.router import router as test_ui_router
 from relluna.services.transcription.asr import apply_transcription_to_layer2
@@ -55,10 +67,10 @@ UPLOAD_DIR.mkdir(parents=True, exist_ok=True)
 
 API_VERSION = "v0.2.0"
 DOCUMENT_MEMORY_VERSION = "v0.2.0"
+_LOCAL_FILE_STORAGE_STATE = "local_file_persisted"
+_LOCAL_FILE_STORAGE_KIND = "local_file"
 
 USE_ADAPTIVE_PIPELINE = True
-
-ProcessingMode = Literal["fast", "standard", "forensic"]
 
 app = FastAPI(title="Relluna API", version=API_VERSION)
 app.include_router(read_model_router)
@@ -76,23 +88,6 @@ class HealthResponse(BaseModel):
     status: str
     version: str
     services: List[ServiceStatus]
-
-
-@dataclass
-class PreflightSignals:
-    media_type: str
-    page_count: int
-    has_native_text: bool
-    native_rotation: int
-    is_pdf: bool
-    original_filename: Optional[str]
-
-
-@dataclass
-class ProcessingDecision:
-    mode: ProcessingMode
-    reasons: List[str]
-    confidence: float
 
 
 @app.get("/health", response_model=HealthResponse)
@@ -179,159 +174,131 @@ def _append_processing_event(
     status: str = "success",
     detalhes: Optional[dict] = None,
 ) -> None:
-    if not dm.layer0:
-        return
-
-    dm.layer0.processingevents.append(
-        ProcessingEvent(
-            etapa=etapa,
-            engine=engine,
-            status=status,
-            detalhes=detalhes or {},
-        )
+    append_processing_event(
+        dm,
+        etapa=etapa,
+        engine=engine,
+        status=status,
+        detalhes=detalhes,
     )
 
 
-def _record_stage_error(dm: DocumentMemory, stage: str, exc: Exception, engine: str) -> None:
+def _drop_none(value):
+    return sanitize_processing_details(value)
+
+
+def _ocr_error_message(exc: Exception) -> str:
+    raw_message = str(exc).strip() or exc.__class__.__name__
+    if "tesseract process timeout" in raw_message.lower():
+        return (
+            "OCR excedeu o timeout operacional no PDF escaneado. "
+            "A extração foi interrompida de forma controlada; tente reduzir resolução/páginas "
+            "ou executar OCR assíncrono."
+        )
+    return raw_message
+
+
+def _stage_error_details(exc: Exception) -> dict:
+    details = {
+        "error_type": exc.__class__.__name__,
+        "message": _ocr_error_message(exc),
+        "traceback_tail": traceback.format_exc(limit=8),
+    }
+    raw_message = str(exc).strip()
+    if raw_message and raw_message != details["message"]:
+        details["cause_message"] = raw_message
+    if "tesseract process timeout" in raw_message.lower():
+        details["code"] = "ocr_timeout"
+        details["warning_code"] = "ocr_timeout"
+        details["severity"] = "error"
+    return details
+
+
+def _collect_stage_warnings(dm: DocumentMemory, stage: str) -> List[dict]:
+    if stage != "decompose_pdf_into_subdocuments" or dm.layer2 is None:
+        return []
+
+    sig = dm.layer2.sinais_documentais.get("ocr_warnings_v1")
+    if not sig or not getattr(sig, "valor", None):
+        return []
+
+    try:
+        warnings = json.loads(sig.valor)
+    except Exception:
+        return []
+
+    if not isinstance(warnings, list):
+        return []
+    return [warning for warning in warnings if isinstance(warning, dict)]
+
+
+def _record_stage_error(
+    dm: DocumentMemory,
+    stage: str,
+    exc: Exception,
+    engine: str,
+    *,
+    duration_ms: Optional[float] = None,
+) -> None:
     _append_processing_event(
         dm,
         etapa=stage,
         engine=engine,
         status="error",
-        detalhes={
-            "error_type": exc.__class__.__name__,
-            "message": str(exc),
-            "traceback_tail": traceback.format_exc(limit=8),
-        },
+        detalhes={**_stage_error_details(exc), "duration_ms": duration_ms},
     )
 
 
 def _http_stage_error(documentid: str, pipeline: str, stage: str, exc: Exception) -> HTTPException:
+    details = _stage_error_details(exc)
     return HTTPException(
         status_code=500,
         detail={
             "documentid": documentid,
             "pipeline": pipeline,
             "stage": stage,
-            "error_type": exc.__class__.__name__,
-            "message": str(exc),
+            "error_type": details["error_type"],
+            "message": details["message"],
+            **{key: value for key, value in details.items() if key in {"code", "severity", "cause_message"}},
         },
     )
 
 
 async def _run_stage(dm: DocumentMemory, stage: str, engine: str, fn: Callable[[], Awaitable[DocumentMemory] | DocumentMemory]) -> DocumentMemory:
+    started = perf_counter()
     try:
         result = fn()
         if hasattr(result, "__await__"):
             dm = await result
         else:
             dm = result
-        _append_processing_event(dm, etapa=stage, engine=engine)
+        duration = elapsed_ms(started)
+        _append_processing_event(
+            dm,
+            etapa=stage,
+            engine=engine,
+            detalhes={"duration_ms": duration},
+        )
+        for warning in _collect_stage_warnings(dm, stage):
+            _append_processing_event(
+                dm,
+                etapa=stage,
+                engine=engine,
+                status="warning",
+                detalhes={**warning, "duration_ms": duration},
+            )
         return dm
     except Exception as exc:
-        _record_stage_error(dm, stage, exc, engine)
+        _record_stage_error(dm, stage, exc, engine, duration_ms=elapsed_ms(started))
         raise
 
 
-def _get_primary_artifact_path(dm: DocumentMemory) -> Optional[Path]:
-    if dm.layer1 is None or not dm.layer1.artefatos:
-        return None
-    uri = dm.layer1.artefatos[0].uri
-    if not uri:
-        return None
-    return Path(uri)
-
-
-def _read_pdf_preflight(path: Path) -> tuple[int, bool, int]:
-    page_count = 1
-    has_native_text = False
-    native_rotation = 0
-
-    try:
-        reader = PdfReader(str(path))
-        page_count = len(reader.pages)
-        if page_count > 0:
-            first_page = reader.pages[0]
-            try:
-                native_rotation = int(first_page.get("/Rotate", 0) or 0)
-            except Exception:
-                native_rotation = 0
-
-            try:
-                extracted = first_page.extract_text() or ""
-                has_native_text = len(extracted.strip()) >= 50
-            except Exception:
-                has_native_text = False
-    except Exception:
-        pass
-
-    return page_count, has_native_text, native_rotation
-
-
 def _collect_preflight_signals(dm: DocumentMemory) -> PreflightSignals:
-    media_type = dm.layer1.midia.value if dm.layer1 else "desconhecido"
-    artifact_path = _get_primary_artifact_path(dm)
-
-    page_count = 1
-    has_native_text = False
-    native_rotation = 0
-    is_pdf = False
-
-    if artifact_path and artifact_path.suffix.lower() == ".pdf":
-        is_pdf = True
-        page_count, has_native_text, native_rotation = _read_pdf_preflight(artifact_path)
-
-    return PreflightSignals(
-        media_type=media_type,
-        page_count=page_count,
-        has_native_text=has_native_text,
-        native_rotation=native_rotation,
-        is_pdf=is_pdf,
-        original_filename=(dm.layer0.original_filename if dm.layer0 else None),
-    )
+    return collect_preflight_signals(dm)
 
 
 def _decide_processing_mode(sig: PreflightSignals) -> ProcessingDecision:
-    if sig.media_type in {MediaType.audio.value, MediaType.video.value}:
-        return ProcessingDecision(
-            mode="forensic",
-            reasons=["temporal_media_requires_transcription"],
-            confidence=0.95,
-        )
-
-    if sig.media_type != MediaType.documento.value:
-        return ProcessingDecision(
-            mode="standard",
-            reasons=["non_document_media"],
-            confidence=0.90,
-        )
-
-    if sig.is_pdf and sig.page_count <= 2 and sig.has_native_text and sig.native_rotation == 0:
-        return ProcessingDecision(
-            mode="fast",
-            reasons=["simple_pdf_with_native_text"],
-            confidence=0.95,
-        )
-
-    if sig.is_pdf and (sig.native_rotation % 360) != 0:
-        return ProcessingDecision(
-            mode="forensic",
-            reasons=["rotated_pdf_requires_heavier_path"],
-            confidence=0.93,
-        )
-
-    if sig.is_pdf and not sig.has_native_text:
-        return ProcessingDecision(
-            mode="standard",
-            reasons=["pdf_without_native_text_requires_ocr"],
-            confidence=0.92,
-        )
-
-    return ProcessingDecision(
-        mode="standard",
-        reasons=["default_document_path"],
-        confidence=0.90,
-    )
+    return decide_processing_mode(sig)
 
 
 def _should_run_transcription(dm: DocumentMemory) -> bool:
@@ -340,57 +307,8 @@ def _should_run_transcription(dm: DocumentMemory) -> bool:
     return dm.layer1.midia in {MediaType.audio, MediaType.video}
 
 
-def _load_json_signal(dm: DocumentMemory, key: str):
-    if dm.layer2 is None:
-        return None
-    sig = dm.layer2.sinais_documentais.get(key)
-    if not sig or not getattr(sig, "valor", None):
-        return None
-    try:
-        import json
-        return json.loads(sig.valor)
-    except Exception:
-        return None
-
-
-def _has_clinical_markers(dm: DocumentMemory) -> bool:
-    text = ""
-    if dm.layer2 and dm.layer2.texto_ocr_literal:
-        text = (dm.layer2.texto_ocr_literal.valor or "").lower()
-    if not text:
-        return False
-    return any(term in text for term in ["cid", "crm", "atestado", "internado", "diagnost", "laudo", "parecer"])
-
-
 def _needs_escalation_after_extract(dm: DocumentMemory) -> bool:
-    page_evidence = _load_json_signal(dm, "page_evidence_v1") or []
-    if not isinstance(page_evidence, list) or not page_evidence:
-        return True
-
-    anchors = []
-    exact = 0
-    patient_present = False
-    provider_present = False
-
-    for item in page_evidence:
-        item_anchors = item.get("anchors") or []
-        anchors.extend(item_anchors)
-        exact += sum(1 for a in item_anchors if a.get("bbox"))
-        people = item.get("people") or {}
-        patient_present = patient_present or bool(people.get("patient_name"))
-        provider_present = provider_present or bool(people.get("provider_name"))
-
-    if not anchors:
-        return True
-
-    exact_rate = exact / max(len(anchors), 1)
-    if exact_rate < 0.60:
-        return True
-
-    if _has_clinical_markers(dm) and not (patient_present or provider_present):
-        return True
-
-    return False
+    return needs_escalation_after_extract(dm)
 
 
 async def _run_fast_pipeline(dm: DocumentMemory) -> DocumentMemory:
@@ -448,12 +366,7 @@ async def _run_extract_pipeline(dm: DocumentMemory) -> DocumentMemory:
         dm,
         etapa="processing_decision",
         engine="services.orchestration.decision_v1",
-        detalhes={
-            "mode": decision.mode,
-            "reasons": decision.reasons,
-            "confidence": decision.confidence,
-            "signals": asdict(preflight),
-        },
+        detalhes=build_processing_decision_details(preflight, decision),
     )
 
     if decision.mode == "fast":
@@ -464,11 +377,8 @@ async def _run_extract_pipeline(dm: DocumentMemory) -> DocumentMemory:
                 dm,
                 etapa="processing_escalation",
                 engine="services.orchestration.decision_v1",
-                detalhes={
-                    "from_mode": "fast",
-                    "to_mode": "standard",
-                    "reason": "low_extract_quality_after_fast_path",
-                },
+                status="warning",
+                detalhes=build_escalation_details(from_mode="fast", to_mode="standard"),
             )
             dm = await _run_standard_pipeline(dm)
 
@@ -525,6 +435,11 @@ async def ingest(
         return {
             "documentid": existing_dm.layer0.documentid,
             "blob_uri": existing_uri,
+            "artifact_uri": existing_uri,
+            "local_file_uri": existing_uri,
+            "storage_kind": _LOCAL_FILE_STORAGE_KIND,
+            "storage_state": _LOCAL_FILE_STORAGE_STATE,
+            "is_remote_blob": False,
             "hash": digest,
             "deduplicated": True,
         }
@@ -608,6 +523,11 @@ async def ingest(
     return {
         "documentid": layer0.documentid,
         "blob_uri": str(target_path),
+        "artifact_uri": str(target_path),
+        "local_file_uri": str(target_path),
+        "storage_kind": _LOCAL_FILE_STORAGE_KIND,
+        "storage_state": _LOCAL_FILE_STORAGE_STATE,
+        "is_remote_blob": False,
         "hash": digest,
         "deduplicated": False,
     }
@@ -715,3 +635,13 @@ async def get_document_timeline(documentid: str):
 
     dm = DocumentMemory.model_validate(dm_dict)
     return build_document_timeline_read_model(dm)
+
+
+@app.get("/documents/{documentid}/case")
+async def get_document_case(documentid: str):
+    dm_dict = await mongo_store.get(documentid)
+    if dm_dict is None:
+        raise HTTPException(status_code=404, detail="Documento não encontrado")
+
+    dm = DocumentMemory.model_validate(dm_dict)
+    return build_document_case_read_model(dm)

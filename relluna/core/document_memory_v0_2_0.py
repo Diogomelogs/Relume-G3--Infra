@@ -3,7 +3,7 @@
 # ============================================================
 
 from .document_memory import (
-    DocumentMemory as DocumentMemory,
+    DocumentMemory_v0_2_0 as DocumentMemory,
     DocumentMemory_v0_2_0 as DocumentMemory_v0_2_0,
     DocumentMemoryCanonical as DocumentMemoryCanonical,
 )

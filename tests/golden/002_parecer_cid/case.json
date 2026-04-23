@@ -1,0 +1,137 @@
+{
+  "id": "002_parecer_cid",
+  "title": "Parecer medico com CID e data documental",
+  "expected": {
+    "entities": {
+      "patient": "JOAO CARLOS LIMA",
+      "provider": "DR. ROBERTO ALMEIDA",
+      "mother": "TERESA LIMA",
+      "cids": ["F32.1"],
+      "document_date": "2024-01-22"
+    },
+    "events": [
+      {"event_type": "parecer_emitido", "date_iso": "2024-01-22"},
+      {"event_type": "registro_condicao_clinica", "date_iso": "2024-01-22"}
+    ],
+    "forbidden_document_dates": ["1988-11-03"],
+    "legally_useful_event_types": [
+      "parecer_emitido",
+      "registro_condicao_clinica",
+      "document_issue_date"
+    ]
+  },
+  "actual": {
+    "document_type": "parecer_medico",
+    "entities": {
+      "patient": {
+        "value": "JOAO CARLOS LIMA",
+        "provenance_status": "observed",
+        "confidence": 0.95,
+        "evidence": {
+          "source_path": "layer2.sinais_documentais.page_evidence_v1",
+          "page": 1,
+          "snippet": "Paciente: JOAO CARLOS LIMA",
+          "bbox": [64, 116, 286, 136]
+        }
+      },
+      "provider": {
+        "value": "DR. ROBERTO ALMEIDA",
+        "provenance_status": "observed",
+        "confidence": 0.93,
+        "evidence": {
+          "source_path": "layer2.sinais_documentais.page_evidence_v1",
+          "page": 2,
+          "snippet": "Dr. Roberto Almeida CRM 99887 RJ",
+          "bbox": [74, 612, 340, 636]
+        }
+      },
+      "mother": {
+        "value": "TERESA LIMA",
+        "provenance_status": "observed",
+        "confidence": 0.88,
+        "evidence": {
+          "source_path": "layer2.sinais_documentais.page_evidence_v1",
+          "page": 1,
+          "snippet": "Mae: TERESA LIMA",
+          "bbox": [64, 142, 235, 162]
+        }
+      },
+      "cids": [
+        {
+          "value": "F32.1",
+          "provenance_status": "observed",
+          "confidence": 0.94,
+          "evidence": {
+            "source_path": "layer2.sinais_documentais.page_evidence_v1",
+            "page": 2,
+            "snippet": "Hipotese diagnostica: CID F32.1",
+            "bbox": [74, 286, 350, 310]
+          }
+        }
+      ],
+      "document_date": {
+        "value": "2024-01-22",
+        "date_iso": "2024-01-22",
+        "provenance_status": "observed",
+        "confidence": 0.91,
+        "evidence": {
+          "source_path": "layer2.sinais_documentais.page_evidence_v1",
+          "page": 2,
+          "snippet": "Rio de Janeiro, 22/01/2024",
+          "bbox": [312, 580, 510, 604]
+        }
+      }
+    },
+    "events": [
+      {
+        "event_type": "parecer_emitido",
+        "title": "Emissao de parecer medico",
+        "description": "Parecer medico emitido em 2024-01-22 por DR. ROBERTO ALMEIDA.",
+        "date_iso": "2024-01-22",
+        "provenance_status": "observed",
+        "review_state": "auto_confirmed",
+        "confidence": 0.93,
+        "entities": {
+          "patient": "JOAO CARLOS LIMA",
+          "provider": "DR. ROBERTO ALMEIDA",
+          "cids": ["F32.1"]
+        },
+        "evidence": {
+          "source_path": "layer2.sinais_documentais.timeline_seed_v2",
+          "page": 2,
+          "snippet": "Rio de Janeiro, 22/01/2024",
+          "bbox": [312, 580, 510, 604]
+        }
+      },
+      {
+        "event_type": "registro_condicao_clinica",
+        "title": "Registro de condicao clinica",
+        "description": "Registro de CID F32.1 vinculado ao parecer de JOAO CARLOS LIMA.",
+        "date_iso": "2024-01-22",
+        "provenance_status": "inferred",
+        "review_state": "review_recommended",
+        "confidence": 0.86,
+        "entities": {
+          "patient": "JOAO CARLOS LIMA",
+          "provider": "DR. ROBERTO ALMEIDA",
+          "cids": ["F32.1"]
+        },
+        "evidence": {
+          "source_path": "layer2.sinais_documentais.timeline_seed_v2",
+          "page": 2,
+          "snippet": "CID F32.1",
+          "bbox": [74, 286, 350, 310]
+        }
+      }
+    ],
+    "review_items": [
+      {
+        "field": "registro_condicao_clinica",
+        "value": "F32.1",
+        "review_state": "review_recommended",
+        "provenance_status": "inferred"
+      }
+    ],
+    "warnings": []
+  }
+}

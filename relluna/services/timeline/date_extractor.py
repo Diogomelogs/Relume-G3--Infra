@@ -1,3 +1,12 @@
+"""
+STATUS: legado
+
+Extrator temporal simplificado do caminho paralelo `services/timeline/*`.
+Hoje não é usado pelo pipeline oficial nem pela timeline pública.
+
+Mantido temporariamente para evitar remoção abrupta sem documentação.
+"""
+
 import re
 from datetime import datetime
 

@@ -4,8 +4,9 @@ from relluna.core.document_memory import DocumentMemory, MediaType
 from relluna.core.contracts.document_memory_contract import (
     Layer5Derivatives,
     Derivado,
-    StorageURI,
 )
+
+_PLACEHOLDER_PERSISTENCE_STATE = "placeholder_not_persisted"
 
 
 def apply_layer5(dm: DocumentMemory) -> DocumentMemory:
@@ -18,7 +19,8 @@ def apply_layer5(dm: DocumentMemory) -> DocumentMemory:
       * video: frame_chave
       * audio: waveform
       * documento: preview
-    - Marca persistência como "stored" e preenche storage_uris fake.
+    - Mantém derivados como placeholders explícitos.
+    - Não afirma persistência real enquanto não houver backend de storage.
     """
     # layer5 pode vir como dict (DocumentMemory v0.2.0), então sempre sobrescreve
     if dm.layer5 is None or not isinstance(dm.layer5, Layer5Derivatives):
@@ -56,10 +58,7 @@ def apply_layer5(dm: DocumentMemory) -> DocumentMemory:
             Derivado(tipo="preview", uri="generated://preview.pdf")
         )
 
-    # Persistência fake exigida pelos testes
-    dm.layer5.storage_uris = [
-        StorageURI(uri="https://local.blob/fake", kind="blob")
-    ]
-    dm.layer5.persistence_state = "stored"
+    dm.layer5.storage_uris = []
+    dm.layer5.persistence_state = _PLACEHOLDER_PERSISTENCE_STATE
 
     return dm

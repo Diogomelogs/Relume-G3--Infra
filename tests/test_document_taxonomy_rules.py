@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timezone
 
 from relluna.core.document_memory import (
     DocumentMemory,
@@ -21,8 +21,8 @@ def _dm_with_ocr(text: str) -> DocumentMemory:
         version="v0.1.0",
         layer0=Layer0Custodia(
             documentid="doc",
-            contentfingerprint="hash",
-            ingestiontimestamp=datetime.utcnow(),
+            contentfingerprint="3" * 64,
+            ingestiontimestamp=datetime.now(timezone.utc),
             ingestionagent="test",
         ),
         layer1=Layer1Artefatos(
