@@ -17,6 +17,13 @@ class CanonicalField(BaseModel):
     confidence: float = 0.0
     source_doc_type: Optional[str] = None
     anchor: Optional[EvidenceAnchor] = None
+    assertion_level: Optional[str] = None
+    provenance_status: Optional[str] = None
+    review_state: Optional[str] = None
+    source_signal: Optional[str] = None
+    source_path: Optional[str] = None
+    evidence_refs: List[Dict[str, Any]] = []
+    reason: Optional[str] = None
 
 
 class CanonicalExtraction(BaseModel):
@@ -24,6 +31,10 @@ class CanonicalExtraction(BaseModel):
     doc_type: str
     confidence: float = 0.0
     fields: List[CanonicalField] = []
+    schema_version: str = "legal_canonical_fields_v1"
+    source_signal: Optional[str] = None
+    source_path: Optional[str] = None
+    warnings: List[str] = []
 
 
 class TimelineFact(BaseModel):
@@ -34,6 +45,12 @@ class TimelineFact(BaseModel):
     doc_type: Optional[str] = None
     anchor: Optional[EvidenceAnchor] = None
     metadata: Dict[str, Any] = {}
+    confidence: Optional[float] = None
+    assertion_level: Optional[str] = None
+    provenance_status: Optional[str] = None
+    review_state: Optional[str] = None
+    source_signal: Optional[str] = None
+    source_path: Optional[str] = None
 
 
 class LegalAlert(BaseModel):

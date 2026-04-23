@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import json
 import re
+from time import perf_counter
 from typing import Any, Dict, List, Optional
 
 from relluna.core.document_memory import DocumentMemory
@@ -12,6 +13,8 @@ from relluna.services.page_extraction.page_clinical_extractors import (
 from relluna.services.page_extraction.page_entity_extractors import (
     extract_basic_page_entities,
 )
+from relluna.services.evidence.signals import dump_critical_signal_json
+from relluna.services.observability import append_processing_event, elapsed_ms
 from relluna.services.page_extraction.page_taxonomy import classify_page_subtype
 from relluna.services.page_extraction.page_text_splitter import split_document_by_page
 
@@ -44,13 +47,15 @@ _RE_TIMESTAMP = re.compile(
 
 # Captura com labels fortes e corte antes do próximo campo.
 _RE_PATIENT_LABEL = re.compile(
-    r"(?is)\b(?:nome\s+paciente|nome\s+do\s+paciente|paciente)\s*[:\-]?\s*"
+    r"(?is)\b(?:nome\s+paciente|nome\s+do\s+paciente|paciente|nome(?!\s+da\s+m[ãa]e))\s*[:\-]?\s*"
+    r"(?:(?:sr(?:a)?|sr\.?\(a\)?|sra\.?)\.?\s+)?"
     r"([A-ZÁÀÃÂÉÊÍÓÔÕÚÇ][A-ZÁÀÃÂÉÊÍÓÔÕÚÇa-záàãâéêíóôõúç'\-\s]{4,}?)"
-    r"(?=\s+(?:nascimento|sexo|rghc|rg|cpf|data(?:/hora)?|idade|prontu[aá]rio|conv[eê]nio|plano|prestador|servi[cç]o|especialidade)\b|$)"
+    r"(?=\s+(?:nome\s+da\s+m[ãa]e|m[ãa]e|genitora|filia[cç][aã]o|nascimento|sexo|rghc|rg|cpf|data(?:/hora)?|idade|prontu[aá]rio|conv[eê]nio|plano|prestador|servi[cç]o|especialidade)\b|$)"
 )
 
 _RE_PATIENT_BODY = re.compile(
     r"(?i)(?:sr\.?\(a\)?|sr\(a\)|o\(a\)\s*sr\.?\(a\)?|paciente)\s*[:\-]?\s*"
+    r"(?:(?:sr(?:a)?|sr\.?\(a\)?|sra\.?)\.?\s+)?"
     r"([A-ZÁÀÃÂÉÊÍÓÔÕÚÇ][A-Za-zÁÀÃÂÉÊÍÓÔÕÚÇáàãâéêíóôõúç'\-]+"
     r"(?:\s+[A-ZÁÀÃÂÉÊÍÓÔÕÚÇ][A-Za-zÁÀÃÂÉÊÍÓÔÕÚÇáàãâéêíóôõúç'\-]+){1,5})"
 )
@@ -189,7 +194,7 @@ def _make_signal(dm: DocumentMemory, key: str, value: Any, metodo: str) -> Docum
         return dm
 
     dm.layer2.sinais_documentais[key] = ProvenancedString(
-        valor=json.dumps(value, ensure_ascii=False),
+        valor=dump_critical_signal_json(key, value, dm=dm),
         fonte=FONTE,
         metodo=metodo,
         estado="confirmado",
@@ -286,6 +291,7 @@ def _normalize_person_name(name: Optional[str]) -> Optional[str]:
         return None
 
     cleaned = " ".join(clean_tokens).strip()
+    cleaned = re.sub(r"(?i)^(?:sr(?:a)?|sr\.?\(a\)?|sra\.?)\.?\s+", "", cleaned).strip()
     low_clean = cleaned.lower()
 
     if any(phrase in low_clean for phrase in _HARD_NON_PERSON_PHRASES):
@@ -352,7 +358,7 @@ def _score_patient_candidate(candidate: str, lines: List[str], full_text: str) -
         wlow = _safe_lower(window)
         llow = _safe_lower(line)
 
-        if re.search(r"(?i)\bnome\s+paciente\b|\bpaciente\s*:", line):
+        if re.search(r"(?i)\bnome\s+paciente\b|\bpaciente\s*:|\bnome\s*:", line):
             score += 12.0
         if _RE_PATIENT_CONTEXT.search(window):
             score += 5.0
@@ -377,7 +383,10 @@ def _score_patient_candidate(candidate: str, lines: List[str], full_text: str) -
 
     if re.search(rf"(?i)\b{re.escape(candidate)}\b", full_text):
         score += 1.0
-    if re.search(rf"(?i)(?:nome\s+paciente|paciente)\s*[:\-]?\s*{re.escape(candidate)}", full_text):
+    if re.search(
+        rf"(?i)(?:nome\s+paciente|paciente|nome(?!\s+da\s+m[ãa]e))\s*[:\-]?\s*{re.escape(candidate)}",
+        full_text,
+    ):
         score += 10.0
     if re.search(
         rf"(?i)(esteve\s+internado\(a\)|afastado\(a\)|paciente|sr\.?\(a\)?)\D{{0,20}}{re.escape(candidate)}",
@@ -895,14 +904,18 @@ def _resolve_signal_zones(anchors: List[Dict[str, Any]]) -> List[Dict[str, Any]]
 
 
 def apply_page_analysis(dm: DocumentMemory) -> DocumentMemory:
-    if dm.layer2 is None or dm.layer2.texto_ocr_literal is None:
+    if dm.layer2 is None:
         return dm
 
     split_pages = split_document_by_page(dm)
+    if not split_pages:
+        return dm
+
     pages: List[Dict[str, Any]] = []
     layout_spans_out: List[Dict[str, Any]] = []
 
     for item in split_pages:
+        page_started = perf_counter()
         page_no = item["page"]
         page_text = item["text"]
         raw_spans = item.get("spans") or []
@@ -1011,6 +1024,22 @@ def apply_page_analysis(dm: DocumentMemory) -> DocumentMemory:
                 "signal_zones": signal_zones,
                 "anchors": anchors,
             }
+        )
+        page_duration = elapsed_ms(page_started)
+        append_processing_event(
+            dm,
+            etapa="page_analysis",
+            engine="services.page_extraction.page_pipeline",
+            status="warning" if not anchors else "success",
+            detalhes={
+                "duration_ms": page_duration,
+                "page_index": page_no,
+                "anchor_count": len(anchors),
+                "signal_zone_count": len(signal_zones),
+                "warning_code": "page_analysis_no_anchors" if not anchors else None,
+            },
+            page_index=page_no,
+            warning_code="page_analysis_no_anchors" if not anchors else None,
         )
 
     dm = _make_signal(

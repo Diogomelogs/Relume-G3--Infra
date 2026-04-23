@@ -30,10 +30,15 @@ def build_facts(extractions: List[CanonicalExtraction]) -> List[TimelineFact]:
             ("Data_Documento", "data_documento_medico"),
             ("Data_ASO", "data_aso"),
             ("Data_Entrega_EPI", "data_entrega_epi"),
+            ("Internacao_Inicio", "internacao_inicio"),
+            ("Internacao_Fim", "internacao_fim"),
+            ("Afastamento_Inicio", "afastamento_inicio"),
+            ("Afastamento_Fim_Estimado", "afastamento_fim_estimado"),
         ]:
             fld = fdict.get(field_name)
             if fld and fld.value:
-                iso = _to_iso(str(fld.value))
+                raw_value = fld.normalized_value or fld.value
+                iso = _to_iso(str(raw_value)) or (str(raw_value) if isinstance(raw_value, str) and len(str(raw_value)) == 10 and str(raw_value)[4] == "-" else None)
                 if iso:
                     facts.append(
                         TimelineFact(
@@ -44,6 +49,12 @@ def build_facts(extractions: List[CanonicalExtraction]) -> List[TimelineFact]:
                             doc_type=ext.doc_type,
                             anchor=fld.anchor,
                             metadata={"field_name": field_name},
+                            confidence=fld.confidence,
+                            assertion_level=fld.assertion_level,
+                            provenance_status=fld.provenance_status,
+                            review_state=fld.review_state,
+                            source_signal=fld.source_signal,
+                            source_path=fld.source_path,
                         )
                     )
 

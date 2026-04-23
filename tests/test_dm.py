@@ -26,13 +26,13 @@ dm = DocumentMemory(
         contentfingerprint=digest,
         ingestiontimestamp=now,
         ingestionagent="dm-test",
-        integrityproofs=[{"algoritmo": "sha256", "hash": digest}],
+        integrityproofs=[{"kind": "local_signature", "payload": {"algoritmo": "sha256", "hash": digest}}],
         juridicalreadinesslevel=0,
         processingevents=[],
     ),
     layer1=Layer1(
         midia=MediaType.imagem,
-        origem=OriginType.digitalizado,
+        origem=OriginType.digitalizado_analogico,
         artefatos=[
             ArtefatoBruto(
                 id="dm-test",

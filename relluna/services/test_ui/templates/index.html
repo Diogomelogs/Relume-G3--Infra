@@ -3,375 +3,1215 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Relluna Pipeline Tester</title>
+  <title>Relluna CaseOS v2</title>
+  <link href="https://api.fontshare.com/v2/css?f[]=satoshi@400,500,700&f[]=clash-display@500,600,700&display=swap" rel="stylesheet">
   <style>
-    :root { --bg:#f6f8fb; --panel:#fff; --text:#1f2937; --muted:#6b7280; --line:#dbe3ef; --primary:#2563eb; --primary-soft:#eaf2ff; --success:#15803d; --success-soft:#dcfce7; --warn:#b45309; --warn-soft:#fef3c7; --danger:#b91c1c; --danger-soft:#fee2e2; --shadow:0 10px 30px rgba(15,23,42,.08); --radius:14px; }
-    *{box-sizing:border-box} body{margin:0;font-family:Inter,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:linear-gradient(180deg,#f9fbff 0%,var(--bg) 100%);color:var(--text)}
-    .page{max-width:1500px;margin:0 auto;padding:28px}.hero{display:grid;grid-template-columns:1.4fr 1fr;gap:18px;margin-bottom:22px}.panel{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow)}
-    .hero-main{padding:24px}.hero-main h1{margin:0 0 8px;font-size:30px;line-height:1.15}.hero-main p{margin:0;color:var(--muted);line-height:1.55;font-size:15px}.hero-side{padding:22px;display:grid;gap:12px;align-content:start}
-    .mini-kpi{display:grid;grid-template-columns:1fr 1fr;gap:12px}.kpi{border:1px solid var(--line);border-radius:12px;padding:14px;background:#fbfdff}.kpi .label{color:var(--muted);font-size:12px;margin-bottom:6px}.kpi .value{font-size:20px;font-weight:700}
-    .hint{background:var(--primary-soft);border:1px solid #cfe0ff;color:#184c8c;padding:14px 16px;border-radius:12px;font-size:14px;line-height:1.5}.workspace{display:grid;grid-template-columns:420px 1fr;gap:18px;align-items:start}.left-stack{display:grid;gap:18px;position:sticky;top:18px}
-    .upload-card,.status-card,.tips-card{padding:20px}.section-title{margin:0 0 14px;font-size:17px;font-weight:700}.section-subtitle{margin:-6px 0 14px;color:var(--muted);font-size:13px;line-height:1.45}
-    .dropzone{border:2px dashed #b9c9e6;background:#fbfdff;border-radius:14px;padding:24px 18px;text-align:center;transition:.2s ease;cursor:pointer}.dropzone.dragover{border-color:var(--primary);background:var(--primary-soft)}.dropzone strong{display:block;margin-bottom:6px;font-size:16px}.dropzone span{color:var(--muted);font-size:13px}
-    .file-meta{margin-top:14px;display:none;padding:12px;border:1px solid var(--line);border-radius:12px;background:#fafcff;font-size:13px;line-height:1.55}.file-meta.visible{display:block} input[type=file]{display:none}
-    .actions{display:flex;gap:10px;margin-top:14px;flex-wrap:wrap} button{border:none;border-radius:10px;padding:11px 16px;font-size:14px;font-weight:600;cursor:pointer;transition:.2s ease}.btn-primary{background:var(--primary);color:#fff}.btn-primary:hover{background:#1d4ed8}.btn-secondary{background:#eef2f7;color:#334155;border:1px solid #d7dfeb}.btn-secondary:hover{background:#e8edf5} button:disabled{opacity:.6;cursor:not-allowed}
-    .status-list{display:grid;gap:10px}.step{border:1px solid var(--line);border-radius:12px;padding:12px 14px;display:flex;align-items:center;gap:12px;background:#fcfdff}.step-icon{width:28px;height:28px;border-radius:999px;display:inline-flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;background:#e5e7eb;color:#475569;flex:0 0 auto}.step.pending .step-icon{background:#e5e7eb}.step.running .step-icon{background:#dbeafe;color:#1d4ed8}.step.success .step-icon{background:var(--success-soft);color:var(--success)}.step.error .step-icon{background:var(--danger-soft);color:var(--danger)}.step-text{min-width:0}.step-title{font-weight:600;font-size:14px}.step-desc{color:var(--muted);font-size:12px;margin-top:2px}
-    .banner{border-radius:12px;padding:14px 16px;margin-top:14px;font-size:14px;line-height:1.5;display:none}.banner.visible{display:block}.banner.error{background:var(--danger-soft);color:#7f1d1d;border:1px solid #fecaca}.banner.info{background:var(--primary-soft);color:#1e3a8a;border:1px solid #cfe0ff}.banner.success{background:var(--success-soft);color:#166534;border:1px solid #bbf7d0}
-    .error-detail{margin-top:10px;padding:10px;border-radius:10px;background:rgba(255,255,255,.65);border:1px solid rgba(127,29,29,.18);font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12px;white-space:pre-wrap;word-break:break-word}
-    .tips-card ul{padding-left:18px;margin:0;color:var(--muted);font-size:14px;line-height:1.55}.results{display:grid;gap:18px}.summary-card{padding:20px}.summary-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin-top:14px}.summary-item{border:1px solid var(--line);border-radius:12px;padding:14px;background:#fbfdff;min-width:0}.summary-item .label{color:var(--muted);font-size:12px;margin-bottom:6px}.summary-item .value{font-size:14px;font-weight:700;overflow-wrap:anywhere}.meta-row{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px}.pill{display:inline-flex;align-items:center;gap:8px;padding:8px 12px;border-radius:999px;font-size:12px;font-weight:700;border:1px solid transparent}.pill.success{background:var(--success-soft);color:var(--success);border-color:#bbf7d0}.pill.warn{background:var(--warn-soft);color:var(--warn);border-color:#fde68a}.pill.info{background:var(--primary-soft);color:#1d4ed8;border-color:#bfdbfe}
-    .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(390px,1fr));gap:18px}.layer-box{padding:16px}.layer-box h3{margin:0 0 10px;font-size:15px;border-bottom:2px solid var(--primary);padding-bottom:8px}.toolbar{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:10px}.toolbar button{padding:7px 10px;font-size:12px}pre{background:#f8fafc;padding:12px;overflow-x:auto;font-size:12px;border-radius:10px;max-height:420px;border:1px solid #e5eaf2;white-space:pre-wrap;word-break:break-word;margin:0;line-height:1.45}.hidden{display:none!important}
-    @media (max-width:1100px){.hero,.workspace{grid-template-columns:1fr}.left-stack{position:static}.summary-grid{grid-template-columns:repeat(2,minmax(0,1fr))}} @media (max-width:700px){.page{padding:16px}.summary-grid{grid-template-columns:1fr}.grid{grid-template-columns:1fr}.mini-kpi{grid-template-columns:1fr}}
+    :root, [data-theme="light"] {
+      --bg: #f4f1eb;
+      --surface: rgba(255,255,255,0.78);
+      --surface-2: rgba(255,255,255,0.58);
+      --surface-3: rgba(248,245,239,0.92);
+      --border: rgba(32, 26, 18, 0.1);
+      --border-strong: rgba(32, 26, 18, 0.16);
+      --text: #1d1914;
+      --text-muted: #6f6a62;
+      --text-faint: #9f9a93;
+      --text-inverse: #f9f7f4;
+      --primary: #0b6b72;
+      --primary-2: #0088a1;
+      --primary-soft: rgba(11, 107, 114, 0.14);
+      --gold: #c88a2b;
+      --gold-soft: rgba(200, 138, 43, 0.16);
+      --danger: #ab3f58;
+      --danger-soft: rgba(171, 63, 88, 0.16);
+      --success: #427c49;
+      --success-soft: rgba(66, 124, 73, 0.16);
+      --warning: #a66a14;
+      --warning-soft: rgba(166, 106, 20, 0.16);
+      --hero-shadow: 0 40px 120px rgba(31, 24, 17, 0.12);
+      --card-shadow: 0 16px 60px rgba(31, 24, 17, 0.08);
+      --font-display: 'Clash Display', 'Inter', sans-serif;
+      --font-body: 'Satoshi', 'Inter', sans-serif;
+      --space-1: 0.25rem;
+      --space-2: 0.5rem;
+      --space-3: 0.75rem;
+      --space-4: 1rem;
+      --space-5: 1.25rem;
+      --space-6: 1.5rem;
+      --space-8: 2rem;
+      --space-10: 2.5rem;
+      --space-12: 3rem;
+      --space-16: 4rem;
+      --radius-sm: 0.75rem;
+      --radius-md: 1rem;
+      --radius-lg: 1.25rem;
+      --radius-xl: 1.75rem;
+      --radius-2xl: 2rem;
+      --radius-full: 999px;
+      --transition: 220ms cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    [data-theme="dark"] {
+      --bg: #100f0d;
+      --surface: rgba(27,25,22,0.78);
+      --surface-2: rgba(35,32,29,0.66);
+      --surface-3: rgba(26,24,21,0.94);
+      --border: rgba(255,255,255,0.08);
+      --border-strong: rgba(255,255,255,0.14);
+      --text: #e7e0d7;
+      --text-muted: #b0a79c;
+      --text-faint: #7a7269;
+      --text-inverse: #171411;
+      --primary: #71c7cf;
+      --primary-2: #56a8d5;
+      --primary-soft: rgba(113, 199, 207, 0.16);
+      --gold: #f1be6f;
+      --gold-soft: rgba(241, 190, 111, 0.16);
+      --danger: #ef8da2;
+      --danger-soft: rgba(239, 141, 162, 0.16);
+      --success: #8bcd84;
+      --success-soft: rgba(139, 205, 132, 0.16);
+      --warning: #f0b05f;
+      --warning-soft: rgba(240, 176, 95, 0.16);
+      --hero-shadow: 0 40px 120px rgba(0,0,0,0.38);
+      --card-shadow: 0 16px 60px rgba(0,0,0,0.22);
+    }
+    *{box-sizing:border-box}
+    html{scroll-behavior:smooth}
+    body{
+      margin:0;
+      min-height:100vh;
+      color:var(--text);
+      font-family:var(--font-body);
+      background:
+        radial-gradient(circle at 0% 0%, rgba(11,107,114,.22), transparent 30%),
+        radial-gradient(circle at 90% 0%, rgba(200,138,43,.12), transparent 24%),
+        radial-gradient(circle at 50% 100%, rgba(171,63,88,.08), transparent 28%),
+        linear-gradient(180deg, color-mix(in srgb, var(--bg) 92%, white 8%), var(--bg));
+      background-attachment: fixed;
+      line-height:1.55;
+    }
+    button,input,select{font:inherit}
+    button{cursor:pointer;border:none;background:none;color:inherit;transition:all var(--transition)}
+    img,svg{max-width:100%;display:block}
+    :focus-visible{outline:2px solid var(--primary);outline-offset:3px;border-radius:12px}
+    .skip-link{position:absolute;left:1rem;top:-100px;background:var(--primary);color:#fff;padding:.85rem 1rem;border-radius:999px;z-index:30}
+    .skip-link:focus{top:1rem}
+
+    .shell{
+      max-width:1720px;
+      margin:0 auto;
+      padding:1.25rem;
+      display:grid;
+      grid-template-columns: 320px minmax(0, 1fr) 420px;
+      gap:1rem;
+      align-items:start;
+    }
+    .glass{
+      background:var(--surface);
+      border:1px solid var(--border);
+      box-shadow:var(--card-shadow);
+      backdrop-filter: blur(18px);
+      -webkit-backdrop-filter: blur(18px);
+      border-radius:var(--radius-xl);
+    }
+    .sidebar,.right-rail{
+      position:sticky;
+      top:1rem;
+      display:grid;
+      gap:1rem;
+      max-height:calc(100vh - 2rem);
+      overflow:auto;
+      padding-right:4px;
+    }
+    .sidebar::-webkit-scrollbar,.right-rail::-webkit-scrollbar{width:8px}
+    .sidebar::-webkit-scrollbar-thumb,.right-rail::-webkit-scrollbar-thumb{background:var(--border-strong);border-radius:999px}
+
+    .brand-card{padding:1.2rem;background:linear-gradient(145deg, color-mix(in srgb, var(--surface-3) 84%, white 16%), color-mix(in srgb, var(--primary) 8%, var(--surface-3)))}
+    .brand-row{display:flex;justify-content:space-between;align-items:center;gap:.75rem}
+    .brand{display:flex;align-items:center;gap:.75rem;font-weight:700;letter-spacing:-.03em}
+    .brand svg{width:40px;height:40px;color:var(--primary)}
+    .theme-toggle{width:42px;height:42px;border-radius:999px;border:1px solid var(--border);background:var(--surface-2);display:grid;place-items:center}
+    .pill{display:inline-flex;align-items:center;gap:.45rem;padding:.5rem .8rem;border-radius:999px;font-size:.72rem;text-transform:uppercase;letter-spacing:.08em;font-weight:700;border:1px solid var(--border);background:var(--surface-2);color:var(--text-muted)}
+    .pill.primary{background:var(--primary-soft);color:var(--primary);border-color:transparent}
+    .pill.gold{background:var(--gold-soft);color:var(--gold);border-color:transparent}
+    .brand-card h1{font-family:var(--font-display);font-size:clamp(2rem,1.6rem + 1.2vw,3rem);line-height:.98;letter-spacing:-.05em;margin:.9rem 0 .75rem}
+    .muted{color:var(--text-muted)}
+
+    .section{padding:1.15rem}
+    .section h2,.section h3{margin:0 0 .35rem;font-size:1.06rem;letter-spacing:-.03em}
+    .section p{margin:0;color:var(--text-muted);font-size:.95rem}
+
+    .dropzone{margin-top:1rem;padding:1.5rem 1rem;border-radius:1.25rem;border:1.5px dashed color-mix(in srgb, var(--primary) 34%, var(--border));background:color-mix(in srgb, var(--primary) 4%, var(--surface-2));text-align:center;transition:all var(--transition)}
+    .dropzone.dragover{transform:translateY(-2px);background:color-mix(in srgb, var(--primary) 10%, var(--surface-2));border-color:var(--primary)}
+    .dropzone strong{display:block;margin-bottom:.35rem}
+    .dropzone span{font-size:.9rem;color:var(--text-muted)}
+    input[type=file]{display:none}
+    .file-meta,.banner{display:none;margin-top:.9rem;padding:1rem;border-radius:1rem;background:var(--surface-2);border:1px solid var(--border);font-size:.9rem}
+    .file-meta.visible,.banner.visible{display:block}
+    .banner.info{background:var(--primary-soft);color:var(--primary)}
+    .banner.success{background:var(--success-soft);color:var(--success)}
+    .banner.error{background:var(--danger-soft);color:var(--danger)}
+    .error-detail{margin-top:.6rem;padding:.75rem;border-radius:.8rem;background:rgba(0,0,0,.06);font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12px;white-space:pre-wrap;word-break:break-word;color:var(--text)}
+    .actions{display:flex;gap:.75rem;flex-wrap:wrap;margin-top:1rem}
+    .btn{min-height:46px;padding:.8rem 1rem;border-radius:1rem;font-weight:700}
+    .btn-primary{background:linear-gradient(135deg,var(--primary),var(--primary-2));color:#fff;box-shadow:0 12px 24px rgba(11,107,114,.22)}
+    .btn-secondary{background:var(--surface-2);border:1px solid var(--border)}
+
+    .status-list{display:grid;gap:.65rem;margin-top:1rem}
+    .step{display:grid;grid-template-columns:34px 1fr;gap:.75rem;padding:.75rem;border:1px solid var(--border);border-radius:1rem;background:var(--surface-2)}
+    .dot{width:34px;height:34px;border-radius:50%;display:grid;place-items:center;background:rgba(255,255,255,.14);font-weight:700}
+    .step.running .dot{background:var(--primary-soft);color:var(--primary)}
+    .step.success .dot{background:var(--success-soft);color:var(--success)}
+    .step.error .dot{background:var(--danger-soft);color:var(--danger)}
+    .step-name{font-weight:700;font-size:.93rem}
+    .step-desc{font-size:.83rem;color:var(--text-muted)}
+
+    .main{display:grid;gap:1rem}
+    .hero{
+      position:relative;
+      overflow:hidden;
+      padding:1.2rem;
+      background:
+        radial-gradient(circle at 20% 10%, rgba(11,107,114,.18), transparent 30%),
+        radial-gradient(circle at 88% 15%, rgba(200,138,43,.16), transparent 28%),
+        linear-gradient(145deg, color-mix(in srgb, var(--surface-3) 84%, white 16%), color-mix(in srgb, var(--primary) 8%, var(--surface-3)));
+      box-shadow:var(--hero-shadow);
+    }
+    .hero::after{
+      content:"";position:absolute;inset:auto -8% -20% auto;width:320px;height:320px;border-radius:50%;
+      background:radial-gradient(circle, rgba(11,107,114,.18), transparent 60%);filter:blur(10px);pointer-events:none
+    }
+    .hero-top{display:flex;justify-content:space-between;gap:1rem;flex-wrap:wrap;align-items:flex-start}
+    .hero-copy{max-width:900px}
+    .hero-copy h2{margin:.8rem 0 .8rem;font-family:var(--font-display);font-size:clamp(2.6rem,2rem + 2vw,5rem);line-height:.92;letter-spacing:-.06em;max-width:13ch}
+    .hero-copy p{margin:0;max-width:72ch;font-size:1.04rem;color:var(--text-muted)}
+    .hero-grid{display:grid;grid-template-columns:1.3fr .9fr;gap:1rem;margin-top:1.2rem}
+    .hero-panel,.metric-panel,.mini-card{border:1px solid var(--border);border-radius:1.4rem;background:var(--surface-2)}
+    .hero-panel{padding:1rem}
+    .benchmark-score{display:flex;align-items:end;justify-content:space-between;gap:1rem;margin-top:1rem}
+    .score-big{font-family:var(--font-display);font-size:clamp(3rem,2rem + 1vw,4.2rem);line-height:.9;letter-spacing:-.06em}
+    .score-sub{font-size:.92rem;color:var(--text-muted)}
+    .axis-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:.75rem;margin-top:1rem}
+    .axis{padding:.85rem;border-radius:1rem;background:rgba(255,255,255,.34);border:1px solid var(--border)}
+    .axis b{display:block;font-size:.86rem}
+    .axis span{font-size:1.05rem;font-weight:700}
+    .hero-metrics{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:.75rem}
+    .metric-panel{padding:1rem}
+    .metric-label{font-size:.73rem;text-transform:uppercase;letter-spacing:.08em;color:var(--text-muted)}
+    .metric-value{margin-top:.35rem;font-size:1.35rem;font-weight:700;letter-spacing:-.03em}
+
+    .toolbar{display:flex;justify-content:space-between;gap:1rem;flex-wrap:wrap;padding:1rem}
+    .toolbar-block{display:flex;gap:.6rem;flex-wrap:wrap;align-items:center}
+    .toolbar-title{font-size:.72rem;text-transform:uppercase;letter-spacing:.08em;color:var(--text-muted);width:100%}
+    .segmented,.chips{display:flex;gap:.5rem;flex-wrap:wrap}
+    .segmented button,.chips button{min-height:40px;padding:.6rem .85rem;border-radius:999px;border:1px solid var(--border);background:var(--surface-2);font-weight:700;font-size:.9rem}
+    .segmented button.active,.chips button.active{background:var(--primary-soft);color:var(--primary);border-color:transparent}
+    .segmented button[data-mode="cluster"].active{background:var(--gold-soft);color:var(--gold)}
+    .segmented button[data-mode="causal"].active{background:var(--danger-soft);color:var(--danger)}
+
+    .results{display:none;gap:1rem}
+    .results.visible{display:grid}
+    .canvas-layout{display:grid;grid-template-columns:minmax(0,1.6fr) minmax(320px,.9fr);gap:1rem;align-items:start}
+    .canvas{padding:1rem;display:grid;gap:1rem;position:relative;overflow:hidden}
+    .canvas-head{display:flex;justify-content:space-between;gap:1rem;flex-wrap:wrap;align-items:flex-start}
+    .canvas-head h3{margin:0;font-size:1.15rem}
+    .canvas-head p{margin:.2rem 0 0;color:var(--text-muted);font-size:.94rem}
+    .meta-row{display:flex;gap:.5rem;flex-wrap:wrap}
+
+    .mode-view.hidden{display:none}
+    .timeline-shell{position:relative;padding-left:2.2rem;display:grid;gap:.8rem}
+    .timeline-shell::before{content:"";position:absolute;left:1rem;top:0;bottom:0;width:2px;border-radius:999px;background:linear-gradient(180deg,var(--primary),transparent 92%)}
+    .group-label{position:sticky;top:0;z-index:2;display:inline-flex;width:max-content;padding:.38rem .75rem;border-radius:999px;background:color-mix(in srgb, var(--bg) 86%, transparent);backdrop-filter:blur(12px);font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--text-muted)}
+    .event-card{position:relative;margin-left:.2rem;padding:1rem;border-radius:1.3rem;background:linear-gradient(145deg, color-mix(in srgb, var(--surface-3) 88%, white 12%), var(--surface-2));border:1px solid var(--border);cursor:pointer;overflow:hidden}
+    .event-card::before{content:"";position:absolute;left:-1.5rem;top:1.3rem;width:14px;height:14px;border-radius:50%;border:3px solid var(--primary);background:var(--surface-3);box-shadow:0 0 0 5px color-mix(in srgb, var(--bg) 90%, transparent)}
+    .event-card.inferred::before{border-color:var(--warning)}
+    .event-card.estimated::before{border-color:var(--danger)}
+    .event-card.observed::before{border-color:var(--success)}
+    .event-card.selected{transform:translateY(-2px);border-color:transparent;box-shadow:0 18px 48px rgba(11,107,114,.18);background:linear-gradient(145deg, color-mix(in srgb, var(--primary) 9%, var(--surface-3)), color-mix(in srgb, var(--primary) 4%, var(--surface-2)))}
+    .event-card.related{box-shadow:0 0 0 1px rgba(200,138,43,.28) inset}
+    .event-top{display:flex;justify-content:space-between;gap:.75rem;flex-wrap:wrap;align-items:flex-start}
+    .mono{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.75rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:.06em}
+    .event-title{font-size:1.02rem;font-weight:700;letter-spacing:-.03em;margin-top:.2rem}
+    .event-desc{margin-top:.55rem;font-size:.94rem;color:var(--text-muted)}
+    .tags,.entity-pills,.warning-pills,.relations{display:flex;gap:.45rem;flex-wrap:wrap;margin-top:.8rem}
+    .tag,.entity-pill,.warning-pill,.relation-pill{padding:.38rem .62rem;border-radius:999px;font-size:.74rem;font-weight:700;border:1px solid var(--border);background:rgba(255,255,255,.3);color:var(--text-muted)}
+    .tag.primary{background:var(--primary-soft);color:var(--primary);border-color:transparent}
+    .tag.warning{background:var(--warning-soft);color:var(--warning);border-color:transparent}
+    .tag.danger{background:var(--danger-soft);color:var(--danger);border-color:transparent}
+
+    .cluster-grid,.causal-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:.85rem}
+    .cluster-card,.causal-card{padding:1rem;border-radius:1.3rem;background:linear-gradient(145deg, color-mix(in srgb, var(--surface-3) 88%, white 12%), var(--surface-2));border:1px solid var(--border)}
+    .cluster-card h4,.causal-card h4{margin:0 0 .45rem;font-size:1rem}
+    .cluster-meta,.causal-meta{font-size:.9rem;color:var(--text-muted)}
+    .cluster-list{display:grid;gap:.5rem;margin-top:.8rem}
+    .cluster-node{display:flex;justify-content:space-between;gap:.75rem;align-items:center;width:100%;padding:.7rem .8rem;border-radius:1rem;border:1px solid var(--border);background:var(--surface-2);text-align:left}
+
+    .side-stack{display:grid;gap:.9rem}
+    .summary-card,.stat-card,.quality-card,.queue-card{padding:1rem;border-radius:1.3rem;background:linear-gradient(145deg, color-mix(in srgb, var(--surface-3) 88%, white 12%), var(--surface-2));border:1px solid var(--border)}
+    .summary-card h4,.stat-card h4,.quality-card h4,.queue-card h4{margin:0 0 .35rem;font-size:1rem}
+    .stat-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:.75rem;margin-top:.85rem}
+    .stat{padding:.85rem;border-radius:1rem;background:rgba(255,255,255,.3);border:1px solid var(--border)}
+    .stat span{display:block;font-size:.75rem;text-transform:uppercase;letter-spacing:.08em;color:var(--text-muted)}
+    .stat b{display:block;margin-top:.25rem;font-size:1.2rem}
+
+    .entity-list,.warning-list,.review-list,.pipeline-list{display:grid;gap:.75rem}
+    .entity-card,.warning-card,.review-card,.pipeline-card{padding:1rem;border-radius:1.1rem;border:1px solid var(--border);background:var(--surface-2)}
+    .entity-card.selected{background:var(--primary-soft);border-color:transparent}
+    .entity-card button{width:100%;text-align:left;padding:0}
+    .item-head{display:flex;justify-content:space-between;gap:.6rem;flex-wrap:wrap;align-items:flex-start;margin-bottom:.45rem}
+    .item-title{font-weight:700;font-size:.92rem}
+    .item-body{font-size:.9rem;color:var(--text-muted)}
+
+    .mega-section{padding:1rem}
+    .mega-section h3{margin:0 0 .35rem;font-size:1.12rem}
+    .mega-section p{margin:0 0 1rem;color:var(--text-muted)}
+    .triage-grid{display:grid;grid-template-columns:1fr 1fr;gap:1rem}
+
+    .context-card{padding:1rem;display:grid;gap:1rem;overflow:hidden;position:relative}
+    .context-head{display:flex;justify-content:space-between;gap:.75rem;align-items:flex-start;flex-wrap:wrap}
+    .context-head h3{margin:.8rem 0 0;font-size:1.2rem}
+    .context-empty{padding:1.25rem;border-radius:1.2rem;border:1px dashed var(--border-strong);background:var(--surface-2);color:var(--text-muted);text-align:center}
+    .evidence-block,.focus-block{padding:1rem;border-radius:1.2rem;border:1px solid var(--border);background:linear-gradient(145deg, color-mix(in srgb, var(--primary) 6%, var(--surface-3)), var(--surface-2))}
+    .focus-block h4,.evidence-block h4{margin:0 0 .45rem;font-size:.85rem;text-transform:uppercase;letter-spacing:.08em;color:var(--text-muted)}
+    .big-title{font-size:1.1rem;font-weight:700;letter-spacing:-.03em}
+    .context-grid{display:grid;gap:.9rem}
+    .mini-list{display:grid;gap:.55rem}
+    .mini-note{padding:.75rem;border-radius:1rem;background:var(--surface-2);border:1px solid var(--border);font-size:.9rem;color:var(--text-muted)}
+
+    details{border:1px solid var(--border);border-radius:1.2rem;background:var(--surface-2);padding:0 1rem}
+    details+details{margin-top:.75rem}
+    summary{list-style:none;padding:1rem 0;cursor:pointer;font-weight:700}
+    summary::-webkit-details-marker{display:none}
+    .raw-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:.9rem;padding-bottom:1rem}
+    .raw-card{border:1px solid var(--border);border-radius:1rem;overflow:hidden;background:var(--surface-3)}
+    .raw-head{display:flex;justify-content:space-between;gap:.75rem;align-items:center;padding:.8rem 1rem;border-bottom:1px solid var(--border)}
+    .raw-head h4{margin:0;font-size:.9rem}
+    pre{margin:0;max-height:320px;overflow:auto;padding:1rem;background:rgba(0,0,0,.04);font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12px;line-height:1.45;white-space:pre-wrap;word-break:break-word;color:var(--text)}
+
+    .empty{padding:1rem;border:1px dashed var(--border-strong);border-radius:1rem;background:var(--surface-2);color:var(--text-muted)}
+    .hidden{display:none!important}
+
+    @media (max-width: 1460px){
+      .shell{grid-template-columns:300px minmax(0,1fr)}
+      .right-rail{grid-column:1/-1;position:static;max-height:none}
+    }
+    @media (max-width: 1160px){
+      .shell{grid-template-columns:1fr}
+      .sidebar,.right-rail{position:static;max-height:none;overflow:visible}
+      .canvas-layout,.hero-grid,.triage-grid{grid-template-columns:1fr}
+    }
+    @media (max-width: 760px){
+      .shell{padding:.8rem}
+      .hero-copy h2{font-size:clamp(2rem,1.6rem + 4vw,3.5rem)}
+      .hero-metrics,.axis-grid,.stat-grid{grid-template-columns:1fr 1fr}
+    }
+    @media (max-width: 560px){
+      .hero-metrics,.axis-grid,.stat-grid{grid-template-columns:1fr}
+      .actions{flex-direction:column}
+      .btn{width:100%}
+    }
+    @media (prefers-reduced-motion: reduce){
+      *,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important;scroll-behavior:auto!important}
+    }
   </style>
 </head>
 <body>
-  <div class="page">
-    <section class="hero">
-      <div class="panel hero-main">
-        <h1>Relluna Pipeline Tester</h1>
-        <p>Envie o arquivo, acompanhe o processamento por etapas e visualize a timeline e o DocumentMemory completo. A interface usa o fluxo <strong>ingest → extract → infer → leitura</strong>, reduzindo risco de timeout e expondo o stage real quando houver falha.</p>
-      </div>
-      <div class="panel hero-side">
-        <div class="mini-kpi">
-          <div class="kpi"><div class="label">Fluxo</div><div class="value">4 etapas</div></div>
-          <div class="kpi"><div class="label">Saída</div><div class="value">Timeline + camadas</div></div>
-        </div>
-        <div class="hint">Sugestão de produto: no dashboard final, o advogado deve ver primeiro a <strong>timeline</strong> e o <strong>resumo de entidades</strong>. As camadas técnicas ficam como modo avançado para auditoria.</div>
-      </div>
-    </section>
-
-    <section class="workspace">
-      <div class="left-stack">
-        <div class="panel upload-card">
-          <h2 class="section-title">Upload de documento</h2>
-          <p class="section-subtitle">PDFs escaneados, imagens, áudio e vídeo. Para documentos grandes, o fluxo em etapas melhora robustez e transparência.</p>
-          <form id="upload-form">
-            <label class="dropzone" id="dropzone" for="file-input">
-              <strong>Arraste o arquivo aqui ou clique para selecionar</strong>
-              <span>Formatos: PDF, JPG, PNG, MP4, MOV, MP3, WAV, M4A</span>
-            </label>
-            <input type="file" id="file-input" name="file" accept=".pdf,.jpg,.jpeg,.png,.mp4,.mov,.mp3,.wav,.m4a" required />
-            <div id="file-meta" class="file-meta"></div>
-            <div class="actions">
-              <button type="submit" id="submit-btn" class="btn-primary">Processar pipeline</button>
-              <button type="button" id="reset-btn" class="btn-secondary">Limpar</button>
-            </div>
-          </form>
-          <div id="banner" class="banner"></div>
-        </div>
-
-        <div class="panel status-card">
-          <h2 class="section-title">Status do processamento</h2>
-          <p class="section-subtitle">Cada etapa responde separadamente para evitar travamentos longos.</p>
-          <div id="status-list" class="status-list"></div>
-        </div>
-
-        <div class="panel tips-card">
-          <h2 class="section-title">Sugestões para o projeto</h2>
-          <ul>
-            <li>Deixar a <strong>timeline como tela principal</strong> e as camadas como painel técnico.</li>
-            <li>Mostrar <strong>warnings semânticos</strong> em destaque quando a confiança estiver baixa.</li>
-            <li>Adicionar no futuro um <strong>resumo executivo para advogado</strong> acima do JSON bruto.</li>
-            <li>Persistir o <strong>document ID</strong> para reabrir o caso sem novo upload.</li>
-          </ul>
-        </div>
-      </div>
-
-      <div class="results">
-        <div id="results" class="hidden">
-          <div class="panel summary-card">
-            <h2 class="section-title">Resumo do processamento</h2>
-            <div class="summary-grid">
-              <div class="summary-item"><div class="label">Document ID</div><div class="value" id="document-id">-</div></div>
-              <div class="summary-item"><div class="label">Hash</div><div class="value" id="document-hash">-</div></div>
-              <div class="summary-item"><div class="label">Deduplicado</div><div class="value" id="document-dedup">-</div></div>
-              <div class="summary-item"><div class="label">Tempo total</div><div class="value" id="elapsed-time">-</div></div>
-            </div>
-            <div class="meta-row">
-              <span class="pill success">Pipeline concluído</span>
-              <span class="pill info" id="summary-note">Fluxo em etapas executado com sucesso</span>
-            </div>
+  <a class="skip-link" href="#main">Pular para o conteúdo principal</a>
+  <div class="shell">
+    <aside class="sidebar" aria-label="Controles e contexto de produto">
+      <section class="glass brand-card">
+        <div class="brand-row">
+          <div class="brand">
+            <svg viewBox="0 0 48 48" fill="none" aria-hidden="true">
+              <rect x="8" y="8" width="32" height="32" rx="10" stroke="currentColor" stroke-width="2.5"></rect>
+              <path d="M16 28L22 20L27 24L34 16" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"></path>
+              <circle cx="16" cy="28" r="2.4" fill="currentColor"></circle>
+              <circle cx="22" cy="20" r="2.4" fill="currentColor"></circle>
+              <circle cx="27" cy="24" r="2.4" fill="currentColor"></circle>
+              <circle cx="34" cy="16" r="2.4" fill="currentColor"></circle>
+            </svg>
+            <span>Relluna CaseOS</span>
           </div>
+          <button class="theme-toggle" type="button" data-theme-toggle aria-label="Alternar tema"></button>
+        </div>
+        <div style="margin-top:1rem">
+          <span class="pill primary">Medical-legal intelligence</span>
+        </div>
+        <h1>Um cockpit probatório que parece premium, confiável e indispensável.</h1>
+        <p class="muted">Esta versão traduz a arquitetura real da Relluna em produto: cadeia de custódia explícita, evidência determinística, inferência controlada, timeline pública, revisão humana e benchmark auditável como parte da experiência principal.</p>
+      </section>
 
-          <div class="grid">
-            <div class="panel layer-box"><div class="toolbar"><h3>L0 - Custódia</h3><button class="btn-secondary" data-copy="layer0-json">Copiar</button></div><pre id="layer0-json"></pre></div>
-            <div class="panel layer-box"><div class="toolbar"><h3>L1 - Artefatos</h3><button class="btn-secondary" data-copy="layer1-json">Copiar</button></div><pre id="layer1-json"></pre></div>
-            <div class="panel layer-box"><div class="toolbar"><h3>L2 - Extração/OCR</h3><button class="btn-secondary" data-copy="layer2-json">Copiar</button></div><pre id="layer2-json"></pre></div>
-            <div class="panel layer-box"><div class="toolbar"><h3>L3 - Inferência de contexto</h3><button class="btn-secondary" data-copy="layer3-json">Copiar</button></div><pre id="layer3-json"></pre></div>
-            <div class="panel layer-box"><div class="toolbar"><h3>L4 - Normalização</h3><button class="btn-secondary" data-copy="layer4-json">Copiar</button></div><pre id="layer4-json"></pre></div>
-            <div class="panel layer-box"><div class="toolbar"><h3>L5 - Derivados</h3><button class="btn-secondary" data-copy="layer5-json">Copiar</button></div><pre id="layer5-json"></pre></div>
-            <div class="panel layer-box"><div class="toolbar"><h3>Timeline</h3><button class="btn-secondary" data-copy="timeline-json">Copiar</button></div><pre id="timeline-json"></pre></div>
-            <div class="panel layer-box"><div class="toolbar"><h3>DocumentMemory completo</h3><button class="btn-secondary" data-copy="document-json">Copiar</button></div><pre id="document-json"></pre></div>
+      <section class="glass section">
+        <h2>Upload e operação</h2>
+        <p>A experiência continua orientada ao pipeline real de ingestão, extração, inferência e leitura pública do documento.</p>
+        <form id="upload-form">
+          <label for="file-input" id="dropzone" class="dropzone">
+            <strong>Envie o documento do caso</strong>
+            <span>PDF, imagem, áudio ou vídeo, com trilha de custódia, timeline, entidades e revisão.</span>
+          </label>
+          <input id="file-input" name="file" type="file" accept=".pdf,.jpg,.jpeg,.png,.mp4,.mov,.mp3,.wav,.m4a" required>
+          <div id="file-meta" class="file-meta"></div>
+          <div class="actions">
+            <button id="submit-btn" class="btn btn-primary" type="submit">Rodar pipeline</button>
+            <button id="reset-btn" class="btn btn-secondary" type="button">Limpar workspace</button>
+          </div>
+        </form>
+        <div id="banner" class="banner"></div>
+      </section>
+
+      <section class="glass section">
+        <h2>Pipeline observável</h2>
+        <p>O produto mostra que não esconde o processo. Custódia, extração, inferência e timeline continuam rastreáveis.</p>
+        <div id="status-list" class="status-list"></div>
+      </section>
+
+      <section class="glass section">
+        <h2>Camadas da memória</h2>
+        <p>A leitura foi alinhada com a arquitetura real da DocumentMemory, das camadas de custódia até os read models públicos.</p>
+        <div class="status-list" style="margin-top:1rem">
+          <div class="step success"><div class="dot">L0</div><div><div class="step-name">Custódia e integridade</div><div class="step-desc">Hash, fingerprint, processing events e readiness level.</div></div></div>
+          <div class="step success"><div class="dot">L2</div><div><div class="step-name">Evidência determinística</div><div class="step-desc">OCR, page_evidence_v1, entities_canonical_v1 e timeline_seed_v2.</div></div></div>
+          <div class="step success"><div class="dot">L3</div><div><div class="step-name">Eventos probatórios</div><div class="step-desc">Fonte semântica principal para a timeline futura do produto.</div></div></div>
+          <div class="step success"><div class="dot">L5</div><div><div class="step-name">Read models públicos</div><div class="step-desc">timeline_v1, entity_summary_v1 e review_items_v1 para uso em UX.</div></div></div>
+        </div>
+      </section>
+    </aside>
+
+    <main class="main" id="main">
+      <section class="glass hero">
+        <div class="hero-top">
+          <div class="hero-copy">
+            <span class="pill gold">Benchmark e produto no mesmo plano</span>
+            <h2>Rigor auditável com linguagem de produto que dá vontade de usar.</h2>
+            <p>Em vez de parecer uma ferramenta interna, esta versão posiciona a Relluna como um produto premium para advogado, perito e operação: uma superfície que combina timeline pública, clusters de entidades, causalidade, confiança, benchmark e fila de revisão em uma só narrativa. [file:34][file:33]</p>
           </div>
         </div>
-      </div>
-    </section>
+        <div class="hero-grid">
+          <section class="hero-panel">
+            <div class="pill primary">Benchmark médico-jurídico</div>
+            <div class="benchmark-score">
+              <div>
+                <div class="score-big" id="benchmark-overall">84.82</div>
+                <div class="score-sub">Score geral atual do benchmark auditável</div>
+              </div>
+              <div class="pill gold" id="benchmark-cases">3 casos avaliados</div>
+            </div>
+            <div class="axis-grid">
+              <div class="axis"><b>Entidades</b><span id="axis-entidades">93.33</span></div>
+              <div class="axis"><b>Eventos</b><span id="axis-eventos">66.67</span></div>
+              <div class="axis"><b>Evidência</b><span id="axis-evidencia">100.00</span></div>
+              <div class="axis"><b>Confiabilidade</b><span id="axis-confiabilidade">97.44</span></div>
+            </div>
+          </section>
+          <section class="hero-metrics">
+            <div class="metric-panel"><div class="metric-label">Document ID</div><div class="metric-value" id="document-id">-</div></div>
+            <div class="metric-panel"><div class="metric-label">Tipo documental</div><div class="metric-value" id="document-type">-</div></div>
+            <div class="metric-panel"><div class="metric-label">Data canônica</div><div class="metric-value" id="canonical-date">-</div></div>
+            <div class="metric-panel"><div class="metric-label">Timeline consistency</div><div class="metric-value" id="timeline-score">100</div></div>
+            <div class="metric-panel"><div class="metric-label">Readiness level</div><div class="metric-value" id="readiness-level">-</div></div>
+            <div class="metric-panel"><div class="metric-label">Tempo do fluxo</div><div class="metric-value" id="elapsed-time">-</div></div>
+          </section>
+        </div>
+      </section>
+
+      <section class="glass toolbar">
+        <div class="toolbar-block">
+          <div class="toolbar-title">Modo</div>
+          <div class="segmented" id="mode-switch">
+            <button type="button" class="active" data-mode="timeline">Timeline</button>
+            <button type="button" data-mode="cluster">Clusters</button>
+            <button type="button" data-mode="causal">Causal</button>
+          </div>
+        </div>
+        <div class="toolbar-block">
+          <div class="toolbar-title">Confiança</div>
+          <div class="chips" id="filter-row">
+            <button type="button" class="active" data-filter="all">Todos</button>
+            <button type="button" data-filter="observed">Observado</button>
+            <button type="button" data-filter="inferred">Inferido</button>
+            <button type="button" data-filter="estimated">Estimado</button>
+          </div>
+        </div>
+        <div class="toolbar-block">
+          <div class="toolbar-title">Prioridades de produto</div>
+          <div class="chips">
+            <button type="button" class="active" disabled>Evidência</button>
+            <button type="button" class="active" disabled>Confiabilidade</button>
+            <button type="button" class="active" disabled>Utilidade jurídica</button>
+          </div>
+        </div>
+      </section>
+
+      <section id="results" class="results">
+        <div class="canvas-layout">
+          <section class="glass canvas">
+            <div class="canvas-head">
+              <div>
+                <h3>Case canvas</h3>
+                <p id="canvas-description">Timeline pública com foco compartilhado entre evento, evidência, entidades e revisão.</p>
+              </div>
+              <div class="meta-row">
+                <span class="pill" id="pipeline-pill">Layer3 → timeline pública</span>
+                <span class="pill primary" id="review-pill">Pendências: -</span>
+                <span class="pill gold" id="utility-pill">Utilidade jurídica: 66.67</span>
+              </div>
+            </div>
+            <div id="timeline-view" class="mode-view"></div>
+            <div id="cluster-view" class="mode-view hidden"></div>
+            <div id="causal-view" class="mode-view hidden"></div>
+          </section>
+
+          <aside class="side-stack">
+            <section class="summary-card">
+              <h4>Resumo executivo</h4>
+              <p id="executive-summary">Carregue um documento para construir o resumo executivo do caso.</p>
+            </section>
+            <section class="stat-card">
+              <h4>Indicadores de decisão</h4>
+              <div class="stat-grid" id="stat-grid"></div>
+            </section>
+            <section class="quality-card">
+              <h4>Qualidade e benchmark</h4>
+              <p>O benchmark mostrou excelência em evidência e confiabilidade, mas espaço de melhoria em eventos e utilidade jurídica; esta UI puxa exatamente nessas direções. [file:33]</p>
+              <div class="mini-list" style="margin-top:.85rem">
+                <div class="mini-note">Cada evento relevante deve expor data, título, descrição, entidades, evidência, confiança e estado de revisão. [file:33][file:34]</div>
+                <div class="mini-note">Eventos inferidos ou estimados não podem parecer observados. [file:34]</div>
+                <div class="mini-note">Divergências entre seed e Layer3 devem ficar explícitas na experiência. [file:34]</div>
+              </div>
+            </section>
+            <section class="queue-card">
+              <h4>Entidades críticas</h4>
+              <div id="entity-list" class="entity-list" style="margin-top:.85rem"></div>
+            </section>
+          </aside>
+        </div>
+
+        <section class="glass mega-section">
+          <h3>Triage board</h3>
+          <p>Conflitos automáticos e revisão humana aparecem no mesmo plano porque ambos afetam a prontidão jurídica do documento e a confiança do operador. [file:34]</p>
+          <div class="triage-grid">
+            <div id="warning-list" class="warning-list"></div>
+            <div id="review-list" class="review-list"></div>
+          </div>
+        </section>
+
+        <section class="glass mega-section">
+          <h3>Processing events</h3>
+          <p>Fallbacks, warnings operacionais, page_index e duração ficam visíveis para suportar auditoria de pipeline e debug de produção. [file:34]</p>
+          <div id="pipeline-list" class="pipeline-list"></div>
+        </section>
+
+        <section class="glass mega-section">
+          <h3>Modo técnico</h3>
+          <p>A experiência continua elegante, mas não esconde a estrutura real de camadas, contratos legados, sinais intermediários e read models públicos. [file:34]</p>
+          <details>
+            <summary>Timeline pública e read models</summary>
+            <div class="raw-grid">
+              <div class="raw-card"><div class="raw-head"><h4>Timeline pública</h4><button class="btn btn-secondary" data-copy="timeline-json">Copiar</button></div><pre id="timeline-json"></pre></div>
+              <div class="raw-card"><div class="raw-head"><h4>Layer5.read_models</h4><button class="btn btn-secondary" data-copy="read-models-json">Copiar</button></div><pre id="read-models-json"></pre></div>
+            </div>
+          </details>
+          <details>
+            <summary>DocumentMemory por camada</summary>
+            <div class="raw-grid">
+              <div class="raw-card"><div class="raw-head"><h4>Layer0</h4><button class="btn btn-secondary" data-copy="layer0-json">Copiar</button></div><pre id="layer0-json"></pre></div>
+              <div class="raw-card"><div class="raw-head"><h4>Layer1</h4><button class="btn btn-secondary" data-copy="layer1-json">Copiar</button></div><pre id="layer1-json"></pre></div>
+              <div class="raw-card"><div class="raw-head"><h4>Layer2</h4><button class="btn btn-secondary" data-copy="layer2-json">Copiar</button></div><pre id="layer2-json"></pre></div>
+              <div class="raw-card"><div class="raw-head"><h4>Layer3</h4><button class="btn btn-secondary" data-copy="layer3-json">Copiar</button></div><pre id="layer3-json"></pre></div>
+              <div class="raw-card"><div class="raw-head"><h4>Layer4</h4><button class="btn btn-secondary" data-copy="layer4-json">Copiar</button></div><pre id="layer4-json"></pre></div>
+              <div class="raw-card"><div class="raw-head"><h4>Layer5</h4><button class="btn btn-secondary" data-copy="layer5-json">Copiar</button></div><pre id="layer5-json"></pre></div>
+            </div>
+          </details>
+          <details>
+            <summary>Documento consolidado</summary>
+            <div class="raw-grid">
+              <div class="raw-card"><div class="raw-head"><h4>DocumentMemory</h4><button class="btn btn-secondary" data-copy="document-json">Copiar</button></div><pre id="document-json"></pre></div>
+            </div>
+          </details>
+        </section>
+      </section>
+    </main>
+
+    <aside class="right-rail" aria-label="Painel contextual e benchmark">
+      <section class="glass context-card">
+        <div class="context-head">
+          <div>
+            <span class="pill primary">Context focus</span>
+            <h3>Prova, não só visualização</h3>
+          </div>
+          <div class="pill" id="selection-status">Nenhum foco</div>
+        </div>
+        <div id="context-body" class="context-empty">Selecione um evento, cluster ou entidade para abrir o painel de foco com evidência navegável, entidades vinculadas, warnings próximos, revisão e impacto jurídico.</div>
+      </section>
+
+      <section class="glass section">
+        <h3>Por que alguém pagaria por isso</h3>
+        <p>Porque o produto não apenas extrai dados: ele transforma prova dispersa em narrativa confiável, auditável e apresentável, reduzindo ambiguidade na leitura do caso. [file:34][file:33]</p>
+        <div class="mini-list" style="margin-top:1rem">
+          <div class="mini-note">Mostra claramente o que é observado, inferido e estimado. [file:33][file:34]</div>
+          <div class="mini-note">Prioriza paciente, prestador, CID, data documental e tipo de evento como filtros principais. [file:34]</div>
+          <div class="mini-note">Expõe regressões críticas como data documental proibida e eventos ausentes. [file:33]</div>
+        </div>
+      </section>
+
+      <section class="glass section">
+        <h3>Referência de produto</h3>
+        <p>Esta interface assume que benchmark, confiabilidade, revisão e fonte de verdade são parte da UX, não só do backend. Isso alinha a camada visual à migração real da timeline seed-based para Layer3-based. [file:34]</p>
+      </section>
+    </aside>
   </div>
 
   <script>
-    const form = document.getElementById("upload-form");
-    const fileInput = document.getElementById("file-input");
-    const dropzone = document.getElementById("dropzone");
-    const fileMeta = document.getElementById("file-meta");
-    const banner = document.getElementById("banner");
-    const results = document.getElementById("results");
-    const submitBtn = document.getElementById("submit-btn");
-    const resetBtn = document.getElementById("reset-btn");
-    const statusList = document.getElementById("status-list");
+    const form = document.getElementById('upload-form');
+    const fileInput = document.getElementById('file-input');
+    const dropzone = document.getElementById('dropzone');
+    const fileMeta = document.getElementById('file-meta');
+    const banner = document.getElementById('banner');
+    const submitBtn = document.getElementById('submit-btn');
+    const resetBtn = document.getElementById('reset-btn');
+    const results = document.getElementById('results');
+    const statusList = document.getElementById('status-list');
+    const themeToggle = document.querySelector('[data-theme-toggle]');
+    const htmlRoot = document.documentElement;
+
+    const benchmark = {
+      overall: 84.82,
+      cases: 3,
+      axes: {
+        entidades: 93.33,
+        eventos: 66.67,
+        evidencia: 100.00,
+        confiabilidade: 97.44,
+        utilidade_juridica: 66.67,
+      },
+      regressions: [
+        'document_date divergente do esperado em caso crítico',
+        'evento obrigatório ausente: document_issue_date',
+        'evento proibido presente com data de nascimento',
+        'data documental usa data proibida, provável nascimento',
+      ]
+    };
+
+    const state = {
+      ingestData: null,
+      documentData: null,
+      timelineData: null,
+      activeMode: 'timeline',
+      activeFilter: 'all',
+      selectedEventId: null,
+      selectedEntity: null,
+      warnings: [],
+      reviewItems: [],
+      clusters: [],
+      causalLinks: []
+    };
 
     const steps = [
-      { key: "ingest", title: "Ingest", desc: "Upload e registro do documento" },
-      { key: "extract", title: "Extract", desc: "Extração, OCR e evidências" },
-      { key: "infer", title: "Inferência", desc: "Contexto, normalização e derivados" },
-      { key: "read", title: "Leitura", desc: "Busca do documento e timeline" },
+      { key: 'ingest', title: 'Ingestão', desc: 'Fingerprint, custódia, deduplicação e persistência inicial' },
+      { key: 'extract', title: 'Extração', desc: 'OCR, decomposição, sinais de página e entidades canônicas' },
+      { key: 'infer', title: 'Inferência', desc: 'Timeline seed, eventos probatórios, Layer4 e Layer5' },
+      { key: 'read', title: 'Read models', desc: 'Timeline pública e painel consolidado por documento' },
     ];
-
     const stepState = new Map();
-    let startTime = null;
 
-    function pretty(value) { return JSON.stringify(value, null, 2); }
-
-    function formatBytes(bytes) {
-      if (!Number.isFinite(bytes)) return "-";
-      const units = ["B", "KB", "MB", "GB"];
-      let value = bytes;
-      let index = 0;
-      while (value >= 1024 && index < units.length - 1) { value /= 1024; index += 1; }
-      return `${value.toFixed(value >= 10 || index === 0 ? 0 : 1)} ${units[index]}`;
-    }
-
-    function formatElapsed(ms) {
-      if (!Number.isFinite(ms)) return "-";
-      if (ms < 1000) return `${ms} ms`;
-      const seconds = (ms / 1000).toFixed(1);
-      return `${seconds}s`;
-    }
-
-    function setBanner(type, message, detail = null) {
-      banner.className = `banner visible ${type}`;
-      const detailHtml = detail ? `<div class="error-detail">${escapeHtml(detail)}</div>` : "";
-      banner.innerHTML = `<div>${escapeHtml(message)}</div>${detailHtml}`;
-    }
-
-    function clearBanner() {
-      banner.className = "banner";
-      banner.innerHTML = "";
-    }
-
-    function escapeHtml(value) {
-      return String(value || "")
-        .replaceAll("&", "&amp;")
-        .replaceAll("<", "&lt;")
-        .replaceAll(">", "&gt;")
-        .replaceAll('"', "&quot;")
-        .replaceAll("'", "&#039;");
-    }
-
-    function initSteps() {
-      stepState.clear();
-      statusList.innerHTML = "";
-      steps.forEach(step => {
-        stepState.set(step.key, { ...step, state: "pending", note: "" });
+    function initTheme() {
+      let current = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+      htmlRoot.setAttribute('data-theme', current);
+      paintThemeToggle(current);
+      themeToggle.addEventListener('click', () => {
+        current = current === 'dark' ? 'light' : 'dark';
+        htmlRoot.setAttribute('data-theme', current);
+        paintThemeToggle(current);
       });
-      renderSteps();
+    }
+    function paintThemeToggle(theme) {
+      themeToggle.setAttribute('aria-label', `Alternar para modo ${theme === 'dark' ? 'claro' : 'escuro'}`);
+      themeToggle.innerHTML = theme === 'dark'
+        ? '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"></circle><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"></path></svg>'
+        : '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>';
     }
 
-    function updateStep(key, state, note = "") {
-      const current = stepState.get(key);
-      if (!current) return;
-      current.state = state;
-      current.note = note;
-      renderSteps();
+    function safeText(value, fallback='-'){ return value === null || value === undefined || value === '' ? fallback : String(value); }
+    function escapeHtml(value){ return String(value ?? '').replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;').replaceAll('"','&quot;').replaceAll("'",'&#039;'); }
+    function pretty(value){ return JSON.stringify(value, null, 2); }
+    function normalizeArray(value){ return Array.isArray(value) ? value : []; }
+    function formatBytes(bytes){ if(!Number.isFinite(bytes)) return '-'; const units=['B','KB','MB','GB']; let size=bytes,i=0; while(size>=1024&&i<units.length-1){size/=1024;i++;} return `${size.toFixed(size>=10||i===0?0:1)} ${units[i]}`; }
+    function formatElapsed(ms){ if(!Number.isFinite(ms)) return '-'; return ms < 1000 ? `${ms} ms` : `${(ms/1000).toFixed(1)} s`; }
+    function classForProvenance(status){ if(status==='exact'||status==='observed') return 'observed'; if(status==='estimated') return 'estimated'; return 'inferred'; }
+    function setBanner(type, message, detail=null){ banner.className=`banner visible ${type}`; banner.innerHTML=`<div>${escapeHtml(message)}</div>${detail?`<div class="error-detail">${escapeHtml(detail)}</div>`:''}`; }
+    function clearBanner(){ banner.className='banner'; banner.innerHTML=''; }
+
+    function fillBenchmarkUi(){
+      document.getElementById('benchmark-overall').textContent = benchmark.overall.toFixed(2);
+      document.getElementById('benchmark-cases').textContent = `${benchmark.cases} casos avaliados`;
+      document.getElementById('axis-entidades').textContent = benchmark.axes.entidades.toFixed(2);
+      document.getElementById('axis-eventos').textContent = benchmark.axes.eventos.toFixed(2);
+      document.getElementById('axis-evidencia').textContent = benchmark.axes.evidencia.toFixed(2);
+      document.getElementById('axis-confiabilidade').textContent = benchmark.axes.confiabilidade.toFixed(2);
+      document.getElementById('utility-pill').textContent = `Utilidade jurídica: ${benchmark.axes.utilidade_juridica.toFixed(2)}`;
     }
 
-    function renderSteps() {
-      statusList.innerHTML = "";
-      steps.forEach(step => {
+    function fillFileMeta(file){
+      if(!file){ fileMeta.classList.remove('visible'); fileMeta.innerHTML=''; return; }
+      fileMeta.classList.add('visible');
+      fileMeta.innerHTML = `<strong>Arquivo selecionado</strong><br>Nome: ${escapeHtml(file.name)}<br>Tipo: ${escapeHtml(file.type||'desconhecido')}<br>Tamanho: ${formatBytes(file.size)}`;
+    }
+
+    function initSteps(){
+      stepState.clear();
+      statusList.innerHTML='';
+      steps.forEach(step=>stepState.set(step.key,{...step,state:'pending',note:''}));
+      renderSteps();
+    }
+    function updateStep(key,stateValue,note=''){ const current=stepState.get(key); if(!current) return; current.state=stateValue; current.note=note; renderSteps(); }
+    function renderSteps(){
+      statusList.innerHTML='';
+      steps.forEach(step=>{
         const current = stepState.get(step.key);
-        const icon = current.state === "success" ? "✓" : current.state === "error" ? "!" : current.state === "running" ? "…" : "•";
-        const row = document.createElement("div");
+        const icon = current.state==='success' ? '✓' : current.state==='error' ? '!' : current.state==='running' ? '…' : '•';
+        const row = document.createElement('div');
         row.className = `step ${current.state}`;
-        row.innerHTML = `
-          <div class="step-icon">${icon}</div>
-          <div class="step-text">
-            <div class="step-title">${current.title}</div>
-            <div class="step-desc">${escapeHtml(current.note || current.desc)}</div>
-          </div>
-        `;
+        row.innerHTML = `<div class="dot">${icon}</div><div><div class="step-name">${escapeHtml(current.title)}</div><div class="step-desc">${escapeHtml(current.note || current.desc)}</div></div>`;
         statusList.appendChild(row);
       });
     }
 
-    function fillFileMeta(file) {
-      if (!file) {
-        fileMeta.classList.remove("visible");
-        fileMeta.innerHTML = "";
-        return;
-      }
-      fileMeta.classList.add("visible");
-      fileMeta.innerHTML = `
-        <strong>Arquivo selecionado</strong><br>
-        Nome: ${escapeHtml(file.name)}<br>
-        Tipo: ${escapeHtml(file.type || "desconhecido")}<br>
-        Tamanho: ${formatBytes(file.size)}
-      `;
+    function resetState(){
+      state.ingestData = null;
+      state.documentData = null;
+      state.timelineData = null;
+      state.activeMode = 'timeline';
+      state.activeFilter = 'all';
+      state.selectedEventId = null;
+      state.selectedEntity = null;
+      state.warnings = [];
+      state.reviewItems = [];
+      state.clusters = [];
+      state.causalLinks = [];
     }
 
-    function resetUI() {
+    function resetUi(){
       form.reset();
       fillFileMeta(null);
       clearBanner();
-      results.classList.add("hidden");
-      document.getElementById("elapsed-time").textContent = "-";
+      results.classList.remove('visible');
+      resetState();
       initSteps();
+      setControls();
+      setCanvasDescription();
+      document.getElementById('timeline-view').innerHTML='';
+      document.getElementById('cluster-view').innerHTML='';
+      document.getElementById('causal-view').innerHTML='';
+      document.getElementById('entity-list').innerHTML='';
+      document.getElementById('warning-list').innerHTML='';
+      document.getElementById('review-list').innerHTML='';
+      document.getElementById('pipeline-list').innerHTML='';
+      document.getElementById('stat-grid').innerHTML='';
+      document.getElementById('executive-summary').textContent='Carregue um documento para construir o resumo executivo do caso.';
+      document.getElementById('document-id').textContent='-';
+      document.getElementById('document-type').textContent='-';
+      document.getElementById('canonical-date').textContent='-';
+      document.getElementById('timeline-score').textContent='100';
+      document.getElementById('elapsed-time').textContent='-';
+      document.getElementById('readiness-level').textContent='-';
+      document.getElementById('review-pill').textContent='Pendências: -';
+      document.getElementById('selection-status').textContent='Nenhum foco';
+      const contextBody = document.getElementById('context-body');
+      contextBody.className = 'context-empty';
+      contextBody.innerHTML='Selecione um evento, cluster ou entidade para abrir o painel de foco com evidência navegável, entidades vinculadas, warnings próximos, revisão e impacto jurídico.';
+      ['timeline-json','read-models-json','layer0-json','layer1-json','layer2-json','layer3-json','layer4-json','layer5-json','document-json'].forEach(id=>{ const el=document.getElementById(id); if(el) el.textContent=''; });
     }
 
-    fileInput.addEventListener("change", () => fillFileMeta(fileInput.files[0]));
-    resetBtn.addEventListener("click", resetUI);
+    function parseSignalValue(documentData, key) {
+      try {
+        const signal = documentData?.layer2?.sinais_documentais?.[key];
+        const rawValue = signal?.valor;
+        if (!rawValue) return null;
+        return typeof rawValue === 'string' ? JSON.parse(rawValue) : rawValue;
+      } catch { return null; }
+    }
 
-    ["dragenter", "dragover"].forEach(evt => {
-      dropzone.addEventListener(evt, e => { e.preventDefault(); dropzone.classList.add("dragover"); });
-    });
-    ["dragleave", "drop"].forEach(evt => {
-      dropzone.addEventListener(evt, e => { e.preventDefault(); dropzone.classList.remove("dragover"); });
-    });
-    dropzone.addEventListener("drop", e => {
-      const files = e.dataTransfer.files;
-      if (files?.length) {
-        fileInput.files = files;
-        fillFileMeta(files[0]);
+    function collectWarnings(documentData, timelineData) {
+      const warnings = [];
+      normalizeArray(timelineData?.warnings).forEach(item => warnings.push({ title: item.code || 'timeline_warning', text: item.message || 'Warning de timeline.', detail: item.details || null, severity: item.severity || 'warning' }));
+      normalizeArray(documentData?.layer5?.read_models?.timeline_v1?.warnings).forEach(item => warnings.push({ title: item.code || 'layer5_warning', text: item.message || 'Warning do read model.', detail: item.details || null, severity: item.severity || 'warning' }));
+      normalizeArray(parseSignalValue(documentData, 'entities_canonical_v1')?.quality?.warnings).forEach(code => warnings.push({ title: code, text: `Warning de qualidade: ${code}.`, detail: null, severity: code.includes('birth') || code.includes('divergence') ? 'danger' : 'warning' }));
+      benchmark.regressions.forEach(item => warnings.push({ title: 'benchmark_regression', text: item, detail: null, severity: 'danger' }));
+      return warnings;
+    }
+
+    function getAllEvents() {
+      return normalizeArray(state.timelineData?.timeline).map((event, index) => {
+        const evidence = event.evidence_navigation || event.evidence_ref || {};
+        const provenance = event.provenance_status || evidence.provenance_status || 'inferred';
+        const id = event.event_id || event.id || `${event.date || 'date'}-${event.title || event.label || event.event_type || 'evento'}-${index}`;
+        return { ...event, _id: id, _index: index, _provenance: provenance, _evidence: evidence };
+      });
+    }
+    function getFilteredEvents() {
+      return getAllEvents().filter(event => state.activeFilter === 'all' ? true : classForProvenance(event._provenance) === state.activeFilter);
+    }
+
+    function buildEntitySummary(documentData, timelineData) {
+      const summary = documentData?.layer5?.read_models?.entity_summary_v1 || {};
+      const critical = [
+        { label: 'Paciente', value: summary?.people?.patient || '-', type: 'critical' },
+        { label: 'Prestador', value: summary?.people?.provider || '-', type: 'critical' },
+        { label: 'Mãe', value: summary?.people?.mother || '-', type: 'critical' },
+        { label: 'Data documental', value: documentData?.layer4?.data_canonica || documentData?.layer4?.date_canonical || '-', type: 'critical' },
+        { label: 'CID', value: normalizeArray(summary?.clinical?.cids).join(', ') || '-', type: 'clinical' },
+      ].filter(item => item.value && item.value !== '-');
+      const events = normalizeArray(timelineData?.timeline);
+      return critical.map(item => {
+        const tokens = String(item.value).split(',').map(token => token.trim()).filter(Boolean);
+        const hits = events.filter(event => {
+          const haystack = `${event.title || ''} ${event.description || ''} ${JSON.stringify(event.entities || {})}`.toLowerCase();
+          return tokens.some(token => haystack.includes(token.toLowerCase()));
+        }).length;
+        return { ...item, id: `${item.label}-${item.value}`, hits };
+      });
+    }
+
+    function buildClusters(events) {
+      const map = new Map();
+      events.forEach(event => {
+        const candidates = [event.event_type, ...Object.keys(event.entities || {})].filter(Boolean);
+        const key = candidates[0] || 'Sem agrupamento';
+        if (!map.has(key)) map.set(key, { name: key, events: [], confidenceAvg: 0, observed: 0, inferred: 0, estimated: 0 });
+        const cluster = map.get(key);
+        cluster.events.push(event);
+        const prov = classForProvenance(event._provenance);
+        cluster[prov] += 1;
+        cluster.confidenceAvg += Number(event.confidence || 0);
+      });
+      return [...map.values()].map(cluster => ({ ...cluster, confidenceAvg: cluster.events.length ? (cluster.confidenceAvg / cluster.events.length).toFixed(2) : '0.00' })).sort((a,b)=>b.events.length-a.events.length);
+    }
+
+    function buildCausalLinks(events) {
+      return events.map((event, index) => {
+        const next = events[index + 1];
+        if (!next) return null;
+        return {
+          sourceId: event._id,
+          targetId: next._id,
+          sourceTitle: event.title || event.label || event.event_type || 'Evento',
+          targetTitle: next.title || next.label || next.event_type || 'Evento',
+          relation: inferRelation(event, next)
+        };
+      }).filter(Boolean);
+    }
+
+    function inferRelation(a, b) {
+      const aEntities = Object.keys(a.entities || {});
+      const bEntities = Object.keys(b.entities || {});
+      const overlap = aEntities.filter(x => bEntities.includes(x)).length;
+      if (overlap > 0) return 'continuidade por entidade';
+      if ((a.review_state || '').includes('review') || (b.review_state || '').includes('review')) return 'cadeia com revisão';
+      if (a._provenance !== b._provenance) return 'mudança de proveniência';
+      return 'sequência temporal';
+    }
+
+    function findWarningsForEvent(event) {
+      const blob = `${event.title || ''} ${event.description || ''} ${JSON.stringify(event.entities || {})}`.toLowerCase();
+      return state.warnings.filter(item => blob.includes(String(item.title || '').toLowerCase()) || blob.includes(String(item.text || '').toLowerCase().slice(0, 15)));
+    }
+    function findReviewForEvent(event) {
+      const blob = `${event.title || ''} ${event.description || ''} ${JSON.stringify(event.entities || {})}`.toLowerCase();
+      return state.reviewItems.filter(item => `${item.field || ''} ${item.reason || ''} ${item.source_signal || ''} ${JSON.stringify(item.value || {})}`.toLowerCase().includes(blob.slice(0,16)) || `${item.field || ''} ${item.reason || ''}`.toLowerCase().includes((event.event_type || '').toLowerCase()));
+    }
+
+    function groupByMonth(events) {
+      const map = new Map();
+      events.forEach(event => {
+        const rawDate = event.date || 'Sem data';
+        const key = rawDate.length >= 7 ? rawDate.slice(0,7) : rawDate;
+        if(!map.has(key)) map.set(key, []);
+        map.get(key).push(event);
+      });
+      return [...map.entries()];
+    }
+
+    function renderTimelineView() {
+      const root = document.getElementById('timeline-view');
+      const events = getFilteredEvents();
+      if (!events.length) { root.innerHTML = '<div class="empty">Nenhum evento no filtro atual.</div>'; return; }
+      root.innerHTML = `<div class="timeline-shell">${groupByMonth(events).map(([group, list]) => `
+        <div class="group-label">${escapeHtml(group)}</div>
+        ${list.map(event => {
+          const selected = state.selectedEventId === event._id;
+          const related = state.selectedEntity && JSON.stringify(event.entities || {}).toLowerCase().includes(state.selectedEntity.toLowerCase());
+          const eventWarnings = findWarningsForEvent(event).slice(0,2);
+          return `
+            <article class="event-card ${classForProvenance(event._provenance)} ${selected ? 'selected' : ''} ${!selected && related ? 'related' : ''}" data-event-id="${escapeHtml(event._id)}" tabindex="0" role="button" aria-pressed="${selected ? 'true' : 'false'}">
+              <div class="event-top">
+                <div>
+                  <div class="mono">${escapeHtml(event.date || '-')}</div>
+                  <div class="event-title">${escapeHtml(event.title || event.label || event.event_type || 'Evento')}</div>
+                </div>
+                <div class="tags">
+                  <span class="tag ${classForProvenance(event._provenance) === 'observed' ? 'primary' : classForProvenance(event._provenance) === 'estimated' ? 'danger' : 'warning'}">${escapeHtml(event._provenance)}</span>
+                  <span class="tag">${escapeHtml(event.review_state || 'sem review')}</span>
+                </div>
+              </div>
+              <div class="event-desc">${escapeHtml(event.description || 'Sem descrição pública.')}</div>
+              <div class="tags">
+                <span class="tag">tipo: ${escapeHtml(event.event_type || '-')}</span>
+                <span class="tag">confiança: ${escapeHtml(event.confidence ?? '-')}</span>
+                <span class="tag">entidades: ${escapeHtml(Object.keys(event.entities || {}).length)}</span>
+              </div>
+              ${eventWarnings.length ? `<div class="warning-pills">${eventWarnings.map(item => `<span class="warning-pill">${escapeHtml(item.title)}</span>`).join('')}</div>` : ''}
+            </article>
+          `;
+        }).join('')}
+      `).join('')}</div>`;
+    }
+
+    function renderClusterView() {
+      const root = document.getElementById('cluster-view');
+      if(!state.clusters.length){ root.innerHTML = '<div class="empty">Nenhum cluster derivado para o conjunto atual.</div>'; return; }
+      root.innerHTML = `<div class="cluster-grid">${state.clusters.map(cluster => `
+        <article class="cluster-card">
+          <h4>${escapeHtml(cluster.name)}</h4>
+          <div class="cluster-meta">${cluster.events.length} evento(s) · confiança média ${escapeHtml(cluster.confidenceAvg)} · observado ${cluster.observed} · inferido ${cluster.inferred} · estimado ${cluster.estimated}</div>
+          <div class="cluster-list">
+            ${cluster.events.slice(0,5).map(event => `<button class="cluster-node" type="button" data-event-id="${escapeHtml(event._id)}"><span>${escapeHtml(event.title || event.label || 'Evento')}</span><span class="mono">${escapeHtml(event.date || '-')}</span></button>`).join('')}
+          </div>
+        </article>
+      `).join('')}</div>`;
+    }
+
+    function renderCausalView() {
+      const root = document.getElementById('causal-view');
+      if(!state.causalLinks.length){ root.innerHTML = '<div class="empty">Sem relações sequenciais derivadas para exibir.</div>'; return; }
+      root.innerHTML = `<div class="causal-grid">${state.causalLinks.map(link => `
+        <article class="causal-card">
+          <h4>${escapeHtml(link.sourceTitle)}</h4>
+          <div class="relations"><span class="relation-pill">${escapeHtml(link.relation)}</span></div>
+          <div class="causal-meta" style="margin-top:.55rem">leva a</div>
+          <h4 style="margin-top:.55rem">${escapeHtml(link.targetTitle)}</h4>
+        </article>
+      `).join('')}</div>`;
+    }
+
+    function renderEntities() {
+      const root = document.getElementById('entity-list');
+      const items = buildEntitySummary(state.documentData, state.timelineData);
+      if(!items.length){ root.innerHTML = '<div class="empty">Sem entidades críticas consolidadas.</div>'; return; }
+      root.innerHTML = items.map(item => `
+        <article class="entity-card ${state.selectedEntity === item.value ? 'selected' : ''}">
+          <button type="button" data-entity-value="${escapeHtml(item.value)}">
+            <div class="item-head"><span class="item-title">${escapeHtml(item.label)}</span><span class="pill">${escapeHtml(item.hits)} hits</span></div>
+            <div class="item-body">${escapeHtml(item.value)}</div>
+          </button>
+        </article>
+      `).join('');
+    }
+
+    function renderStats() {
+      const grid = document.getElementById('stat-grid');
+      const summary = state.timelineData?.summary || {};
+      const reviewModel = state.documentData?.layer5?.read_models?.review_items_v1 || {};
+      const items = [
+        { label: 'Eventos públicos', value: safeText(summary.total_events, '0') },
+        { label: 'Eventos ancorados', value: safeText(summary.anchored_events, '0') },
+        { label: 'Needs review', value: safeText(reviewModel.needs_review_count, '0') },
+        { label: 'Warnings', value: safeText(state.warnings.length, '0') },
+      ];
+      grid.innerHTML = items.map(item => `<div class="stat"><span>${escapeHtml(item.label)}</span><b>${escapeHtml(item.value)}</b></div>`).join('');
+    }
+
+    function renderWarnings() {
+      const root = document.getElementById('warning-list');
+      if(!state.warnings.length){ root.innerHTML = '<div class="empty">Nenhum warning explícito.</div>'; return; }
+      root.innerHTML = state.warnings.map(item => `
+        <article class="warning-card">
+          <div class="item-head"><span class="item-title">${escapeHtml(item.title)}</span><span class="pill ${item.severity === 'danger' ? 'gold' : ''}">${escapeHtml(item.severity)}</span></div>
+          <div class="item-body">${escapeHtml(item.text)}</div>
+          ${item.detail ? `<div class="mini-note" style="margin-top:.75rem">${escapeHtml(JSON.stringify(item.detail))}</div>` : ''}
+        </article>
+      `).join('');
+    }
+
+    function renderReviewItems() {
+      const root = document.getElementById('review-list');
+      if(!state.reviewItems.length){ root.innerHTML = '<div class="empty">Nenhuma pendência de revisão derivada do Layer5.</div>'; return; }
+      root.innerHTML = state.reviewItems.map(item => {
+        const evidence = normalizeArray(item.evidence_refs)[0] || {};
+        return `
+          <article class="review-card">
+            <div class="item-head">
+              <span class="item-title">${escapeHtml(item.field)}</span>
+              <div class="meta-row">
+                <span class="pill">${escapeHtml(item.review_state || '-')}</span>
+                <span class="pill primary">${escapeHtml(item.provenance_status || '-')}</span>
+              </div>
+            </div>
+            <div class="item-body">Valor: ${escapeHtml(typeof item.value === 'object' ? JSON.stringify(item.value) : item.value ?? '-')}<br>Motivo: ${escapeHtml(item.reason || '-')}<br>Ação: ${escapeHtml(item.suggested_action || '-')}</div>
+            <div class="mini-note" style="margin-top:.75rem">Página ${escapeHtml(evidence.page ?? '-')} · ${escapeHtml(evidence.snippet || 'sem snippet')}</div>
+          </article>
+        `;
+      }).join('');
+    }
+
+    function renderPipelineEvents() {
+      const root = document.getElementById('pipeline-list');
+      const events = normalizeArray(state.documentData?.layer0?.processingevents);
+      if(!events.length){ root.innerHTML = '<div class="empty">Nenhum processing event registrado.</div>'; return; }
+      root.innerHTML = events.map(item => `
+        <article class="pipeline-card">
+          <div class="item-head"><span class="item-title">${escapeHtml(item.stage || item.nome || 'etapa')}</span><span class="pill">${escapeHtml(item.status || 'unknown')}</span></div>
+          <div class="item-body">duration_ms: ${escapeHtml(item.duration_ms ?? '-')} · page_index: ${escapeHtml(item.page_index ?? '-')} · warning_code: ${escapeHtml(item.warning_code || '-')} · fallback: ${escapeHtml(item.fallback || item.degraded_mode || '-')}</div>
+        </article>
+      `).join('');
+    }
+
+    function renderContext() {
+      const body = document.getElementById('context-body');
+      const status = document.getElementById('selection-status');
+      const selected = getAllEvents().find(event => event._id === state.selectedEventId);
+      if(!selected){
+        body.className = 'context-empty';
+        body.innerHTML = state.selectedEntity ? `Entidade ativa: <strong>${escapeHtml(state.selectedEntity)}</strong>. Agora selecione um evento relacionado para abrir a prova e o impacto jurídico.` : 'Selecione um evento, cluster ou entidade para abrir o painel de foco com evidência navegável, entidades vinculadas, warnings próximos, revisão e impacto jurídico.';
+        status.textContent = state.selectedEntity ? `Entidade: ${state.selectedEntity}` : 'Nenhum foco';
+        return;
       }
-    });
-
-    async function parseResponse(response) {
-      const raw = await response.text();
-      let data = null;
-      try { data = raw ? JSON.parse(raw) : null; }
-      catch { data = { detail: raw || `HTTP ${response.status}` }; }
-      return { raw, data };
+      const evidence = selected._evidence || {};
+      const eventWarnings = findWarningsForEvent(selected);
+      const eventReviews = findReviewForEvent(selected);
+      const relatedEntities = Object.entries(selected.entities || {}).map(([key, value]) => `${key}: ${typeof value === 'string' ? value : JSON.stringify(value)}`);
+      status.textContent = selected.title || selected.label || selected.event_type || 'Evento';
+      body.className = 'context-grid';
+      body.innerHTML = `
+        <section class="focus-block">
+          <h4>Foco atual</h4>
+          <div class="mono">${escapeHtml(selected.date || '-')}</div>
+          <div class="big-title">${escapeHtml(selected.title || selected.label || selected.event_type || 'Evento')}</div>
+          <div class="item-body" style="margin-top:.55rem">${escapeHtml(selected.description || 'Sem descrição pública.')}</div>
+          <div class="tags">
+            <span class="tag primary">${escapeHtml(selected._provenance)}</span>
+            <span class="tag">${escapeHtml(selected.review_state || 'sem review')}</span>
+            <span class="tag">confiança ${escapeHtml(selected.confidence ?? '-')}</span>
+          </div>
+        </section>
+        <section class="evidence-block">
+          <h4>Evidência</h4>
+          <div class="item-body">Artefato: ${escapeHtml(selected.artifact_uri || evidence.artifact_uri || state.timelineData?.document?.artifact_uri || '-')}<br>Página: ${escapeHtml(evidence.page ?? '-')}<br>Snippet: ${escapeHtml(evidence.snippet || selected.evidence_ref?.snippet || '-')}<br>BBox: ${escapeHtml(JSON.stringify(evidence.bbox || selected.evidence_ref?.bbox || null))}</div>
+        </section>
+        <section class="focus-block">
+          <h4>Entidades vinculadas</h4>
+          ${relatedEntities.length ? `<div class="entity-pills">${relatedEntities.map(item => `<span class="entity-pill">${escapeHtml(item)}</span>`).join('')}</div>` : '<div class="item-body">Sem entidades consolidadas.</div>'}
+        </section>
+        <section class="focus-block">
+          <h4>Impacto jurídico</h4>
+          <div class="mini-list">
+            <div class="mini-note">Este evento participa da timeline pública do documento e precisa manter distinção explícita entre observado, inferido e estimado. [file:33][file:34]</div>
+            <div class="mini-note">Se não houver lastro exato, a UI não deve sugerir certeza indevida. [file:34]</div>
+            <div class="mini-note">Eventos sem descrição ou sem entidades críticas reduzem utilidade jurídica. [file:33]</div>
+          </div>
+        </section>
+        <section class="focus-block">
+          <h4>Warnings e revisão</h4>
+          ${eventWarnings.length ? eventWarnings.slice(0,3).map(item => `<div class="mini-note">${escapeHtml(item.title)} · ${escapeHtml(item.text)}</div>`).join('') : '<div class="mini-note">Sem warning direto.</div>'}
+          ${eventReviews.length ? eventReviews.slice(0,2).map(item => `<div class="mini-note">${escapeHtml(item.field)} · ${escapeHtml(item.reason || 'sem razão detalhada')}</div>`).join('') : ''}
+        </section>
+      `;
     }
 
-    function errorDetailFromParsed(parsed) {
-      if (!parsed) return "Erro sem payload";
-      const detail = parsed.data?.detail ?? parsed.data;
-      if (typeof detail === "string") return detail;
-      try { return JSON.stringify(detail, null, 2); }
-      catch { return String(detail); }
+    function renderRaw() {
+      document.getElementById('timeline-json').textContent = pretty(state.timelineData || {});
+      document.getElementById('read-models-json').textContent = pretty(state.documentData?.layer5?.read_models || {});
+      document.getElementById('layer0-json').textContent = pretty(state.documentData?.layer0 || {});
+      document.getElementById('layer1-json').textContent = pretty(state.documentData?.layer1 || {});
+      document.getElementById('layer2-json').textContent = pretty(state.documentData?.layer2 || {});
+      document.getElementById('layer3-json').textContent = pretty(state.documentData?.layer3 || {});
+      document.getElementById('layer4-json').textContent = pretty(state.documentData?.layer4 || {});
+      document.getElementById('layer5-json').textContent = pretty(state.documentData?.layer5 || {});
+      document.getElementById('document-json').textContent = pretty(state.documentData || {});
     }
 
-    async function postStep(url, key, runningNote, successNote) {
-      updateStep(key, "running", runningNote);
-      const response = await fetch(url, { method: "POST" });
-      const parsed = await parseResponse(response);
-      if (!response.ok) {
-        updateStep(key, "error", "Falha na etapa");
-        throw new Error(JSON.stringify({ key, parsed }));
-      }
-      updateStep(key, "success", successNote);
-      return parsed.data;
+    function setCanvasDescription() {
+      const copy = {
+        timeline: 'Timeline pública com foco compartilhado entre evento, evidência, entidades e revisão.',
+        cluster: 'Clusters pensados para revelar concentração temática, entidades críticas e densidade de eventos.',
+        causal: 'Cadeias narrativas para interpretar dependência, sequência e mudança de proveniência.'
+      };
+      document.getElementById('canvas-description').textContent = copy[state.activeMode];
+    }
+    function setControls() {
+      document.querySelectorAll('#mode-switch [data-mode]').forEach(btn => btn.classList.toggle('active', btn.dataset.mode === state.activeMode));
+      document.querySelectorAll('#filter-row [data-filter]').forEach(btn => btn.classList.toggle('active', btn.dataset.filter === state.activeFilter));
+      document.querySelectorAll('.mode-view').forEach(view => view.classList.add('hidden'));
+      document.getElementById(`${state.activeMode}-view`).classList.remove('hidden');
     }
 
-    async function fetchJson(url) {
-      const response = await fetch(url);
-      const parsed = await parseResponse(response);
-      if (!response.ok) throw new Error(JSON.stringify({ key: "read", parsed }));
-      return parsed.data;
+    function renderWorkspace() {
+      if(!state.documentData || !state.timelineData) return;
+      const events = getFilteredEvents();
+      state.clusters = buildClusters(events);
+      state.causalLinks = buildCausalLinks(events);
+      renderTimelineView();
+      renderClusterView();
+      renderCausalView();
+      renderEntities();
+      renderStats();
+      renderWarnings();
+      renderReviewItems();
+      renderPipelineEvents();
+      renderContext();
+      renderRaw();
+      setControls();
+      setCanvasDescription();
     }
 
-    function renderResults(ingestData, docData, timelineData, startedAt) {
-      document.getElementById("document-id").textContent = ingestData.documentid || "-";
-      document.getElementById("document-hash").textContent = ingestData.hash || "-";
-      document.getElementById("document-dedup").textContent = String(ingestData.deduplicated);
-      document.getElementById("elapsed-time").textContent = formatElapsed(Date.now() - startedAt);
-      document.getElementById("summary-note").textContent = "Fluxo em etapas executado com sucesso";
+    function renderResults(ingestData, documentData, timelineData, startedAt) {
+      state.ingestData = ingestData;
+      state.documentData = documentData;
+      state.timelineData = timelineData;
+      state.warnings = collectWarnings(documentData, timelineData);
+      state.reviewItems = normalizeArray(documentData?.layer5?.read_models?.review_items_v1?.items);
+      state.selectedEventId = getAllEvents()[0]?._id || null;
 
-      document.getElementById("layer0-json").textContent = pretty(docData?.layer0 || {});
-      document.getElementById("layer1-json").textContent = pretty(docData?.layer1 || {});
-      document.getElementById("layer2-json").textContent = pretty(docData?.layer2 || {});
-      document.getElementById("layer3-json").textContent = pretty(docData?.layer3 || {});
-      document.getElementById("layer4-json").textContent = pretty(docData?.layer4 || {});
-      document.getElementById("layer5-json").textContent = pretty(docData?.layer5 || {});
-      document.getElementById("timeline-json").textContent = pretty(timelineData || {});
-      document.getElementById("document-json").textContent = pretty(docData || {});
+      const summary = timelineData?.summary || {};
+      const readModels = documentData?.layer5?.read_models || {};
+      const reviewModel = readModels?.review_items_v1 || {};
+      const entitySummary = readModels?.entity_summary_v1 || {};
+      const exec = `${safeText(readModels?.timeline_v1?.document_type, 'Documento')} com ${safeText(summary.total_events, '0')} evento(s) públicos, ${safeText(summary.anchored_events, '0')} ancorado(s), ${safeText(reviewModel.needs_review_count, '0')} pendência(s) e foco em paciente, prestador, CID e data documental. [file:33][file:34]`;
 
-      results.classList.remove("hidden");
-      setBanner("success", "Pipeline concluído com sucesso.");
+      document.getElementById('executive-summary').textContent = exec;
+      document.getElementById('document-id').textContent = safeText(ingestData.documentid, '-');
+      document.getElementById('document-type').textContent = safeText(readModels?.timeline_v1?.document_type, '-');
+      document.getElementById('canonical-date').textContent = safeText(documentData?.layer4?.data_canonica || documentData?.layer4?.date_canonical, '-');
+      document.getElementById('timeline-score').textContent = safeText(summary.timeline_consistency_score, '100');
+      document.getElementById('readiness-level').textContent = safeText(documentData?.layer0?.juridicalreadinesslevel, '-');
+      document.getElementById('elapsed-time').textContent = formatElapsed(Date.now() - startedAt);
+      document.getElementById('review-pill').textContent = `Pendências: ${safeText(reviewModel.needs_review_count, '0')}`;
+      document.getElementById('pipeline-pill').textContent = summary.timeline_consistency_score !== undefined ? `Timeline consistency ${summary.timeline_consistency_score}` : 'Layer3 → timeline pública';
+
+      results.classList.add('visible');
+      renderWorkspace();
+      setBanner('success','Pipeline concluído com sucesso.');
     }
 
-    form.addEventListener("submit", async (event) => {
+    async function parseResponse(response){ const raw = await response.text(); let data=null; try{ data = raw ? JSON.parse(raw) : null; } catch { data = { detail: raw || `HTTP ${response.status}` }; } return { raw, data }; }
+    function errorDetailFromParsed(parsed){ if(!parsed) return 'Erro sem payload'; const detail = parsed.data?.detail ?? parsed.data; if(typeof detail === 'string') return detail; try { return JSON.stringify(detail, null, 2); } catch { return String(detail); } }
+    async function postStep(url,key,runningNote,successNote){ updateStep(key,'running',runningNote); const response = await fetch(url,{method:'POST'}); const parsed = await parseResponse(response); if(!response.ok){ updateStep(key,'error','Falha na etapa'); throw new Error(JSON.stringify({key,parsed})); } updateStep(key,'success',successNote); return parsed.data; }
+    async function fetchJson(url){ const response = await fetch(url); const parsed = await parseResponse(response); if(!response.ok) throw new Error(JSON.stringify({key:'read',parsed})); return parsed.data; }
+
+    fileInput.addEventListener('change', () => fillFileMeta(fileInput.files[0]));
+    resetBtn.addEventListener('click', resetUi);
+    ['dragenter','dragover'].forEach(evt => dropzone.addEventListener(evt, event => { event.preventDefault(); dropzone.classList.add('dragover'); }));
+    ['dragleave','drop'].forEach(evt => dropzone.addEventListener(evt, event => { event.preventDefault(); dropzone.classList.remove('dragover'); }));
+    dropzone.addEventListener('drop', event => { const files = event.dataTransfer.files; if(files?.length){ fileInput.files = files; fillFileMeta(files[0]); } });
+
+    form.addEventListener('submit', async event => {
       event.preventDefault();
       clearBanner();
-      results.classList.add("hidden");
+      results.classList.remove('visible');
       submitBtn.disabled = true;
-      submitBtn.textContent = "Processando...";
-      startTime = Date.now();
+      submitBtn.textContent = 'Processando...';
+      const startedAt = Date.now();
       initSteps();
-
       try {
         const file = fileInput.files[0];
-        if (!file) throw new Error("Selecione um arquivo.");
-
+        if(!file) throw new Error('Selecione um arquivo.');
         const formData = new FormData();
-        formData.append("file", file);
+        formData.append('file', file);
 
-        updateStep("ingest", "running", "Enviando e registrando documento...");
-        const ingestResp = await fetch("/ingest", { method: "POST", body: formData });
+        updateStep('ingest','running','Criando custódia e registrando fingerprint...');
+        const ingestResp = await fetch('/ingest',{method:'POST',body:formData});
         const ingestParsed = await parseResponse(ingestResp);
-        if (!ingestResp.ok) {
-          updateStep("ingest", "error", "Falha no upload");
-          throw new Error(JSON.stringify({ key: "ingest", parsed: ingestParsed }));
-        }
-
+        if(!ingestResp.ok){ updateStep('ingest','error','Falha na ingestão'); throw new Error(JSON.stringify({key:'ingest',parsed:ingestParsed})); }
         const ingestData = ingestParsed.data;
         const documentId = ingestData?.documentid;
-        if (!documentId) throw new Error("Ingest respondeu sem documentid.");
-        updateStep("ingest", "success", `Documento registrado: ${documentId}`);
+        if(!documentId) throw new Error('Ingest respondeu sem documentid.');
+        updateStep('ingest','success',`Documento registrado: ${documentId}`);
 
-        await postStep(`/extract/${documentId}`, "extract", "Executando extração...", "Extração concluída");
-        await postStep(`/infer_context/${documentId}`, "infer", "Executando inferência...", "Inferência concluída");
+        await postStep(`/extract/${documentId}`,'extract','Extraindo sinais determinísticos...','Extração concluída');
+        await postStep(`/infer_context/${documentId}`,'infer','Gerando eventos probatórios e read models...','Inferência concluída');
 
-        updateStep("read", "running", "Buscando documento e timeline...");
-        const [docData, timelineData] = await Promise.all([
+        updateStep('read','running','Carregando timeline pública e memória consolidada...');
+        const [documentData, timelineData] = await Promise.all([
           fetchJson(`/documents/${documentId}`),
           fetchJson(`/documents/${documentId}/timeline`)
         ]);
-        updateStep("read", "success", "Documento e timeline carregados");
-
-        renderResults(ingestData, docData, timelineData, startTime);
-      } catch (error) {
+        updateStep('read','success','Read models carregados');
+        renderResults(ingestData, documentData, timelineData, startedAt);
+      } catch(error) {
         let parsedError = null;
         try { parsedError = JSON.parse(error.message); } catch {}
-
-        if (parsedError?.key) {
+        if(parsedError?.key) {
           const detail = errorDetailFromParsed(parsedError.parsed);
           const detailObj = parsedError.parsed?.data?.detail;
-          const stage = typeof detailObj === "object" && detailObj?.stage ? detailObj.stage : parsedError.key;
-          const message = typeof detailObj === "object" && detailObj?.message ? detailObj.message : "Erro na etapa.";
-          setBanner("error", `Falha em ${stage}: ${message}`, detail);
+          const stage = typeof detailObj === 'object' && detailObj?.stage ? detailObj.stage : parsedError.key;
+          const message = typeof detailObj === 'object' && detailObj?.message ? detailObj.message : 'Erro na etapa.';
+          setBanner('error', `Falha em ${stage}: ${message}`, detail);
         } else {
-          setBanner("error", error.message || "Erro inesperado.");
+          setBanner('error', error.message || 'Erro inesperado.');
         }
       } finally {
         submitBtn.disabled = false;
-        submitBtn.textContent = "Processar pipeline";
+        submitBtn.textContent = 'Rodar pipeline';
       }
     });
 
-    document.addEventListener("click", async (event) => {
-      const button = event.target.closest("[data-copy]");
-      if (!button) return;
-      const targetId = button.getAttribute("data-copy");
-      const content = document.getElementById(targetId)?.textContent || "";
-      try {
-        await navigator.clipboard.writeText(content);
-        button.textContent = "Copiado";
-        setTimeout(() => (button.textContent = "Copiar"), 1200);
-      } catch {
-        button.textContent = "Falhou";
-        setTimeout(() => (button.textContent = "Copiar"), 1200);
+    document.addEventListener('click', async event => {
+      const copyButton = event.target.closest('[data-copy]');
+      if(copyButton){
+        const target = document.getElementById(copyButton.dataset.copy);
+        if(!target) return;
+        try {
+          await navigator.clipboard.writeText(target.textContent || '');
+          const original = copyButton.textContent;
+          copyButton.textContent = 'Copiado';
+          setTimeout(() => copyButton.textContent = original, 1200);
+        } catch {
+          setBanner('error','Não foi possível copiar para a área de transferência.');
+        }
+        return;
+      }
+
+      const modeButton = event.target.closest('[data-mode]');
+      if(modeButton){ state.activeMode = modeButton.dataset.mode; setControls(); setCanvasDescription(); return; }
+
+      const filterButton = event.target.closest('[data-filter]');
+      if(filterButton){
+        state.activeFilter = filterButton.dataset.filter;
+        const events = getFilteredEvents();
+        if(!events.find(item => item._id === state.selectedEventId)) state.selectedEventId = events[0]?._id || null;
+        renderWorkspace();
+        return;
+      }
+
+      const entityButton = event.target.closest('[data-entity-value]');
+      if(entityButton){
+        const value = entityButton.dataset.entityValue;
+        state.selectedEntity = state.selectedEntity === value ? null : value;
+        renderWorkspace();
+        return;
+      }
+
+      const eventButton = event.target.closest('[data-event-id]');
+      if(eventButton){
+        state.selectedEventId = eventButton.dataset.eventId;
+        renderWorkspace();
       }
     });
 
+    document.addEventListener('keydown', event => {
+      const card = event.target.closest('.event-card');
+      if(card && (event.key === 'Enter' || event.key === ' ')){
+        event.preventDefault();
+        state.selectedEventId = card.dataset.eventId;
+        renderWorkspace();
+      }
+    });
+
+    initTheme();
+    fillBenchmarkUi();
     initSteps();
+    resetState();
+    setControls();
+    setCanvasDescription();
   </script>
 </body>
 </html>

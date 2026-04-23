@@ -16,4 +16,9 @@ def test_ingest_creates_dm_and_blob(client, tmp_path):
     data = res.json()
 
     assert "documentid" in data
-    assert data["blob_uri"].startswith("https://")
+    assert data["blob_uri"] == data["artifact_uri"]
+    assert data["blob_uri"] == data["local_file_uri"]
+    assert data["storage_kind"] == "local_file"
+    assert data["storage_state"] == "local_file_persisted"
+    assert data["is_remote_blob"] is False
+    assert "/.uploads/" in data["local_file_uri"]

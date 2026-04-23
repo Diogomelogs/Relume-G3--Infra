@@ -1,5 +1,15 @@
-
 from __future__ import annotations
+"""
+STATUS: wrapper compatível legado
+
+Este módulo não é a fonte oficial da timeline pública.
+Hoje a superfície oficial converge para:
+- `Layer3.eventos_probatorios`
+- `relluna/services/read_model/timeline_builder.py`
+
+Mantemos este builder apenas como compatibilidade do caminho paralelo
+`relluna/services/timeline/*`.
+"""
 
 import hashlib
 from typing import Any, Dict, List
@@ -94,3 +104,18 @@ def build_events_v2(
 
     events.sort(key=lambda x: (x["date_iso"], x["event_type"], x["event_id"]))
     return events
+
+
+def build_events(
+    timeline_seeds: List[Dict[str, Any]],
+    document_type: str,
+    entities: List[Dict[str, Any]] | None = None,
+) -> List[Dict[str, Any]]:
+    """
+    Wrapper compatível para o caminho legado `timeline_pipeline.py`.
+    """
+    return build_events_v2(
+        timeline_seeds=timeline_seeds,
+        document_type=document_type,
+        entities=entities or [],
+    )

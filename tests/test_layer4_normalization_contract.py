@@ -1,7 +1,11 @@
-from datetime import datetime
+from datetime import datetime, timezone
 from relluna.core.document_memory import (
     DocumentMemory,
+    ConfidenceState,
+    Layer3Evidence,
     Layer4SemanticNormalization,
+    ProvenancedDatetime,
+    ProvenancedString,
 )
 from relluna.core.normalization import normalize_to_layer4
 
@@ -15,8 +19,8 @@ def _base_dm():
         version="v0.1.0",
         layer0=dict(
             documentid="doc-123",
-            contentfingerprint="hash",
-            ingestiontimestamp=datetime.utcnow(),
+            contentfingerprint="d" * 64,
+            ingestiontimestamp=datetime.now(timezone.utc),
             ingestionagent="test",
         ),
         layer1=None,
@@ -25,6 +29,19 @@ def _base_dm():
         layer4=None,
         layer5=None,
         layer6=None,
+    )
+
+
+def _layer3_with_temporal(value: str, confidence: float) -> Layer3Evidence:
+    return Layer3Evidence(
+        estimativa_temporal=ProvenancedDatetime(
+            valor=datetime.fromisoformat(value),
+            fonte="inferida",
+            metodo="regex",
+            estado=ConfidenceState.inferido,
+            confianca=confidence,
+            lastro=[],
+        )
     )
 
 
@@ -60,16 +77,7 @@ def test_layer4_prefers_layer3_temporal_estimate():
     ela deve ser promovida para Layer4 como data canônica.
     """
     dm = _base_dm()
-    dm.layer3 = {
-        "estimativa_temporal": {
-            "valor": "2001-05-20",
-            "fonte": "inferida",
-            "metodo": "regex",
-            "estado": "inferido",
-            "confianca": 0.85,
-            "lastro": [],
-        }
-    }
+    dm.layer3 = _layer3_with_temporal("2001-05-20", 0.85)
 
     out = normalize_to_layer4(dm)
 
@@ -84,16 +92,7 @@ def test_layer4_generates_period_label():
     um rótulo temporal humano (ex: ano, década).
     """
     dm = _base_dm()
-    dm.layer3 = {
-        "estimativa_temporal": {
-            "valor": "1994-08-01",
-            "fonte": "inferida",
-            "metodo": "regex",
-            "estado": "inferido",
-            "confianca": 0.9,
-            "lastro": [],
-        }
-    }
+    dm.layer3 = _layer3_with_temporal("1994-08-01", 0.9)
 
     out = normalize_to_layer4(dm)
 
@@ -108,16 +107,16 @@ def test_layer4_entities_are_propagated_not_created():
     Ela apenas consolida ou propaga informações existentes.
     """
     dm = _base_dm()
-    dm.layer3 = {
-        "tipo_evento": {
-            "valor": "documento_identidade",
-            "fonte": "inferida",
-            "metodo": "rules",
-            "estado": "inferido",
-            "confianca": 0.9,
-            "lastro": [],
-        }
-    }
+    dm.layer3 = Layer3Evidence(
+        tipo_evento=ProvenancedString(
+            valor="documento_identidade",
+            fonte="inferida",
+            metodo="rules",
+            estado=ConfidenceState.inferido,
+            confianca=0.9,
+            lastro=[],
+        )
+    )
 
     out = normalize_to_layer4(dm)
 
@@ -141,16 +140,7 @@ def test_layer4_does_not_mutate_previous_layers():
     Layer4 NÃO pode modificar Layer0–3.
     """
     dm = _base_dm()
-    dm.layer3 = {
-        "estimativa_temporal": {
-            "valor": "2010-01-01",
-            "fonte": "inferida",
-            "metodo": "regex",
-            "estado": "inferido",
-            "confianca": 0.8,
-            "lastro": [],
-        }
-    }
+    dm.layer3 = _layer3_with_temporal("2010-01-01", 0.8)
 
     snapshot = dm.model_dump()
     out = normalize_to_layer4(dm)

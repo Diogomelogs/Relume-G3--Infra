@@ -1,3 +1,16 @@
+"""
+STATUS: legado
+
+Builder simplificado do caminho paralelo `relluna/services/timeline/*`.
+Não é a fonte oficial atual da timeline pública.
+
+Fonte oficial:
+- `Layer3.eventos_probatorios`
+- `relluna/services/read_model/timeline_builder.py`
+
+Mantido apenas para compatibilidade/documentação até a limpeza final.
+"""
+
 from typing import List, Dict, Any
 
 LABEL_MAP = {

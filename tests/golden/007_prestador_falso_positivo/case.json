@@ -1,0 +1,65 @@
+{
+  "id": "007_prestador_falso_positivo",
+  "title": "Prestador nao pode virar falso positivo geografico",
+  "expected": {
+    "document_type": "laudo_medico",
+    "entities": {
+      "patient": "ALICE MARTINS",
+      "provider": "DR. GUSTAVO LEAL",
+      "document_date": "2024-07-03"
+    },
+    "forbidden_entities": {
+      "provider": ["SAO PAULO"]
+    },
+    "events": [
+      {"event_type": "document_issue_date", "date_iso": "2024-07-03"}
+    ],
+    "legally_useful_event_types": ["document_issue_date"]
+  },
+  "actual": {
+    "document_type": "laudo_medico",
+    "entities": {
+      "patient": {
+        "value": "ALICE MARTINS",
+        "provenance_status": "observed",
+        "confidence": 0.94,
+        "evidence": {"page": 1, "snippet": "Paciente: ALICE MARTINS", "bbox": [68, 118, 248, 138]}
+      },
+      "provider": {
+        "value": "SAO PAULO",
+        "provenance_status": "inferred",
+        "confidence": 0.61,
+        "evidence": {"page": 1, "snippet": "São Paulo, 03/07/2024", "bbox": null}
+      },
+      "document_date": {
+        "value": "2024-07-03",
+        "date_iso": "2024-07-03",
+        "provenance_status": "observed",
+        "confidence": 0.92,
+        "evidence": {"page": 1, "snippet": "São Paulo, 03/07/2024", "bbox": [332, 578, 508, 600]}
+      }
+    },
+    "events": [
+      {
+        "event_type": "document_issue_date",
+        "title": "Emissao do documento",
+        "description": "Laudo emitido em 2024-07-03.",
+        "date_iso": "2024-07-03",
+        "provenance_status": "observed",
+        "review_state": "auto_confirmed",
+        "confidence": 0.92,
+        "entities": {"patient": "ALICE MARTINS", "provider": "SAO PAULO"},
+        "evidence": {"page": 1, "snippet": "São Paulo, 03/07/2024", "bbox": [332, 578, 508, 600]}
+      }
+    ],
+    "review_items": [
+      {
+        "field": "provider",
+        "value": "SAO PAULO",
+        "review_state": "needs_review",
+        "provenance_status": "inferred"
+      }
+    ],
+    "warnings": ["provider_without_crm"]
+  }
+}

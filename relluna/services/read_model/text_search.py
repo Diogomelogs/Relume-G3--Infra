@@ -56,12 +56,22 @@ def build_search_corpus(read_model: Any) -> Tuple[str, str]:
     Adapte por convenção, sem depender de um schema rígido.
     """
     # Campos comuns no read-model (tente vários nomes sem quebrar)
-    docid = _safe_get(read_model, "documentid", "") or _safe_get(read_model, "layer0.documentid", "")
+    docid = (
+        _safe_get(read_model, "documentid", "")
+        or _safe_get(read_model, "document_id", "")
+        or _safe_get(read_model, "layer0.documentid", "")
+    )
     title = _safe_get(read_model, "titulo", "") or _safe_get(read_model, "title", "")
     text = _safe_get(read_model, "texto", "") or _safe_get(read_model, "text", "")
     summary = _safe_get(read_model, "resumo", "") or _safe_get(read_model, "summary", "")
     tags = _safe_get(read_model, "tags", []) or _safe_get(read_model, "layer4.tags", [])
     entities = _safe_get(read_model, "entidades", []) or _safe_get(read_model, "entities", [])
+    patient = _safe_get(read_model, "patient", "")
+    provider = _safe_get(read_model, "provider", "")
+    cids = _safe_get(read_model, "cids", []) or []
+    event_types = _safe_get(read_model, "event_types", []) or []
+    doc_type = _safe_get(read_model, "doc_type", "")
+    search_text = _safe_get(read_model, "search_text", "")
 
     # Normaliza coleções
     if isinstance(tags, (list, tuple)):
@@ -76,7 +86,21 @@ def build_search_corpus(read_model: Any) -> Tuple[str, str]:
 
     # Corpus: título+tags+entities recebem peso “natural” porque tokens repetem
     corpus = " ".join(
-        part for part in [str(title), str(tags_text), str(ent_text), str(summary), str(text)] if part
+        part
+        for part in [
+            str(title),
+            str(doc_type),
+            str(patient),
+            str(provider),
+            " ".join(str(x) for x in cids if x is not None),
+            " ".join(str(x) for x in event_types if x is not None),
+            str(tags_text),
+            str(ent_text),
+            str(summary),
+            str(text),
+            str(search_text),
+        ]
+        if part
     ).strip()
 
     # Fonte de snippet: prefira o texto longo, senão resumo/título
@@ -152,7 +176,11 @@ def search_read_models_text(
         return hits
 
     for rm in read_models:
-        docid = _safe_get(rm, "documentid", "") or _safe_get(rm, "layer0.documentid", "")
+        docid = (
+            _safe_get(rm, "documentid", "")
+            or _safe_get(rm, "document_id", "")
+            or _safe_get(rm, "layer0.documentid", "")
+        )
         if not docid:
             continue
 

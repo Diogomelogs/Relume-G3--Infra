@@ -1,3 +1,16 @@
+"""
+STATUS: wrapper compatível legado
+
+Pipeline paralelo anterior à consolidação da timeline oficial.
+Hoje não participa do fluxo real da API e existe apenas para compatibilidade
+pontual/documentação de legado.
+
+Fonte oficial atual da timeline:
+- `deterministic_extractors.timeline_seed_v2` como fallback compatível
+- `Layer3.eventos_probatorios` como fonte primária
+- `relluna/services/read_model/timeline_builder.py` como superfície pública
+"""
+
 import json
 
 from .date_extractor import extract_dates

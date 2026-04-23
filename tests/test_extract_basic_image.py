@@ -1,6 +1,6 @@
 # arquivo: tests/test_extract_basic_image.py
 
-from datetime import datetime
+from datetime import datetime, timezone
 from pathlib import Path
 
 import pytest
@@ -25,8 +25,8 @@ def _build_minimal_image_dm(image_path: Path) -> DocumentMemory:
     """
     layer0 = Layer0Custodia(
         documentid="test-doc-uuid",
-        contentfingerprint="dummy-hash",
-        ingestiontimestamp=datetime.utcnow(),
+        contentfingerprint="5" * 64,
+        ingestiontimestamp=datetime.now(timezone.utc),
         ingestionagent="test_ingest",
     )
 
@@ -96,4 +96,3 @@ def test_extract_basic_image_populates_layer2(tmp_path: Path):
 
     # entidades_visuais_objetivas ainda é lista vazia (placeholder)
     assert len(layer2.entidades_visuais_objetivas) >= 0
-

@@ -8,6 +8,7 @@ from typing import Any, Dict, List, Optional, Tuple
 
 from relluna.core.document_memory import DocumentMemory
 from relluna.core.document_memory.types_basic import ProvenancedString
+from relluna.services.evidence.signals import load_critical_signal_json
 
 FONTE = "deterministic_extractors.entities_hard_v2"
 
@@ -48,6 +49,8 @@ _CID_CONTEXT_NEGATIVE = (
 )
 
 def _load_signal_json(dm: DocumentMemory, key: str) -> Any:
+    if key in {"page_evidence_v1", "entities_canonical_v1", "timeline_seed_v2"}:
+        return load_critical_signal_json(dm, key)
     if dm.layer2 is None:
         return None
     sig = dm.layer2.sinais_documentais.get(key)
