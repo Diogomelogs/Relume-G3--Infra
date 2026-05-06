@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+import warnings
+
 from relluna.core import (
     basic_pipeline,
     inference_pipeline,
@@ -13,6 +15,12 @@ PIPE_STAGES = ("basic", "plus", "canonical", "archival", "full")
 
 
 def run_full_pipeline(dm: DocumentMemory, *, stage: str = "full") -> DocumentMemory:
+    warnings.warn(
+        "relluna.core.full_pipeline é legado; use o fluxo da API em "
+        "relluna.services.ingestion.api.",
+        DeprecationWarning,
+        stacklevel=2,
+    )
     if stage not in PIPE_STAGES:
         raise ValueError(f"stage inválido: {stage}. Use {PIPE_STAGES}")
 

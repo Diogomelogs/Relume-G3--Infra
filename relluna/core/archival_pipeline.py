@@ -1,8 +1,16 @@
 from __future__ import annotations
 
+import warnings
+
 from relluna.core.document_memory import DocumentMemory
 
 def run_archival_pipeline(dm: DocumentMemory) -> DocumentMemory:
+    warnings.warn(
+        "relluna.core.archival_pipeline é legado; use o fluxo da API em "
+        "relluna.services.ingestion.api.",
+        DeprecationWarning,
+        stacklevel=2,
+    )
     # Se Layer5 não existir como model forte, use dict (extra allow) em models_v0_2_0
     if getattr(dm, "layer5", None) is None:
         dm.layer5 = {}  # mínimo real: estrutura para derivados/organização

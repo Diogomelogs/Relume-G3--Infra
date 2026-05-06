@@ -1,8 +1,16 @@
 from __future__ import annotations
 
+import warnings
+
 from relluna.core.document_memory import DocumentMemory, Layer4SemanticNormalization
 
 def run_canonical_pipeline(dm: DocumentMemory) -> DocumentMemory:
+    warnings.warn(
+        "relluna.core.canonical_pipeline é legado; use o fluxo da API em "
+        "relluna.services.ingestion.api.",
+        DeprecationWarning,
+        stacklevel=2,
+    )
     if dm.layer4 is None:
         dm.layer4 = Layer4SemanticNormalization()
 
