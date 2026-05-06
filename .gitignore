@@ -1,6 +1,11 @@
 data/
 
+.env
 .venv/
 __pycache__/
 *.pyc
 .uploads/
+uploads/
+artifacts/
+*.bak
+*.bak.*
