@@ -122,7 +122,7 @@ def build_dossier_payload(dm: DocumentMemory) -> Dict[str, Any]:
             "persistence_state": _get(_get(dm, "layer5"), "persistence_state"),
         },
         "disclaimers": [
-            "Derivados placeholder não representam persistência real em backend remoto.",
+            "Derivados de mídia podem continuar não materializados, mas read models Layer5 são persistidos no DocumentMemory e podem ser projetados no read-model store.",
             "Eventos inferidos ou estimados permanecem marcados explicitamente e não equivalem a fato observado.",
         ],
     }

@@ -187,9 +187,9 @@ def test_build_dossier_payload_has_minimum_audit_shape():
     assert dossier["document"]["content_fingerprint"] == "4" * 64
     assert dossier["document"]["artifact"]["uri"] == "memory://dossier.pdf"
     assert dossier["document"]["artifact"]["is_persisted"] is False
-    assert dossier["summary"]["persistence_state"] == "placeholder_not_persisted"
+    assert dossier["summary"]["persistence_state"] == "stored"
     assert dossier["entities"]["patient"] == "MARIA SILVA"
-    assert "Derivados placeholder" in dossier["disclaimers"][0]
+    assert "read models Layer5 são persistidos" in dossier["disclaimers"][0]
 
 
 def test_build_dossier_payload_marks_inferred_and_estimated_events_explicitly():

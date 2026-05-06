@@ -9,6 +9,7 @@ from relluna.core.document_memory import (
 )
 from relluna.services.derivatives.layer5 import apply_layer5
 from relluna.services.read_model.models import DocumentReadModel
+from relluna.services.read_model.store import ReadModelStore
 from relluna.services.read_model.timeline_builder import build_document_timeline_read_model
 
 
@@ -260,3 +261,10 @@ def project_dm_to_read_model(dm: DocumentMemory) -> DocumentReadModel:
         created_at=now,
         updated_at=now,
     )
+
+
+async def persist_document_read_model(dm: DocumentMemory) -> DocumentReadModel:
+    read_model = project_dm_to_read_model(dm)
+    store = ReadModelStore()
+    await store.upsert(read_model)
+    return read_model
