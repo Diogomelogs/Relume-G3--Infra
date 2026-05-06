@@ -55,7 +55,7 @@ def _dm_com_layer2() -> DocumentMemory:
 # Teste principal: valida contrato de rastreabilidade da Layer3
 # ---------------------------------------------------------------------
 def test_layer3_llm_requires_lastro_and_meta(monkeypatch):
-    from relluna.services.inference import llm_context
+    from relluna.services.context_inference import llm_context
 
     # Mock da função real de inferência
     def _infer_from_l2(dm: DocumentMemory) -> Layer3Evidence:

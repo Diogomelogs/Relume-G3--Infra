@@ -3,7 +3,7 @@ from __future__ import annotations
 import re
 import unicodedata
 from dataclasses import dataclass
-from typing import Any, Iterable, List, Optional, Tuple
+from typing import Any, Iterable, List, Tuple
 
 
 _WORD_RE = re.compile(r"[a-z0-9]+", re.IGNORECASE)
@@ -56,11 +56,6 @@ def build_search_corpus(read_model: Any) -> Tuple[str, str]:
     Adapte por convenção, sem depender de um schema rígido.
     """
     # Campos comuns no read-model (tente vários nomes sem quebrar)
-    docid = (
-        _safe_get(read_model, "documentid", "")
-        or _safe_get(read_model, "document_id", "")
-        or _safe_get(read_model, "layer0.documentid", "")
-    )
     title = _safe_get(read_model, "titulo", "") or _safe_get(read_model, "title", "")
     text = _safe_get(read_model, "texto", "") or _safe_get(read_model, "text", "")
     summary = _safe_get(read_model, "resumo", "") or _safe_get(read_model, "summary", "")

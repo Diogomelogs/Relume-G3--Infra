@@ -29,11 +29,12 @@ services:
 
   worker:
     build: .
-    command: ["python", "-c", "print('worker placeholder rodando'); import time; time.sleep(3600)"]
+    command: ["python", "-m", "relluna.services.persistence.dm_writer"]
     environment:
       - PYTHONUNBUFFERED=1
       - MONGO_URI=mongodb://mongo:27017
       - MONGO_DB=relluna
+      - RELLUNA_WORKER_POLL_INTERVAL_S=5
     volumes:
       - .:/app
     depends_on:
