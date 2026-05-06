@@ -12,7 +12,6 @@ from relluna.core.document_memory.layer1 import MediaType
 from relluna.core.document_memory.layer3 import ContextualTranscription, Layer3Evidence
 from relluna.core.document_memory.transcription import TranscriptionSegment
 from relluna.core.document_memory.types_basic import (
-    ConfidenceState,
     EvidenceRef,
     InferenceMeta,
 )

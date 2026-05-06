@@ -3,7 +3,7 @@ from __future__ import annotations
 import warnings
 
 from relluna.core.document_memory import DocumentMemory, Layer3Evidence
-from relluna.services.inference import llm_context
+from relluna.services.context_inference import llm_context
 
 
 def run_inference_pipeline(dm: DocumentMemory) -> DocumentMemory:
