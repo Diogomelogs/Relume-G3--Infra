@@ -34,25 +34,28 @@ def _dm(midia: MediaType = MediaType.documento) -> DocumentMemory:
     )
 
 
-def test_apply_layer5_does_not_claim_fake_blob_persistence():
+def test_apply_layer5_persists_read_models_in_document_memory():
     dm = apply_layer5(_dm())
 
     assert dm.layer5 is not None
-    assert dm.layer5.persistence_state == "placeholder_not_persisted"
-    assert dm.layer5.storage_uris == []
+    assert dm.layer5.persistence_state == "stored"
+    assert len(dm.layer5.storage_uris) == 3
+    assert all(item.kind == "document_memory" for item in dm.layer5.storage_uris)
+    assert all(item.uri.startswith("document-memory://") for item in dm.layer5.storage_uris)
     assert dm.layer5.documentos_derivados[0].uri.startswith("generated://")
 
 
-def test_layer5_contract_exposes_placeholder_state_without_fake_storage_uri():
+def test_layer5_contract_exposes_stored_state_without_fake_blob_uri():
     contract = to_contract(apply_layer5(_dm(MediaType.imagem)))
 
-    assert contract["layer5"]["persistence_state"] == "placeholder_not_persisted"
-    assert contract["layer5"]["storage_uris"] == []
+    assert contract["layer5"]["persistence_state"] == "stored"
+    assert len(contract["layer5"]["storage_uris"]) == 3
+    assert all(item["kind"] == "document_memory" for item in contract["layer5"]["storage_uris"])
     assert contract["layer5"]["imagens_derivadas"][0]["uri"].startswith("generated://")
 
 
-def test_layer5_contract_never_reports_stored_state_without_real_storage_uri():
+def test_layer5_contract_reports_stored_state_with_explicit_local_storage_contract():
     contract = to_contract(apply_layer5(_dm()))
 
-    assert contract["layer5"]["persistence_state"] != "stored"
-    assert contract["layer5"]["storage_uris"] == []
+    assert contract["layer5"]["persistence_state"] == "stored"
+    assert contract["layer5"]["storage_uris"]

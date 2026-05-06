@@ -1,9 +1,11 @@
 from datetime import datetime, timezone
 import json
+import asyncio
 from relluna.core.document_memory import DocumentMemory, Layer0Custodia, Layer1Artefatos, Layer2Evidence, ArtefatoBruto, MediaType, OriginType
 from relluna.core.document_memory.layer3 import ProbatoryEvent
 from relluna.core.document_memory.types_basic import ConfidenceState, EvidenceRef, ProvenancedString
-from relluna.services.read_model.projector import project_dm_to_read_model
+from relluna.services.read_model.projector import project_dm_to_read_model, persist_document_read_model
+from relluna.services.read_model import store as read_model_store
 
 
 def _dm_minimo():
@@ -106,3 +108,16 @@ def test_projector_never_invents_date():
     rm = project_dm_to_read_model(dm)
     assert rm.date_canonical is None
     assert rm.period_label is None
+
+
+def test_persist_document_read_model_writes_to_local_fallback(monkeypatch):
+    read_model_store._MEMORY_READ_MODEL_STORE.clear()
+    monkeypatch.setattr(read_model_store, "get_db", lambda: (_ for _ in ()).throw(RuntimeError("no mongo")))
+
+    dm = _dm_minimo()
+    persisted = asyncio.run(persist_document_read_model(dm))
+
+    assert persisted.document_id == "doc-1"
+    stored = read_model_store.list_all()
+    assert len(stored) == 1
+    assert stored[0]["document_id"] == "doc-1"

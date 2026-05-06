@@ -52,6 +52,7 @@ from relluna.services.pdf_decomposition.decompose_pdf import decompose_pdf_into_
 from relluna.services.read_model import documents_router
 from relluna.services.read_model.endpoints import router as read_model_router
 from relluna.services.read_model.case_builder import build_document_case_read_model
+from relluna.services.read_model.projector import persist_document_read_model
 from relluna.services.read_model.timeline_builder import build_document_timeline_read_model
 from relluna.services.test_ui.router import router as test_ui_router
 from relluna.services.transcription.asr import apply_transcription_to_layer2
@@ -400,6 +401,7 @@ async def _run_infer_pipeline(dm: DocumentMemory) -> DocumentMemory:
     if dm.layer4 is None:
         dm.layer4 = Layer4SemanticNormalization()
     dm = await _run_stage(dm, "apply_layer5", "services.derivatives.layer5", lambda: apply_layer5(dm))
+    await _run_stage(dm, "persist_read_model", "services.read_model.projector", lambda: persist_document_read_model(dm))
 
     if dm.layer0:
         has_timeline = dm.layer2 is not None and "timeline_seed_v2" in dm.layer2.sinais_documentais

@@ -8,6 +8,7 @@ from relluna.core.document_memory import DocumentMemory, MediaType
 from relluna.core.contracts.document_memory_contract import (
     Layer5Derivatives,
     Derivado,
+    StorageURI,
 )
 from relluna.services.entities.document_date_resolver import DocumentDateResolver
 from relluna.services.entities.people_resolver import PeopleResolver
@@ -18,7 +19,8 @@ from relluna.services.read_model.timeline_builder import (
 )
 
 _BUILDER_VERSION = "layer5_read_model_v3"
-_PLACEHOLDER_PERSISTENCE_STATE = "placeholder_not_persisted"
+_LAYER5_STORAGE_KIND = "document_memory"
+_LAYER5_PERSISTENCE_STATE = "stored"
 _PEOPLE_RESOLVER = PeopleResolver()
 _DOCUMENT_DATE_RESOLVER = DocumentDateResolver()
 
@@ -189,97 +191,48 @@ def _normalize_event_entities(
 def _build_timeline_v1(dm: DocumentMemory) -> dict:
     document_id = dm.layer0.documentid if dm.layer0 else None
     document_type = _canonical_document_type(dm)
-    canonical = _load_entities_canonical(dm)
-
     events_out: List[dict] = []
-
-    for event in getattr(dm.layer3, "eventos_probatorios", None) or []:
-        event_type = getattr(event, "event_type", None)
-        if not event_type:
-            tipo_ev = getattr(event, "tipo_evento", None)
-            event_type = getattr(tipo_ev, "valor", None) if tipo_ev else None
-
-        if not event_type:
+    public_timeline = build_document_timeline_read_model(dm)
+    for event in public_timeline.get("timeline", []) or []:
+        if not isinstance(event, dict):
             continue
 
-        confidence = getattr(event, "confidence", None)
-        if confidence is None:
-            confidence = getattr(event, "confianca", None)
-
-        entities_raw: Dict[str, Any] = getattr(event, "entities", None) or {}
-        entities = _normalize_event_entities(entities_raw, canonical)
-
-        citations_raw = getattr(event, "citations", None) or []
-        if not citations_raw:
-            citations_raw = getattr(event, "evidencias_origem", None) or []
-
-        citations_out = [_citation_to_dict(c, document_id) for c in citations_raw]
-
-        cids = entities.get("cids") or []
-        tags = list(dict.fromkeys([f"cid:{cid}" for cid in cids if cid]))
-
-        title = getattr(event, "title", None) or _fallback_title(event_type)
-        description = getattr(event, "description", None) or getattr(event, "descricao_curta", None)
+        citations = [
+            {
+                "document_id": document_id,
+                "source_path": citation.get("source_path"),
+                "page": citation.get("page"),
+                "bbox": citation.get("bbox"),
+                "snippet": citation.get("snippet"),
+                "confidence": citation.get("confidence"),
+                "provenance_status": citation.get("provenance_status"),
+                "review_state": citation.get("review_state"),
+                "note": citation.get("note"),
+            }
+            for citation in (event.get("citations") or [])
+            if isinstance(citation, dict)
+        ]
 
         events_out.append(
             {
-                "event_id": getattr(event, "event_id", None),
-                "event_type": event_type,
-                "title": title,
-                "description": description,
-                "date_iso": getattr(event, "date_iso", None),
-                "confidence": confidence,
-                "review_state": getattr(event, "review_state", None) or _review_state(confidence),
-                "provenance_status": getattr(event, "provenance_status", None),
-                "derivation_rule": getattr(event, "derivation_rule", None),
-                "tags": tags,
-                "entities": entities,
-                "citations": citations_out,
+                "event_id": event.get("event_id"),
+                "event_type": event.get("event_type"),
+                "title": event.get("title") or _fallback_title(event.get("event_type")),
+                "description": event.get("description"),
+                "date_iso": event.get("date"),
+                "confidence": event.get("confidence"),
+                "review_state": event.get("review_state") or _review_state(event.get("confidence")),
+                "provenance_status": event.get("provenance_status"),
+                "derivation_rule": "timeline_public_projection_v1",
+                "tags": list(
+                    dict.fromkeys(
+                        [f"cid:{cid}" for cid in (event.get("entities", {}) or {}).get("cids", []) if cid]
+                    )
+                ),
+                "entities": event.get("entities", {}) or {},
+                "citations": citations,
             }
         )
-
-    if not events_out:
-        public_timeline = build_document_timeline_read_model(dm)
-        for event in public_timeline.get("timeline", []) or []:
-            if not isinstance(event, dict):
-                continue
-
-            citations = [
-                {
-                    "document_id": document_id,
-                    "source_path": citation.get("source_path"),
-                    "page": citation.get("page"),
-                    "bbox": citation.get("bbox"),
-                    "snippet": citation.get("snippet"),
-                    "confidence": citation.get("confidence"),
-                    "provenance_status": citation.get("provenance_status"),
-                    "review_state": citation.get("review_state"),
-                    "note": citation.get("note"),
-                }
-                for citation in (event.get("citations") or [])
-                if isinstance(citation, dict)
-            ]
-
-            events_out.append(
-                {
-                    "event_id": event.get("event_id"),
-                    "event_type": event.get("event_type"),
-                    "title": event.get("title") or _fallback_title(event.get("event_type")),
-                    "description": event.get("description"),
-                    "date_iso": event.get("date"),
-                    "confidence": event.get("confidence"),
-                    "review_state": event.get("review_state") or _review_state(event.get("confidence")),
-                    "provenance_status": event.get("provenance_status"),
-                    "derivation_rule": "timeline_public_fallback_v1",
-                    "tags": list(
-                        dict.fromkeys(
-                            [f"cid:{cid}" for cid in (event.get("entities", {}) or {}).get("cids", []) if cid]
-                        )
-                    ),
-                    "entities": event.get("entities", {}) or {},
-                    "citations": citations,
-                }
-            )
 
     events_out.sort(key=_event_sort_key)
     consistency_warning = build_timeline_consistency_warning(dm)
@@ -736,17 +689,26 @@ def apply_layer5(dm: DocumentMemory) -> DocumentMemory:
             Derivado(tipo="preview", uri="generated://preview.pdf")
         )
 
-    # Layer5 ainda não persiste derivados em backend real.
-    # Mantemos URIs de placeholder explícitas para compatibilidade,
-    # mas não afirmamos persistência nem expomos blob fake.
-    dm.layer5.storage_uris = []
-    dm.layer5.persistence_state = _PLACEHOLDER_PERSISTENCE_STATE
-
-    if dm.layer3 is not None:
-        dm.layer5.read_models = {
-            "timeline_v1": _build_timeline_v1(dm),
-            "entity_summary_v1": _build_entity_summary_v1(dm),
-            "review_items_v1": _build_review_items_v1(dm),
-        }
+    dm.layer5.read_models = {
+        "timeline_v1": _build_timeline_v1(dm),
+        "entity_summary_v1": _build_entity_summary_v1(dm),
+        "review_items_v1": _build_review_items_v1(dm),
+    }
+    document_id = dm.layer0.documentid if dm.layer0 else "unknown"
+    dm.layer5.storage_uris = [
+        StorageURI(
+            kind=_LAYER5_STORAGE_KIND,
+            uri=f"document-memory://{document_id}/layer5/read_models/timeline_v1",
+        ),
+        StorageURI(
+            kind=_LAYER5_STORAGE_KIND,
+            uri=f"document-memory://{document_id}/layer5/read_models/entity_summary_v1",
+        ),
+        StorageURI(
+            kind=_LAYER5_STORAGE_KIND,
+            uri=f"document-memory://{document_id}/layer5/read_models/review_items_v1",
+        ),
+    ]
+    dm.layer5.persistence_state = _LAYER5_PERSISTENCE_STATE
 
     return dm

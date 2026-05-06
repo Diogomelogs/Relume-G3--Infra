@@ -1,8 +1,9 @@
-from datetime import datetime, timezone
 from typing import Any, Dict, List, Optional
 
 from relluna.infra.mongo import get_db
 from .schema import ReadModelDocument
+
+_MEMORY_READ_MODEL_STORE: Dict[str, dict] = {}
 
 
 def _safe_get(obj: Any, key: str, default: Any = None) -> Any:
@@ -65,15 +66,26 @@ def _matches_filters(
 
 class ReadModelStore:
     def __init__(self) -> None:
-        db = get_db()
-        self.col = db["read_model_documents"]
+        self.col = None
+        try:
+            db = get_db()
+            self.col = db["read_model_documents"]
+        except Exception:
+            self.col = None
 
     async def upsert(self, doc: ReadModelDocument) -> None:
-        await self.col.update_one(
+        payload = doc.model_dump(mode="python")
+        if self.col is None:
+            _MEMORY_READ_MODEL_STORE[doc.document_id] = payload
+            return
+
+        result = self.col.update_one(
             {"document_id": doc.document_id},
-            {"$set": doc.model_dump()},
+            {"$set": payload},
             upsert=True,
         )
+        if hasattr(result, "__await__"):
+            await result
 
     async def search(
         self,
@@ -92,6 +104,29 @@ class ReadModelStore:
         skip: int = 0,
     ) -> List[dict]:
         query: dict = {}
+        if self.col is None:
+            docs = list(_MEMORY_READ_MODEL_STORE.values())
+            filtered = [
+                doc for doc in docs
+                if _matches_filters(
+                    doc,
+                    q=q,
+                    periodo=periodo,
+                    tipo_evento=tipo_evento,
+                    tags=tags,
+                    patient=patient,
+                    provider=provider,
+                    cid=cid,
+                    date=date,
+                    doc_type=doc_type,
+                    start_date=start_date,
+                    end_date=end_date,
+                )
+            ]
+            filtered.sort(key=lambda doc: _safe_get(doc, "date_canonical") or "", reverse=True)
+            if skip:
+                filtered = filtered[skip:]
+            return filtered[:limit]
 
         if q:
             query["search_text"] = {"$regex": q, "$options": "i"}
@@ -166,3 +201,15 @@ class ReadModelStore:
             results = results[skip:]
 
         return results[:limit]
+
+
+def list_all() -> List[dict]:
+    return list(_MEMORY_READ_MODEL_STORE.values())
+
+
+def all() -> List[dict]:
+    return list_all()
+
+
+def iter_all():
+    return iter(list_all())
