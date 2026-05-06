@@ -1,26 +1,26 @@
 # Benchmark medico-juridico auditavel
 
-Gerado em: `2026-04-23T18:39:28.862119+00:00`
+Gerado em: `2026-05-06T21:13:40.687120+00:00`
 Casos avaliados: **11**
-Score geral: **88.94/100**
+Score geral: **93.03/100**
 
 ## Score por eixo
 
 | Eixo | Score |
 | --- | ---: |
 | entidades | 91.21 |
-| eventos | 81.82 |
-| evidencia | 91.67 |
+| eventos | 90.91 |
+| evidencia | 93.94 |
 | confiabilidade | 98.16 |
-| utilidade_juridica | 81.82 |
+| utilidade_juridica | 90.91 |
 
 ## Métricas explícitas
 
 | Métrica | Score |
 | --- | ---: |
-| utilidade_juridica | 81.82 |
-| ancoragem_evidencia | 91.67 |
-| revisao_humana | 78.79 |
+| utilidade_juridica | 90.91 |
+| ancoragem_evidencia | 93.94 |
+| revisao_humana | 87.88 |
 | consistencia_timeline | 90.91 |
 
 ## Casos
@@ -33,10 +33,10 @@ Score geral: **88.94/100**
 | 004_receituario_vs_atestado | 96.00 | 80.00 | 100.00 | 100.00 | 100.00 | 100.00 | 1 |
 | 005_documento_composto | 100.00 | 100.00 | 100.00 | 100.00 | 100.00 | 100.00 | 0 |
 | 006_paciente_vs_mae | 100.00 | 100.00 | 100.00 | 100.00 | 100.00 | 100.00 | 0 |
-| 007_prestador_falso_positivo | 87.00 | 60.00 | 100.00 | 75.00 | 100.00 | 100.00 | 4 |
+| 007_prestador_falso_positivo | 92.00 | 60.00 | 100.00 | 100.00 | 100.00 | 100.00 | 2 |
 | 008_cid_espurio | 93.33 | 83.33 | 100.00 | 83.33 | 100.00 | 100.00 | 3 |
 | 009_evento_inferido_sem_lastro_exato | 87.50 | 100.00 | 100.00 | 50.00 | 87.50 | 100.00 | 3 |
-| 010_divergencia_seed_layer3 | 60.00 | 100.00 | 0.00 | 100.00 | 100.00 | 0.00 | 1 |
+| 010_divergencia_seed_layer3 | 100.00 | 100.00 | 100.00 | 100.00 | 100.00 | 100.00 | 0 |
 | 011_evento_estimado_com_explicacao | 100.00 | 100.00 | 100.00 | 100.00 | 100.00 | 100.00 | 0 |
 
 ## Métrica de consistência
@@ -53,15 +53,12 @@ Score geral: **88.94/100**
 - `004_receituario_vs_atestado` [critical] entidades: Tipo documental divergente: esperado `receituario`.
 - `007_prestador_falso_positivo` [critical] entidades: Campo crítico `provider` divergente: esperado `DR. GUSTAVO LEAL`.
 - `007_prestador_falso_positivo` [critical] entidades: Campo `provider` contém valor proibido `SAO PAULO`.
-- `007_prestador_falso_positivo` [major] evidencia: Lastro incompleto para `entity:provider`; exige página, snippet e bbox.
-- `007_prestador_falso_positivo` [major] confiabilidade: `entity:provider` exige revisão humana, mas não expõe review_state.
 - `008_cid_espurio` [critical] entidades: Campo `cids` contém valor proibido `ABC12`.
 - `008_cid_espurio` [major] evidencia: Lastro incompleto para `entity:cids`; exige página, snippet e bbox.
 - `008_cid_espurio` [major] confiabilidade: `entity:cids:1` exige revisão humana, mas não expõe review_state.
 - `009_evento_inferido_sem_lastro_exato` [major] evidencia: Lastro incompleto para `entity:document_date`; exige página, snippet e bbox.
 - `009_evento_inferido_sem_lastro_exato` [major] evidencia: Lastro incompleto para `event:parecer_emitido`; exige página, snippet e bbox.
 - `009_evento_inferido_sem_lastro_exato` [major] confiabilidade: `entity:document_date` não distingue observado/inferido/estimado.
-- `010_divergencia_seed_layer3` [critical] eventos: Evento obrigatório ausente: `document_issue_date` em `2024-10-21`.
 
 ## Estrutura proposta
 

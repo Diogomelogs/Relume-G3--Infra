@@ -28,8 +28,9 @@
       "provider": {
         "value": "SAO PAULO",
         "provenance_status": "inferred",
-        "confidence": 0.61,
-        "evidence": {"page": 1, "snippet": "São Paulo, 03/07/2024", "bbox": null}
+        "confidence": 0.62,
+        "review_state": "needs_review",
+        "evidence": {"page": 1, "snippet": "São Paulo, 03/07/2024", "bbox": [332, 578, 508, 600]}
       },
       "document_date": {
         "value": "2024-07-03",
@@ -60,6 +61,6 @@
         "provenance_status": "inferred"
       }
     ],
-    "warnings": ["provider_without_crm"]
+    "warnings": ["provider_looks_geographic_false_positive"]
   }
 }
