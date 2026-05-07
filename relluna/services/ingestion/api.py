@@ -6,6 +6,7 @@ from pathlib import Path
 from typing import List, Optional, Callable, Awaitable
 from uuid import uuid4
 import json
+import os
 import traceback
 from time import perf_counter
 
@@ -23,6 +24,7 @@ from relluna.core.document_memory import (
 from relluna.core.document_memory.layer0 import CustodyEvent, IntegrityProof, ProcessingEvent
 from relluna.core.document_memory.layer1 import ArtefatoTipo
 from relluna.core.document_memory.layer4_canonical import Layer4SemanticNormalization
+from relluna.infra.blob import AzureBlobArtefactStore
 from relluna.infra import mongo_store
 from relluna.infra.azureblobbackend import AzureBlobBackend
 from relluna.infra.mongo.client import get_db
@@ -112,7 +114,10 @@ async def health() -> HealthResponse:
             ServiceStatus(
                 name="blob",
                 status="degraded",
-                detail="AZURE_STORAGE_CONNECTION_STRING not set",
+                detail=(
+                    "Blob backend not configured "
+                    "(AZURE_STORAGE_CONNECTION_STRING or AZURE_BLOB_CONNECTION_STRING)"
+                ),
             )
         )
     else:
@@ -186,6 +191,36 @@ def _append_processing_event(
 
 def _drop_none(value):
     return sanitize_processing_details(value)
+
+
+def _env_flag(name: str, default: str = "0") -> bool:
+    return (os.getenv(name, default).strip().lower() in {"1", "true", "yes", "on"})
+
+
+def _blob_metadata_from_dm(dm: DocumentMemory) -> Optional[dict]:
+    if dm.layer1 is None or not dm.layer1.artefatos:
+        return None
+    metadata = dm.layer1.artefatos[0].metadados_nativos or {}
+    blob_data = metadata.get("blob_storage")
+    return blob_data if isinstance(blob_data, dict) else None
+
+
+def _maybe_upload_original_to_blob(local_path: Path, artefact_id: str) -> Optional[dict]:
+    if not _env_flag("RELLUNA_ENABLE_REMOTE_BLOB_INGEST", "0"):
+        return None
+
+    backend = AzureBlobBackend()
+    if not backend.is_configured:
+        return None
+
+    store = AzureBlobArtefactStore()
+    blob_path = store.upload(local_path, artefact_id)
+    return {
+        "container": store.container_name,
+        "blob_path": blob_path,
+        "blob_uri": store.blob_url_for(artefact_id),
+        "uploaded_at": utcnow().isoformat(),
+    }
 
 
 def _ocr_error_message(exc: Exception) -> str:
@@ -432,16 +467,17 @@ async def ingest(
     if existing is not None:
         existing_dm = DocumentMemory.model_validate(existing) if isinstance(existing, dict) else existing
         existing_uri = None
+        blob_metadata = _blob_metadata_from_dm(existing_dm)
         if existing_dm.layer1 and existing_dm.layer1.artefatos:
             existing_uri = existing_dm.layer1.artefatos[0].uri
         return {
             "documentid": existing_dm.layer0.documentid,
-            "blob_uri": existing_uri,
+            "blob_uri": (blob_metadata or {}).get("blob_uri"),
             "artifact_uri": existing_uri,
             "local_file_uri": existing_uri,
-            "storage_kind": _LOCAL_FILE_STORAGE_KIND,
-            "storage_state": _LOCAL_FILE_STORAGE_STATE,
-            "is_remote_blob": False,
+            "storage_kind": ("azure_blob+local_file" if blob_metadata else _LOCAL_FILE_STORAGE_KIND),
+            "storage_state": ("blob_and_local_file_persisted" if blob_metadata else _LOCAL_FILE_STORAGE_STATE),
+            "is_remote_blob": bool(blob_metadata),
             "hash": digest,
             "deduplicated": True,
         }
@@ -511,6 +547,48 @@ async def ingest(
 
     dm = DocumentMemory(version=DOCUMENT_MEMORY_VERSION, layer0=layer0, layer1=layer1)
 
+    blob_metadata = None
+    try:
+        blob_metadata = _maybe_upload_original_to_blob(target_path, documentid)
+    except Exception as exc:
+        dm.layer0.processingevents.append(
+            ProcessingEvent(
+                etapa="blob_upload",
+                engine="infra.blob.azure",
+                status="warning",
+                detalhes={"message": str(exc)},
+            )
+        )
+
+    if blob_metadata:
+        artefact = dm.layer1.artefatos[0]
+        artefact.metadados_nativos = artefact.metadados_nativos or {}
+        artefact.metadados_nativos["blob_storage"] = blob_metadata
+        dm.layer0.custodychain.append(
+            CustodyEvent(
+                etapa="ingest",
+                agente="api",
+                acao="copy",
+                origem_uri=str(target_path),
+                destino_uri=blob_metadata["blob_uri"],
+                detalhes={
+                    "container": blob_metadata["container"],
+                    "blob_path": blob_metadata["blob_path"],
+                },
+            )
+        )
+        dm.layer0.processingevents.append(
+            ProcessingEvent(
+                etapa="blob_upload",
+                engine="infra.blob.azure",
+                status="success",
+                detalhes={
+                    "container": blob_metadata["container"],
+                    "blob_path": blob_metadata["blob_path"],
+                },
+            )
+        )
+
     if midia == MediaType.imagem:
         try:
             nsfw_result = check_image_nsfw(target_path, threshold=0.7)
@@ -524,12 +602,12 @@ async def ingest(
 
     return {
         "documentid": layer0.documentid,
-        "blob_uri": str(target_path),
+        "blob_uri": (blob_metadata or {}).get("blob_uri"),
         "artifact_uri": str(target_path),
         "local_file_uri": str(target_path),
-        "storage_kind": _LOCAL_FILE_STORAGE_KIND,
-        "storage_state": _LOCAL_FILE_STORAGE_STATE,
-        "is_remote_blob": False,
+        "storage_kind": ("azure_blob+local_file" if blob_metadata else _LOCAL_FILE_STORAGE_KIND),
+        "storage_state": ("blob_and_local_file_persisted" if blob_metadata else _LOCAL_FILE_STORAGE_STATE),
+        "is_remote_blob": bool(blob_metadata),
         "hash": digest,
         "deduplicated": False,
     }
