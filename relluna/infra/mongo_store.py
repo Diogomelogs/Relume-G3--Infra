@@ -36,7 +36,12 @@ def get_database():
 
     if _db is None:
         client = get_mongo_client()
-        db_name = os.getenv("MONGO_DB_NAME", "relluna")
+        db_name = (
+            os.getenv("MONGO_DB")
+            or os.getenv("MONGO_DB_NAME")
+            or os.getenv("MONGODB_DB")
+            or "relluna"
+        )
         _db = client[db_name]
     return _db
 
@@ -74,6 +79,7 @@ async def get(documentid: str) -> Optional[DocumentMemory]:
     data = await coll.find_one({"layer0.documentid": documentid})
     if not data:
         return None
+    data.pop("_id", None)
     return DocumentMemory.model_validate(data)
 
 

@@ -38,6 +38,7 @@ O caminho principal é a API em `relluna/services/ingestion/api.py`.
 4. Procura documento existente pelo fingerprint.
 5. Se houver duplicata, retorna o `documentid` existente e não cria nova memória.
 6. Salva o arquivo em `.uploads` com prefixo do hash.
+6.1. Se `RELLUNA_ENABLE_REMOTE_BLOB_INGEST=1` e o backend Blob estiver configurado, copia o arquivo original também para Azure Blob e registra `blob_storage` em `Layer1.artefatos[0].metadados_nativos`, sem substituir o `uri` local usado pelos extratores.
 7. Detecta `MediaType` e `OriginType`.
 8. Cria `DocumentMemory` com:
    - Layer0: hash, custódia, metadados de ingestão, `processingevents`.
@@ -45,7 +46,7 @@ O caminho principal é a API em `relluna/services/ingestion/api.py`.
 9. Para imagem, tenta rodar checagem NSFW e salva o resultado em `metadados_nativos` quando disponível.
 10. Persiste com `relluna.infra.mongo_store.save`.
 
-Observação: o campo legado `blob_uri` aponta para caminho local em `.uploads`, não para blob remoto real. As respostas de ingestão também expõem `artifact_uri`, `local_file_uri`, `storage_kind="local_file"`, `storage_state="local_file_persisted"` e `is_remote_blob=false` para evitar leitura enganosa de persistência remota.
+Observação: o pipeline continua processando a partir do arquivo local em `.uploads`. Quando o upload remoto está ativo, a resposta de ingestão expõe `blob_uri` remoto e preserva `artifact_uri`/`local_file_uri` locais para compatibilidade com os extratores que ainda fazem `Path(artefato.uri)`. Sem a flag explícita, o comportamento permanece apenas local.
 
 ### `/extract/{documentid}`
 
@@ -67,7 +68,7 @@ O fluxo real usa estágios como:
 
 O caminho `fast` pode escalar para `standard` se a qualidade extraída for baixa.
 
-Para PDFs escaneados sem texto nativo, `decompose_pdf_into_subdocuments` usa OCR. Antes do OCR pesado, `page_strategy_v1` classifica cada página como `native_text`, `ocr_light`, `ocr_heavy` ou `image_only` a partir de sinais baratos de texto nativo e imagens do PDF. A normalização de orientação não tenta mais múltiplas rotações por OCR por padrão; mantém a orientação renderizada, registra `ocr_warnings_v1` e emite `ProcessingEvent(status="warning")` quando opera em modo limitado. Chamadas de Tesseract têm timeout operacional para evitar travamento silencioso e permitir erro estruturado na API/UI.
+Para PDFs escaneados sem texto nativo, `decompose_pdf_into_subdocuments` usa OCR local. Hoje o repositório não contém chamada ativa para Azure Computer Vision; o caminho real usa PyMuPDF/pypdf para texto nativo e Tesseract (`pytesseract`) para OCR raster. Antes do OCR pesado, `page_strategy_v1` classifica cada página como `native_text`, `ocr_light`, `ocr_heavy` ou `image_only` a partir de sinais baratos de texto nativo e imagens do PDF. A normalização de orientação não tenta mais múltiplas rotações por OCR por padrão; mantém a orientação renderizada, registra `ocr_warnings_v1` e emite `ProcessingEvent(status="warning")` quando opera em modo limitado. Chamadas de Tesseract têm timeout operacional para evitar travamento silencioso e permitir erro estruturado na API/UI.
 
 ### `/infer_context/{documentid}`
 
@@ -161,6 +162,8 @@ Contém inferências:
 - `eventos_probatorios`.
 
 `Layer3.eventos_probatorios` é gerado principalmente a partir de `timeline_seed_v2`, que por sua vez nasce primeiro de `subdocument_unit_v1` e `page_unit_v1`; `entities_canonical_v1` permanece apenas como fallback compatível. Cada evento deve carregar data, tipo, título, descrição, entidades, citações, confiança, revisão, status de proveniência e o estado epistemológico explícito (`observed`, `inferred` ou `unknown`).
+
+Observação operacional: o pipeline HTTP ativo (`relluna/services/ingestion/api.py`) usa `relluna.services.context_inference.basic.infer_layer3`, baseado em regras e sinais canônicos. O caminho LLM em `relluna.services.context_inference.llm_context` existe, mas não é chamado pela API atual; além disso, quando faltam `AZURE_OPENAI_API_KEY` e deployment, ele entra em fallback explícito `llm_offline_missing_api_key`.
 
 Regra de utilidade jurídica: todo evento probatório deve expor `provenance_status`, `review_state` e `confidence`. Quando houver evidência exata, a citação deve carregar `page`, `snippet` e `bbox`; quando a evidência não for exata, o evento deve ficar explicitamente marcado como `inferred` ou `estimated`.
 

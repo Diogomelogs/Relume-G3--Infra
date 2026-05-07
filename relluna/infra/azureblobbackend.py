@@ -1,6 +1,8 @@
 import os
 from typing import Optional
 
+from relluna.infra.blob.client import get_blob_settings
+
 try:
     # Tenta importar o SDK oficial da Azure
     from azure.storage.blob import BlobServiceClient, ContainerClient  # type: ignore
@@ -22,7 +24,13 @@ class AzureBlobBackend:
     """
 
     def __init__(self, conn_str: Optional[str] = None) -> None:
-        self._conn_str = conn_str or os.getenv("AZURE_STORAGE_CONNECTION_STRING")
+        resolved_conn_str = conn_str
+        if resolved_conn_str is None:
+            try:
+                resolved_conn_str = get_blob_settings().connection_string
+            except RuntimeError:
+                resolved_conn_str = None
+        self._conn_str = resolved_conn_str
         self._client = None
 
         if self._conn_str and BlobServiceClient is not None:
@@ -46,9 +54,23 @@ class AzureBlobBackend:
         Faz upload de um blob e retorna a URL.
         """
         container_client = self._get_container_client(container)
+        try:
+            container_client.create_container()
+        except Exception:
+            pass
         blob = container_client.get_blob_client(blob_path)
         blob.upload_blob(data, overwrite=True)
         return blob.url
+
+    def download(self, container: str, blob_path: str) -> bytes:
+        container_client = self._get_container_client(container)
+        blob = container_client.get_blob_client(blob_path)
+        return blob.download_blob().readall()
+
+    def delete(self, container: str, blob_path: str) -> None:
+        container_client = self._get_container_client(container)
+        blob = container_client.get_blob_client(blob_path)
+        blob.delete_blob(delete_snapshots="include")
 
     def ping(self) -> bool:
         """
