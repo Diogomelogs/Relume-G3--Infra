@@ -5,17 +5,13 @@ import json
 import requests
 from typing import Any
 
-def _get_env(name: str) -> str:
-    v = os.environ.get(name)
-    if not v:
-        raise RuntimeError(f"Missing env var: {name}")
-    return v
+from relluna.infra.secrets import get_secret
 
 def chat_json(*, system: str, user_json: dict[str, Any], json_schema: dict[str, Any]) -> dict[str, Any]:
-    endpoint = _get_env("AZURE_OPENAI_ENDPOINT")
-    key = _get_env("AZURE_OPENAI_API_KEY")
-    deployment = _get_env("AZURE_OPENAI_CHAT_DEPLOYMENT")
-    api_version = os.environ.get("AZURE_OPENAI_API_VERSION", "2024-02-15-preview")
+    endpoint = get_secret("AZURE_OPENAI_ENDPOINT")
+    key = get_secret("AZURE_OPENAI_API_KEY")
+    deployment = get_secret("AZURE_OPENAI_CHAT_DEPLOYMENT")
+    api_version = get_secret("AZURE_OPENAI_API_VERSION", default="2024-02-15-preview")
 
     url = f"{endpoint}/openai/deployments/{deployment}/chat/completions?api-version={api_version}"
     headers = {"api-key": key, "content-type": "application/json"}
@@ -42,10 +38,10 @@ def chat_json(*, system: str, user_json: dict[str, Any], json_schema: dict[str, 
     return out
 
 def embed_text(text: str) -> list[float]:
-    endpoint = _get_env("AZURE_OPENAI_ENDPOINT")
-    key = _get_env("AZURE_OPENAI_API_KEY")
-    deployment = _get_env("AZURE_OPENAI_EMBED_DEPLOYMENT")
-    api_version = os.environ.get("AZURE_OPENAI_API_VERSION", "2024-02-15-preview")
+    endpoint = get_secret("AZURE_OPENAI_ENDPOINT")
+    key = get_secret("AZURE_OPENAI_API_KEY")
+    deployment = get_secret("AZURE_OPENAI_EMBED_DEPLOYMENT")
+    api_version = get_secret("AZURE_OPENAI_API_VERSION", default="2024-02-15-preview")
 
     url = f"{endpoint}/openai/deployments/{deployment}/embeddings?api-version={api_version}"
     headers = {"api-key": key, "content-type": "application/json"}

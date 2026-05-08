@@ -1,9 +1,10 @@
 from __future__ import annotations
 
-import os
 from dataclasses import dataclass
 from pymongo import MongoClient
 from pymongo.database import Database
+
+from relluna.infra.secrets import get_secret
 
 
 @dataclass(frozen=True)
@@ -13,8 +14,14 @@ class MongoSettings:
 
     @staticmethod
     def from_env() -> "MongoSettings":
-        uri = os.getenv("MONGO_URI") or os.getenv("MONGODB_URI")
-        db_name = os.getenv("MONGO_DB") or os.getenv("MONGODB_DB")
+        uri = (
+            get_secret("MONGO_URI", default="")
+            or get_secret("MONGODB_URI", default="")
+        )
+        db_name = (
+            get_secret("MONGO_DB", default="")
+            or get_secret("MONGODB_DB", default="")
+        )
         if not uri:
             raise RuntimeError("Missing env var: MONGO_URI (or legacy MONGODB_URI)")
         if not db_name:
