@@ -2,8 +2,8 @@
 
 from typing import Optional, List
 
-import os
 from motor.motor_asyncio import AsyncIOMotorClient, AsyncIOMotorCollection
+from relluna.infra.secrets import get_secret
 
 from relluna.core.document_memory import DocumentMemory
 
@@ -24,7 +24,7 @@ async def init(
     global _client, _collection
 
     if uri is None:
-        uri = os.getenv("MONGODB_URI", "mongodb://localhost:27017")
+        uri = get_secret("MONGODB_URI", default="mongodb://localhost:27017")
 
     _client = AsyncIOMotorClient(uri)
     db = _client[db_name]

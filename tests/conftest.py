@@ -44,6 +44,14 @@ real_mongo.count_all = fake_mongo_store.count_all
 from relluna.services.ingestion.api import app
 
 
+@pytest.fixture(autouse=True)
+def _clear_secrets_cache():
+    from relluna.infra.secrets import get_secret
+    get_secret.cache_clear()
+    yield
+    get_secret.cache_clear()
+
+
 @pytest.fixture(scope="session")
 def client():
     with TestClient(app) as client:

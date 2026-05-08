@@ -3,6 +3,7 @@ from typing import Optional
 
 from motor.motor_asyncio import AsyncIOMotorClient
 from relluna.core.document_memory import DocumentMemory
+from relluna.infra.secrets import get_secret
 
 # -----------------------------
 # In-memory fallback
@@ -24,7 +25,10 @@ def get_mongo_client():
         return None
 
     if _client is None:
-        uri = os.getenv("MONGO_URI") or os.getenv("MONGODB_URI")
+        uri = (
+            get_secret("MONGO_URI", default="")
+            or get_secret("MONGODB_URI", default="")
+        )
         _client = AsyncIOMotorClient(uri)
     return _client
 
@@ -37,9 +41,9 @@ def get_database():
     if _db is None:
         client = get_mongo_client()
         db_name = (
-            os.getenv("MONGO_DB")
-            or os.getenv("MONGO_DB_NAME")
-            or os.getenv("MONGODB_DB")
+            get_secret("MONGO_DB", default="")
+            or get_secret("MONGO_DB_NAME", default="")
+            or get_secret("MONGODB_DB", default="")
             or "relluna"
         )
         _db = client[db_name]

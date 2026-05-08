@@ -1,6 +1,7 @@
 from azure.storage.blob import BlobServiceClient
 from dataclasses import dataclass
-import os
+
+from relluna.infra.secrets import get_secret
 
 
 @dataclass
@@ -9,18 +10,10 @@ class BlobSettings:
     container_name: str
 
 
-def _first_env(*names: str) -> str | None:
-    for name in names:
-        value = os.getenv(name)
-        if value:
-            return value
-    return None
-
-
 def get_blob_settings() -> BlobSettings:
-    connection_string = _first_env(
-        "AZURE_STORAGE_CONNECTION_STRING",
-        "AZURE_BLOB_CONNECTION_STRING",
+    connection_string = (
+        get_secret("AZURE_STORAGE_CONNECTION_STRING", default="")
+        or get_secret("AZURE_BLOB_CONNECTION_STRING", default="")
     )
     if not connection_string:
         raise RuntimeError(
@@ -28,15 +21,15 @@ def get_blob_settings() -> BlobSettings:
             "(or legacy AZURE_BLOB_CONNECTION_STRING)"
         )
 
+    container_name = (
+        get_secret("AZURE_BLOB_CONTAINER", default="")
+        or get_secret("AZURE_CONTAINER_RAW", default="")
+        or "memories"
+    )
+
     return BlobSettings(
         connection_string=connection_string,
-        container_name=(
-            _first_env(
-                "AZURE_BLOB_CONTAINER",
-                "AZURE_CONTAINER_RAW",
-            )
-            or "memories"
-        ),
+        container_name=container_name,
     )
 
 
