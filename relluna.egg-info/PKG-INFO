@@ -6,6 +6,7 @@ Requires-Python: >=3.11
 Requires-Dist: fastapi>=0.110.0
 Requires-Dist: uvicorn[standard]>=0.27.0
 Requires-Dist: pydantic>=2.6.0
+Requires-Dist: python-dotenv>=1.0.1
 Requires-Dist: python-multipart>=0.0.9
 Requires-Dist: httpx>=0.27.0
 Requires-Dist: redis>=5.0.1
@@ -14,5 +15,11 @@ Requires-Dist: pymongo>=4.8.0
 Requires-Dist: motor[srv]>=3.0.0
 Requires-Dist: pillow>=10.3.0
 Requires-Dist: pypdf>=5.0.0
+Requires-Dist: azure-storage-blob>=12.19.0
+Requires-Dist: azure-identity>=1.15.0
+Requires-Dist: azure-keyvault-secrets>=4.7.0
 Provides-Extra: dev
 Requires-Dist: pytest; extra == "dev"
+Requires-Dist: ruff>=0.6.9; extra == "dev"
+Provides-Extra: asr
+Requires-Dist: openai-whisper>=20231117; extra == "asr"

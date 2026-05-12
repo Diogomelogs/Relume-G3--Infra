@@ -21,6 +21,7 @@ dependencies = [
     "motor[srv]>=3.0.0",
     "pillow>=10.3.0",
     "pypdf>=5.0.0",
+    "azure-storage-blob>=12.19.0",
     "azure-identity>=1.15.0",
     "azure-keyvault-secrets>=4.7.0"
 ]
