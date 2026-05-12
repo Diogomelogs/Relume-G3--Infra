@@ -15,7 +15,7 @@ from relluna.core.normalization import normalize_to_layer4
 from relluna.services.context_inference.basic import infer_layer3
 from relluna.services.deterministic_extractors.timeline_seed_v2 import seed_timeline_v2
 from relluna.services.entities.entities_canonical_v1 import apply_entities_canonical_v1
-from relluna.services.benchmark import evaluate_case, load_benchmark_case
+from relluna.services.benchmark import evaluate_case, load_benchmark_case, project_document_memory
 
 
 def _dm_with_page_evidence(page_evidence: list[dict]) -> DocumentMemory:
@@ -222,3 +222,33 @@ def test_full_pipeline_keeps_birth_date_out_of_document_date_and_timeline():
     events = {(event.event_type, event.date_iso) for event in dm.layer3.eventos_probatorios}
     assert ("document_issue_date", "2024-03-05") in events
     assert ("document_issue_date", "1980-01-20") not in events
+
+
+def test_benchmark_projection_from_live_pipeline_keeps_birth_date_out_of_actual_payload():
+    page_evidence = _birth_and_issue_page_evidence()
+    dm = _dm_with_page_evidence(page_evidence)
+    dm.layer2.texto_ocr_literal = ProvenancedString(
+        valor="\n".join(item["page_text"] for item in page_evidence),
+        fonte="pytest",
+        metodo="fixture",
+        estado=ConfidenceState.confirmado,
+        confianca=1.0,
+    )
+
+    dm = apply_entities_canonical_v1(dm)
+    dm = seed_timeline_v2(dm)
+    dm = infer_layer3(dm)
+    dm = normalize_to_layer4(dm)
+
+    projected = project_document_memory(dm)
+
+    document_date = projected["entities"]["document_date"]
+    assert document_date["date_iso"] == "2024-03-05"
+    assert document_date["value"] == "2024-03-05"
+
+    event_pairs = {
+        (event["event_type"], event["date_iso"])
+        for event in projected["events"]
+    }
+    assert ("document_issue_date", "2024-03-05") in event_pairs
+    assert ("document_issue_date", "1980-01-20") not in event_pairs

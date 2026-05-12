@@ -1,6 +1,6 @@
 {
   "id": "010_divergencia_seed_layer3",
-  "title": "Divergencia entre seed e Layer3 deve aparecer no benchmark",
+  "title": "Timeline publica reconcilia seed e Layer3 sem esconder divergencia",
   "expected": {
     "document_type": "parecer_medico",
     "entities": {
@@ -40,8 +40,8 @@
       {
         "event_type": "document_issue_date",
         "title": "Data de emissao",
-        "description": "Layer3 promoveu a data errada na timeline.",
-        "date_iso": "2024-10-22",
+        "description": "Timeline publica conciliou a data documental correta sem esconder a divergencia com Layer3.",
+        "date_iso": "2024-10-21",
         "provenance_status": "observed",
         "review_state": "needs_review",
         "confidence": 0.74,

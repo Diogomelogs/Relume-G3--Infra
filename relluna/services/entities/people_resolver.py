@@ -38,6 +38,10 @@ _HEADER_BREAK_TOKENS = (
     "especialidade",
 )
 
+_CITY_DATE_PREFIX = re.compile(
+    r"(?i)^[A-ZÀ-Ý][A-ZÀ-Ýa-zà-ÿ]+(?:\s+[A-ZÀ-Ý][A-ZÀ-Ýa-zà-ÿ]+){0,3}\s*,\s*\d{1,2}(?:[/-]\d{1,2}[/-]\d{2,4})?$"
+)
+
 
 @dataclass
 class PersonResolution:
@@ -130,12 +134,17 @@ class PeopleResolver:
                 continue
 
             anchor = self._best_anchor_for_label(page_item, "provider")
+            if anchor and not self._provider_anchor_matches_name(anchor, name):
+                anchor = None
             crm = self._normalize_crm(
                 (page_item.get("administrative_entities") or {}).get("crm") or [],
                 page_item.get("page_text") or "",
             )
             confidence = float(people.get("provider_confidence") or 0.70)
             evidence = self._evidence_ref(page_item, anchor, "provider", name)
+            review_state = people.get("provider_review_state") or "review_recommended"
+            if not evidence.get("bbox") or not crm:
+                review_state = "needs_review"
             score = confidence + (0.08 if crm else 0.0)
             if evidence.get("bbox"):
                 score += 0.04
@@ -148,7 +157,7 @@ class PeopleResolver:
                     "crm": crm,
                     "confidence": round(confidence, 3),
                     "reason": "provider_anchor_candidate",
-                    "review_state": people.get("provider_review_state") or "review_recommended",
+                    "review_state": review_state,
                     "evidence_refs": [evidence],
                     "_score": score,
                 }
@@ -262,12 +271,29 @@ class PeopleResolver:
         low = value.lower()
         if any(item in low for item in _HARD_NON_PERSON):
             return True
+        if _CITY_DATE_PREFIX.match(value.strip()):
+            return True
         return bool(
             re.search(
                 r"\b(?:medicamentos?|subst[âa]ncias?|emitente|fornecedor|comprador|identifica[cç][aã]o|estado|normal|servi[cç]o|especialidade)\b",
                 low,
             )
         )
+
+    def _provider_anchor_matches_name(
+        self,
+        anchor: Optional[Dict[str, Any]],
+        name: str,
+    ) -> bool:
+        if not anchor:
+            return False
+        snippet = self._norm_text(anchor.get("snippet"))
+        identity = self._identity_text(name)
+        if not snippet or not identity:
+            return False
+        if identity in self._identity_text(snippet):
+            return True
+        return self._token_overlap(identity, self._identity_text(snippet)) >= 0.8
 
     def _extract_provider_name(self, raw: Optional[str]) -> tuple[Optional[str], Optional[str]]:
         raw = self._trim_header_field_noise(raw)
@@ -335,3 +361,10 @@ class PeopleResolver:
         normalized = re.sub(r"(?i)^(?:dr|dra|sr|sra)\.?\s+", "", normalized)
         normalized = re.sub(r"[^a-zà-ÿ\s]", " ", normalized)
         return re.sub(r"\s+", " ", normalized).strip()
+
+    def _token_overlap(self, left: str, right: str) -> float:
+        left_tokens = {token for token in left.split() if token}
+        right_tokens = {token for token in right.split() if token}
+        if not left_tokens or not right_tokens:
+            return 0.0
+        return len(left_tokens & right_tokens) / float(len(left_tokens | right_tokens))

@@ -413,6 +413,28 @@ def test_timeline_policy_emits_structured_warning_on_seed_layer3_divergence():
     assert layer5_timeline["warnings"] == [warning]
 
 
+def test_timeline_policy_repairs_singleton_document_date_from_seed_without_hiding_warning():
+    dm = _timeline_policy_dm()
+    dm.layer3.eventos_probatorios[0].date_iso = "2024-03-06"
+
+    public_timeline = build_document_timeline_read_model(dm)
+    layer5_timeline = apply_layer5(dm).layer5.read_models["timeline_v1"]
+
+    assert public_timeline["summary"]["timeline_consistency_score"] == 0.0
+    assert public_timeline["warnings"][0]["code"] == "timeline_seed_v2_layer3_divergence"
+    assert len(public_timeline["timeline"]) == 1
+    assert public_timeline["timeline"][0]["event_type"] == "document_issue_date"
+    assert public_timeline["timeline"][0]["date"] == "2024-03-05"
+    assert public_timeline["timeline"][0]["evidence_ref"]["bbox"] == [10, 20, 30, 40]
+    assert public_timeline["timeline"][0]["compatibility_bridge"]["seed_repaired_date"] is True
+
+    assert layer5_timeline["timeline_consistency_score"] == 0.0
+    assert layer5_timeline["warnings"][0]["code"] == "timeline_seed_v2_layer3_divergence"
+    assert layer5_timeline["events"][0]["event_type"] == "document_issue_date"
+    assert layer5_timeline["events"][0]["date_iso"] == "2024-03-05"
+    assert layer5_timeline["events"][0]["citations"][0]["bbox"] == [10, 20, 30, 40]
+
+
 def test_public_timeline_prioritizes_subdocument_aware_events_for_compound_documents():
     dm = _compound_subdocument_dm()
     dm = apply_entities_canonical_v1(dm)

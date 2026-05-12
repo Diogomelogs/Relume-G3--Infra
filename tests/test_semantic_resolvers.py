@@ -191,6 +191,72 @@ def test_people_resolver_keeps_patient_provider_and_mother_distinct():
     assert result["provider"]["evidence_refs"]
 
 
+def test_people_resolver_rejects_geographic_provider_false_positive_and_keeps_exact_doctor_evidence():
+    page_evidence = [
+        {
+            "page": 1,
+            "page_text": (
+                "LAUDO MEDICO\n"
+                "Paciente: ALICE MARTINS\n"
+                "São Paulo, 03/07/2024\n"
+            ),
+            "page_taxonomy": {"value": "laudo_medico"},
+            "people": {
+                "patient_name": "ALICE MARTINS",
+                "patient_confidence": 0.94,
+                "provider_name": "SAO PAULO",
+                "provider_confidence": 0.61,
+                "provider_review_state": "needs_review",
+            },
+            "anchors": [
+                {
+                    "label": "patient",
+                    "snippet": "Paciente: ALICE MARTINS",
+                    "bbox": [68, 118, 248, 138],
+                    "source_path": "layer2.sinais_documentais.page_evidence_v1",
+                },
+                {
+                    "label": "provider",
+                    "snippet": "São Paulo, 03/07/2024",
+                    "bbox": None,
+                    "source_path": "layer2.sinais_documentais.page_evidence_v1",
+                },
+            ],
+            "administrative_entities": {"crm": []},
+            "clinical_entities": {},
+        },
+        {
+            "page": 2,
+            "page_text": "Dr. GUSTAVO LEAL CRM 99887 SP",
+            "page_taxonomy": {"value": "laudo_medico"},
+            "people": {
+                "provider_name": "DR. GUSTAVO LEAL",
+                "provider_confidence": 0.78,
+                "provider_review_state": "review_recommended",
+            },
+            "anchors": [
+                {
+                    "label": "provider",
+                    "snippet": "Dr. GUSTAVO LEAL CRM 99887 SP",
+                    "bbox": [70, 612, 346, 634],
+                    "source_path": "layer2.sinais_documentais.page_evidence_v1",
+                },
+            ],
+            "administrative_entities": {"crm": ["CRM 99887 SP"]},
+            "clinical_entities": {},
+        },
+    ]
+
+    result = PeopleResolver().resolve(page_evidence)
+
+    assert result["provider"]["name"] == "DR. GUSTAVO LEAL"
+    assert result["provider"]["crm"]["display"] == "CRM 99887 SP"
+    assert result["provider"]["evidence_refs"][0]["page"] == 2
+    assert result["provider"]["evidence_refs"][0]["snippet"] == "Dr. GUSTAVO LEAL CRM 99887 SP"
+    assert result["provider"]["evidence_refs"][0]["bbox"] == [70, 612, 346, 634]
+    assert "SAO PAULO" not in result["provider"]["name"]
+
+
 def test_entities_canonical_uses_structured_semantic_resolutions():
     dm = apply_entities_canonical_v1(_dm_with_page_evidence(_page_evidence()))
     canonical = json.loads(dm.layer2.sinais_documentais["entities_canonical_v1"].valor)
