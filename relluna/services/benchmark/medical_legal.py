@@ -22,6 +22,7 @@ CRITICAL_CLEAN_CASE_IDS = (
     "002_parecer_cid",
     "005_documento_composto",
     "006_paciente_vs_mae",
+    "010_divergencia_seed_layer3",
     "011_evento_estimado_com_explicacao",
 )
 
@@ -30,7 +31,6 @@ CRITICAL_SENTINEL_CASE_IDS = (
     "004_receituario_vs_atestado",
     "007_prestador_falso_positivo",
     "008_cid_espurio",
-    "010_divergencia_seed_layer3",
 )
 
 CRITICAL_ENTITY_FIELDS = ("patient", "provider", "mother", "cids", "document_date")

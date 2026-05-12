@@ -49,6 +49,7 @@ def test_positive_medical_legal_goldens_score_high():
         "002_parecer_cid",
         "005_documento_composto",
         "006_paciente_vs_mae",
+        "010_divergencia_seed_layer3",
         "011_evento_estimado_com_explicacao",
     ):
         result = evaluate_case(cases[case_id])
@@ -124,10 +125,6 @@ def test_benchmark_detects_new_semantic_regressions_explicitly():
     cid_espurio = evaluate_case(cases["008_cid_espurio"])
     assert any("valor proibido `ABC12`" in item["message"] for item in cid_espurio["regressions"])
 
-    divergence = evaluate_case(cases["010_divergencia_seed_layer3"])
-    assert divergence["timeline_consistency_score"] == 0.0
-    assert divergence["explicit_metrics"]["timeline_consistency_score"] == 0.0
-
 
 def test_semantic_gate_passes_for_current_critical_split():
     summary = evaluate_cases(load_benchmark_cases(BENCHMARK_DIR))
@@ -163,3 +160,16 @@ def test_semantic_gate_fails_when_sentinel_stops_detecting_regression():
         "critical sentinel case stopped detecting regressions: 003_regressao_data_nascimento" in failure
         for failure in gate["failures"]
     )
+
+
+def test_divergence_case_keeps_consistency_metric_zero_without_semantic_regression():
+    cases = {
+        case["id"]: case
+        for case in load_benchmark_cases(BENCHMARK_DIR)
+    }
+
+    divergence = evaluate_case(cases["010_divergencia_seed_layer3"])
+
+    assert divergence["regressions"] == []
+    assert divergence["timeline_consistency_score"] == 0.0
+    assert divergence["explicit_metrics"]["timeline_consistency_score"] == 0.0

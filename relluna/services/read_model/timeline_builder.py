@@ -128,6 +128,90 @@ def _normalize_layer3_probatory_events(dm: DocumentMemory) -> List[Dict[str, Any
     return normalized
 
 
+_SINGLETON_COMPATIBILITY_EVENT_TYPES = {
+    "document_issue_date",
+    "parecer_emitido",
+}
+
+
+def _reconcile_public_timeline_with_seed_fallback(
+    layer3_timeline: List[Dict[str, Any]],
+    timeline_seed_v2: List[Dict[str, Any]],
+) -> List[Dict[str, Any]]:
+    if not layer3_timeline:
+        return _normalize_timeline_items(timeline_seed_v2)
+    if not timeline_seed_v2:
+        return list(layer3_timeline)
+
+    reconciled = [dict(event) for event in layer3_timeline if isinstance(event, dict)]
+    normalized_seed_events = _normalize_timeline_items(timeline_seed_v2)
+    exact_keys = {
+        (event.get("subdoc_id"), event.get("event_type"), event.get("date"))
+        for event in reconciled
+    }
+    singleton_indexes = {
+        (event.get("subdoc_id"), event.get("event_type")): idx
+        for idx, event in enumerate(reconciled)
+        if event.get("event_type") in _SINGLETON_COMPATIBILITY_EVENT_TYPES
+    }
+
+    for seed_event in normalized_seed_events:
+        exact_key = (
+            seed_event.get("subdoc_id"),
+            seed_event.get("event_type"),
+            seed_event.get("date"),
+        )
+        if exact_key in exact_keys:
+            continue
+
+        singleton_key = (
+            seed_event.get("subdoc_id"),
+            seed_event.get("event_type"),
+        )
+        singleton_idx = singleton_indexes.get(singleton_key)
+        if singleton_idx is not None:
+            base_event = reconciled[singleton_idx]
+            patched_event = dict(base_event)
+            patched_event["date"] = seed_event.get("date")
+            patched_event["evidence_ref"] = seed_event.get("evidence_ref", {})
+            patched_event["evidence_navigation"] = dict(
+                base_event.get("evidence_navigation") or {}
+            )
+            patched_event["evidence_navigation"]["page"] = seed_event.get(
+                "evidence_navigation", {}
+            ).get("page")
+            patched_event["evidence_navigation"]["bbox"] = seed_event.get(
+                "evidence_navigation", {}
+            ).get("bbox")
+            patched_event["evidence_navigation"]["snippet"] = seed_event.get(
+                "evidence_navigation", {}
+            ).get("snippet")
+            patched_event["evidence_navigation"]["subdoc_id"] = seed_event.get(
+                "evidence_navigation", {}
+            ).get("subdoc_id") or patched_event.get("subdoc_id")
+            patched_event["artifact_uri"] = (
+                base_event.get("artifact_uri") or seed_event.get("artifact_uri")
+            )
+            patched_event["assertion_level"] = (
+                seed_event.get("assertion_level") or patched_event.get("assertion_level")
+            )
+            if not patched_event.get("citations"):
+                patched_event["citations"] = seed_event.get("citations") or []
+            patched_event.setdefault("compatibility_bridge", {})
+            patched_event["compatibility_bridge"]["seed_repaired_date"] = True
+            patched_event["compatibility_bridge"]["seed_date"] = seed_event.get("date")
+            patched_event["compatibility_bridge"]["seed_event_id"] = seed_event.get("event_id")
+            reconciled[singleton_idx] = patched_event
+            exact_keys.add(exact_key)
+            continue
+
+        reconciled.append(seed_event)
+        exact_keys.add(exact_key)
+
+    reconciled.sort(key=lambda x: (x["date"], x.get("subdoc_id") or "", x["event_id"] or ""))
+    return reconciled
+
+
 def _first_event_evidence_ref(event: Any) -> Dict[str, Any]:
     citations = _get(event, "citations", None) or _get(event, "evidencias_origem", None) or []
     citation = citations[0] if citations else None
@@ -341,7 +425,9 @@ def build_document_timeline_read_model(dm: DocumentMemory) -> Dict[str, Any]:
     artifact_uri = _artifact_navigation_uri(dm)
 
     timeline_raw = timeline_v2 if timeline_v2 else timeline_v1
-    timeline = layer3_timeline if layer3_timeline else _normalize_timeline_items(timeline_raw)
+    timeline = _reconcile_public_timeline_with_seed_fallback(layer3_timeline, timeline_v2)
+    if not timeline:
+        timeline = _normalize_timeline_items(timeline_raw)
     canonical_meta = _canonical_subdocument_metadata(dm)
     segmented_subdocuments = _segmented_subdocuments(dm)
     relation_graph = _relation_graph(dm)

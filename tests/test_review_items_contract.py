@@ -254,3 +254,86 @@ def test_review_items_v1_flags_seed_vs_layer3_conflict():
     assert item["suggested_action"] == "reconcile_timeline_sources"
     assert item["value"]["seed_event_count"] == 1
     assert item["value"]["layer3_event_count"] == 2
+
+
+def test_review_items_v1_marks_weak_provider_evidence_as_needs_review():
+    dm = DocumentMemory(
+        layer0=Layer0Custodia(
+            documentid="review-items-provider-weak",
+            contentfingerprint="4" * 64,
+            ingestionagent="pytest",
+        ),
+        layer1=Layer1Artefatos(
+            midia=MediaType.documento,
+            origem=OriginType.digital_nativo,
+            artefatos=[
+                ArtefatoBruto(
+                    id="artifact-2",
+                    tipo=ArtefatoTipo.original,
+                    uri="memory://review-items-provider-weak.pdf",
+                    hash_sha256="4" * 64,
+                )
+            ],
+        ),
+        layer2=Layer2Evidence(),
+        layer3=Layer3Evidence(),
+    )
+
+    page_evidence = [
+        {
+            "page": 1,
+            "page_text": (
+                "LAUDO MEDICO\n"
+                "Paciente: ALICE MARTINS\n"
+                "Prestador: DR. GUSTAVO LEAL\n"
+                "São Paulo, 03/07/2024\n"
+            ),
+            "page_taxonomy": {"value": "laudo_medico"},
+            "people": {
+                "patient_name": "ALICE MARTINS",
+                "patient_confidence": 0.94,
+                "patient_review_state": "review_recommended",
+                "provider_name": "DR. GUSTAVO LEAL",
+                "provider_confidence": 0.78,
+                "provider_review_state": "review_recommended",
+            },
+            "anchors": [
+                {
+                    "label": "patient",
+                    "snippet": "Paciente: ALICE MARTINS",
+                    "bbox": [68, 118, 248, 138],
+                    "source_path": "layer2.sinais_documentais.page_evidence_v1",
+                },
+                {
+                    "label": "provider",
+                    "snippet": "São Paulo, 03/07/2024",
+                    "bbox": None,
+                    "source_path": "layer2.sinais_documentais.page_evidence_v1",
+                },
+            ],
+            "date_candidates": [
+                {"literal": "03/07/2024", "date_iso": "2024-07-03"},
+            ],
+            "administrative_entities": {"crm": []},
+            "clinical_entities": {"cids": []},
+        }
+    ]
+
+    dm.layer2.sinais_documentais["page_evidence_v1"] = ProvenancedString(
+        valor=json.dumps(page_evidence, ensure_ascii=False),
+        fonte="pytest",
+        metodo="fixture",
+        estado=ConfidenceState.confirmado,
+        confianca=1.0,
+    )
+
+    dm = apply_layer5(apply_entities_canonical_v1(dm))
+    review_model = dm.layer5.read_models["review_items_v1"]
+    item = _item_by_field(review_model, "provider")
+
+    assert item["value"] == "DR. GUSTAVO LEAL"
+    assert item["review_state"] == "needs_review"
+    assert item["provenance_status"] == "text_fallback"
+    assert item["evidence_refs"][0]["page"] == 1
+    assert item["evidence_refs"][0]["bbox"] is None
+    assert item["evidence_refs"][0]["snippet"] == "provider: DR. GUSTAVO LEAL"
