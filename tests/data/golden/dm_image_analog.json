@@ -1,0 +1,207 @@
+{
+  "layer0": {
+    "authenticitystate": null,
+    "contentfingerprint": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+    "custodychain": [],
+    "documentid": "8b450775-19c8-4fff-bd84-08cb2ad6dbff",
+    "fingerprint_algorithm": "sha256",
+    "ingestionagent": "golden_generator",
+    "ingestiontimestamp": "2026-01-01T00:00:00Z",
+    "integrityproofs": [
+      {
+        "created_at": "2026-03-01T22:50:05.421049Z",
+        "kind": "local_signature",
+        "payload": {
+          "algoritmo": "sha256",
+          "hash": "f78c98b6bf243f8c7f837994a99e08fd253583c854dd4d30c834924b1d1184d4"
+        }
+      }
+    ],
+    "juridicalreadinesslevel": 0,
+    "mimetype": null,
+    "original_filename": null,
+    "originality": null,
+    "processingevents": [],
+    "size_bytes": null,
+    "source": null,
+    "storage_uris": [],
+    "versiongraph": []
+  },
+  "layer1": {
+    "artefatos": [
+      {
+        "created_at": null,
+        "id": "image_analog.jpg",
+        "metadados_nativos": null,
+        "mimetype": "application/octet-stream",
+        "nome": "image_analog.jpg",
+        "tamanho_bytes": 193470,
+        "tipo": "original",
+        "uri": "tests/data/media/image_analog.jpg"
+      }
+    ],
+    "midia": "imagem",
+    "origem": "digital_nativo"
+  },
+  "layer2": {
+    "altura_px": {
+      "confianca": 1.0,
+      "estado": "confirmado",
+      "fonte": "deterministic_extractors.basic",
+      "lastro": [],
+      "metodo": "Pillow.size",
+      "valor": 1200.0
+    },
+    "data_exif": {
+      "confianca": null,
+      "estado": "insuficiente",
+      "fonte": "deterministic_extractors.basic",
+      "lastro": [],
+      "metodo": "exif",
+      "valor": null
+    },
+    "deterministic_plus": {
+      "engine": "deterministic_extractors.plus",
+      "height": 1200,
+      "width": 1600
+    },
+    "duracao_segundos": null,
+    "entidades_visuais_objetivas": [
+      {
+        "bbox_list": [
+          {
+            "bbox": {
+              "height": 148,
+              "width": 74,
+              "x": 40,
+              "y": 404
+            },
+            "confianca": 0.6624870577361435
+          }
+        ],
+        "estado": "confirmado",
+        "metodo": "opencv.hog",
+        "quantidade": 1,
+        "tipo": "pessoa"
+      },
+      {
+        "bbox_list": [
+          {
+            "bbox": {
+              "height": 498,
+              "width": 498,
+              "x": 564,
+              "y": 184
+            }
+          }
+        ],
+        "estado": "confirmado",
+        "metodo": "opencv.haar",
+        "quantidade": 1,
+        "tipo": "rosto"
+      }
+    ],
+    "gps_exif": null,
+    "largura_px": {
+      "confianca": 1.0,
+      "estado": "confirmado",
+      "fonte": "deterministic_extractors.basic",
+      "lastro": [],
+      "metodo": "Pillow.size",
+      "valor": 1600.0
+    },
+    "num_falantes": null,
+    "num_paginas": null,
+    "ocr_texto": null,
+    "qualidade_sinal": {
+      "foco": {
+        "confianca": 1.0,
+        "estado": "confirmado",
+        "fonte": "deterministic_extractors.basic",
+        "lastro": [],
+        "metodo": "focus_stub",
+        "valor": 1.0
+      },
+      "iluminacao": null,
+      "nitidez": null,
+      "resolucao": {
+        "confianca": 1.0,
+        "estado": "confirmado",
+        "fonte": "deterministic_extractors.basic",
+        "lastro": [],
+        "metodo": "resolution_from_dimensions",
+        "valor": "1600x1200"
+      }
+    },
+    "sinais_documentais": {},
+    "taxa_amostragem_hz": null,
+    "texto_ocr_literal": {
+      "confianca": null,
+      "estado": "insuficiente",
+      "fonte": "deterministic_extractors.basic",
+      "lastro": [],
+      "metodo": "ocr",
+      "valor": null
+    },
+    "transcricao_literal": null,
+    "transcricao_segmentada": [],
+    "video_metadata": null
+  },
+  "layer3": {
+    "entidades_semanticas": [],
+    "estimativa_temporal": null,
+    "regras_aplicadas": [],
+    "temporalidades_inferidas": [],
+    "tipo_documento": null,
+    "tipo_evento": {
+      "confianca": 0.9,
+      "estado": "inferido",
+      "fonte": "rules",
+      "lastro": [
+        {
+          "kind": null,
+          "note": null,
+          "page": null,
+          "path": "layer1.midia",
+          "span": null,
+          "uri": null
+        }
+      ],
+      "meta": {
+        "engine": "rules",
+        "timestamp": "2026-03-01T22:50:06.434051",
+        "version": null
+      },
+      "metodo": "taxonomy_rules",
+      "valor": "imagem"
+    }
+  },
+  "layer4": {
+    "data_canonica": null,
+    "entidades": [],
+    "local_canonico": null,
+    "periodo": null,
+    "relacoes_temporais": [],
+    "tags": []
+  },
+  "layer5": {
+    "audios_derivados": [],
+    "documentos_derivados": [],
+    "imagens_derivadas": [
+      {
+        "tipo": "thumbnail",
+        "uri": "generated://thumbnail.jpg"
+      }
+    ],
+    "persistence_state": "stored",
+    "storage_uris": [
+      {
+        "kind": "blob",
+        "uri": "document-memory://golden/layer5/storage"
+      }
+    ],
+    "videos_derivados": []
+  },
+  "layer6": null,
+  "version": "v0.2.0"
+}

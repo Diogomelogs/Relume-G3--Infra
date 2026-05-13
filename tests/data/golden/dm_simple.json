@@ -1,0 +1,96 @@
+{
+  "layer0": {
+    "authenticitystate": null,
+    "contentfingerprint": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+    "custodychain": [],
+    "documentid": "c0317fc3-cd60-48cf-b1a0-bb8cb928440f",
+    "fingerprint_algorithm": "sha256",
+    "ingestionagent": "golden_generator",
+    "ingestiontimestamp": "2026-01-01T00:00:00Z",
+    "integrityproofs": [
+      {
+        "created_at": "2026-03-01T22:50:06.478999Z",
+        "kind": "local_signature",
+        "payload": {
+          "algoritmo": "sha256",
+          "hash": "30f0d76a3e5f7aa4427c837b5641723355817652c446473512540812f8d2759c"
+        }
+      }
+    ],
+    "juridicalreadinesslevel": 0,
+    "mimetype": null,
+    "original_filename": null,
+    "originality": null,
+    "processingevents": [],
+    "size_bytes": null,
+    "source": null,
+    "storage_uris": [],
+    "versiongraph": []
+  },
+  "layer1": {
+    "artefatos": [
+      {
+        "created_at": null,
+        "id": "simple.pdf",
+        "metadados_nativos": null,
+        "mimetype": "application/octet-stream",
+        "nome": "simple.pdf",
+        "tamanho_bytes": 31196,
+        "tipo": "original",
+        "uri": "tests/data/media/simple.pdf"
+      }
+    ],
+    "midia": "documento",
+    "origem": "digital_nativo"
+  },
+  "layer2": {
+    "altura_px": null,
+    "data_exif": null,
+    "deterministic_plus": {
+      "engine": "deterministic_extractors.plus"
+    },
+    "duracao_segundos": null,
+    "entidades_visuais_objetivas": [],
+    "gps_exif": null,
+    "largura_px": null,
+    "num_falantes": null,
+    "num_paginas": null,
+    "ocr_texto": null,
+    "qualidade_sinal": null,
+    "sinais_documentais": {},
+    "taxa_amostragem_hz": null,
+    "texto_ocr_literal": null,
+    "transcricao_literal": null,
+    "transcricao_segmentada": [],
+    "video_metadata": null
+  },
+  "layer3": null,
+  "layer4": {
+    "data_canonica": null,
+    "entidades": [],
+    "local_canonico": null,
+    "periodo": null,
+    "relacoes_temporais": [],
+    "tags": []
+  },
+  "layer5": {
+    "audios_derivados": [],
+    "documentos_derivados": [
+      {
+        "tipo": "preview",
+        "uri": "generated://preview.pdf"
+      }
+    ],
+    "imagens_derivadas": [],
+    "persistence_state": "stored",
+    "storage_uris": [
+      {
+        "kind": "blob",
+        "uri": "document-memory://golden/layer5/storage"
+      }
+    ],
+    "videos_derivados": []
+  },
+  "layer6": null,
+  "version": "v0.2.0"
+}
