@@ -12,6 +12,13 @@ class EntityRef(BaseModel):
     confidence: Optional[float] = None
 
 
+class TimelinePanelRef(BaseModel):
+    endpoint: str
+    total_events: int = 0
+    anchored_events: int = 0
+    timeline_consistency_score: Optional[float] = None
+
+
 class DocumentReadModel(BaseModel):
     """
     Read Model do painel (materialized view).
@@ -37,9 +44,18 @@ class DocumentReadModel(BaseModel):
     doc_type: Optional[str] = None        # DocumentType.value (taxonomia)
     tags: List[str] = Field(default_factory=list)
     entities: List[EntityRef] = Field(default_factory=list)
+    event_types: List[str] = Field(default_factory=list)
+    patient: Optional[str] = None
+    provider: Optional[str] = None
+    cids: List[str] = Field(default_factory=list)
 
     # links rápidos p/ artefatos (raw, thumb, derived etc)
     artefacts: Dict[str, str] = Field(default_factory=dict)
+    timeline: Optional[TimelinePanelRef] = None
+
+    # indicadores operacionais/semânticos
+    confidence_indicators: Dict[str, Any] = Field(default_factory=dict)
+    needs_review_count: int = 0
 
     created_at: datetime
     updated_at: datetime

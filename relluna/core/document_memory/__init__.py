@@ -9,9 +9,12 @@ from .layer0 import Layer0Custodia
 from .layer1 import Layer1, ArtefatoBruto, MediaType, OriginType
 from .layer2 import Layer2Evidence
 from .layer3 import Layer3Evidence
+from .layer3 import SemanticEntity
 from .layer4_canonical import Layer4SemanticNormalization
 from relluna.core.contracts.document_memory_contract import Layer5Derivatives
 from .layer6 import Layer6Optimization
+from relluna.core.document_memory.types_basic import TemporalReference
+
 
 # Basic types
 from .types_basic import (
@@ -24,6 +27,7 @@ from .types_basic import (
     EvidenceNumber,
     ConfidenceState,
     EvidenceRef,
+    SemanticEntity,
     InferenceMeta,
     GpsExif,
     QualidadeSinal,
@@ -54,8 +58,13 @@ class DocumentMemory(BaseModel):
     layer6: Optional[Layer6Optimization] = None
 
 
+from .models_v0_2_0 import DocumentMemoryCanonical, DocumentMemory_v0_2_0
+
+
 __all__ = [
     "DocumentMemory",
+    "DocumentMemoryCanonical",
+    "DocumentMemory_v0_2_0",
     # Layers
     "Layer0",
     "Layer1",

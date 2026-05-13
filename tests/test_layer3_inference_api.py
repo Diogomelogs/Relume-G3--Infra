@@ -4,7 +4,7 @@
 
 from __future__ import annotations
 
-from datetime import datetime
+from datetime import datetime, timezone
 
 from relluna.core.document_memory import (
     DocumentMemory,
@@ -25,8 +25,8 @@ def test_infer_layer3_sets_tipo_evento_for_recibo():
         version="v0.1.0",
         layer0=Layer0Custodia(
             documentid="doc-3",
-            contentfingerprint="hash-3",
-            ingestiontimestamp=datetime.utcnow(),
+            contentfingerprint="c" * 64,
+            ingestiontimestamp=datetime.now(timezone.utc),
             ingestionagent="test",
         ),
         layer1=Layer1Artefatos(

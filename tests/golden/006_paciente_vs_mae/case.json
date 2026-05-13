@@ -1,0 +1,61 @@
+{
+  "id": "006_paciente_vs_mae",
+  "title": "Paciente e mae nao podem ser confundidos",
+  "expected": {
+    "document_type": "laudo_medico",
+    "entities": {
+      "patient": "PEDRO HENRIQUE SOUSA",
+      "mother": "LUCIA HELENA SOUSA",
+      "provider": "DRA. RENATA BORGES",
+      "document_date": "2024-06-11"
+    },
+    "events": [
+      {"event_type": "document_issue_date", "date_iso": "2024-06-11"}
+    ],
+    "legally_useful_event_types": ["document_issue_date"]
+  },
+  "actual": {
+    "document_type": "laudo_medico",
+    "entities": {
+      "patient": {
+        "value": "PEDRO HENRIQUE SOUSA",
+        "provenance_status": "observed",
+        "confidence": 0.95,
+        "evidence": {"page": 1, "snippet": "Paciente: PEDRO HENRIQUE SOUSA", "bbox": [70, 120, 336, 142]}
+      },
+      "mother": {
+        "value": "LUCIA HELENA SOUSA",
+        "provenance_status": "observed",
+        "confidence": 0.9,
+        "evidence": {"page": 1, "snippet": "Mae: LUCIA HELENA SOUSA", "bbox": [70, 146, 310, 168]}
+      },
+      "provider": {
+        "value": "DRA. RENATA BORGES",
+        "provenance_status": "observed",
+        "confidence": 0.92,
+        "evidence": {"page": 1, "snippet": "Dra. Renata Borges CRM 12345 GO", "bbox": [70, 610, 362, 632]}
+      },
+      "document_date": {
+        "value": "2024-06-11",
+        "date_iso": "2024-06-11",
+        "provenance_status": "observed",
+        "confidence": 0.9,
+        "evidence": {"page": 1, "snippet": "Goiania, 11/06/2024", "bbox": [340, 580, 506, 602]}
+      }
+    },
+    "events": [
+      {
+        "event_type": "document_issue_date",
+        "title": "Emissao do documento",
+        "description": "Laudo emitido em 2024-06-11.",
+        "date_iso": "2024-06-11",
+        "provenance_status": "observed",
+        "review_state": "auto_confirmed",
+        "confidence": 0.9,
+        "entities": {"patient": "PEDRO HENRIQUE SOUSA", "provider": "DRA. RENATA BORGES"},
+        "evidence": {"page": 1, "snippet": "Goiania, 11/06/2024", "bbox": [340, 580, 506, 602]}
+      }
+    ],
+    "warnings": []
+  }
+}

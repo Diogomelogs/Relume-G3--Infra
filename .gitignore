@@ -1,1 +1,52 @@
+# Segredos — JAMAIS commitar
+.env
+.env.local
+.env.*.local
+*.pem
+*.key
+secrets/
+credentials/
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+.venv/
+venv/
+env/
+ENV/
+*.egg-info/
+dist/
+build/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+coverage.xml
+htmlcov/
+
+# Diretórios de runtime do Relluna
+uploads/
+uploads_test/
+uploads_test_ui/
+generated_frames/
+tmp/
+logs/
+*.log
+artifacts/
 data/
+
+# Editores e SO
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+*.bak
+*.bak.*
+
+# Dependências
+node_modules/

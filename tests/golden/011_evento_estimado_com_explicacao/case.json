@@ -1,0 +1,62 @@
+{
+  "id": "011_evento_estimado_com_explicacao",
+  "title": "Evento estimado com explicacao deve pontuar bem em utilidade",
+  "expected": {
+    "document_type": "atestado_medico",
+    "entities": {
+      "patient": "HELENA PRADO",
+      "provider": "DRA. MONICA FREITAS",
+      "document_date": "2024-11-02"
+    },
+    "events": [
+      {"event_type": "afastamento_fim_estimado", "date_iso": "2024-11-09"}
+    ],
+    "legally_useful_event_types": ["afastamento_fim_estimado"]
+  },
+  "actual": {
+    "document_type": "atestado_medico",
+    "entities": {
+      "patient": {
+        "value": "HELENA PRADO",
+        "provenance_status": "observed",
+        "confidence": 0.95,
+        "evidence": {"page": 1, "snippet": "Paciente: HELENA PRADO", "bbox": [70, 120, 226, 140]}
+      },
+      "provider": {
+        "value": "DRA. MONICA FREITAS",
+        "provenance_status": "observed",
+        "confidence": 0.93,
+        "evidence": {"page": 1, "snippet": "Dra. Monica Freitas CRM 88991 SP", "bbox": [70, 610, 360, 634]}
+      },
+      "document_date": {
+        "value": "2024-11-02",
+        "date_iso": "2024-11-02",
+        "provenance_status": "observed",
+        "confidence": 0.91,
+        "evidence": {"page": 1, "snippet": "São Paulo, 02/11/2024", "bbox": [320, 580, 506, 602]}
+      }
+    },
+    "events": [
+      {
+        "event_type": "afastamento_fim_estimado",
+        "title": "Fim estimado do afastamento",
+        "description": "Data estimada a partir de afastamento por 7 dias contados desde a emissão; permanece marcada como estimada e sujeita a revisão.",
+        "date_iso": "2024-11-09",
+        "provenance_status": "estimated",
+        "review_state": "review_recommended",
+        "confidence": 0.82,
+        "entities": {"patient": "HELENA PRADO", "provider": "DRA. MONICA FREITAS", "duration_days": 7},
+        "evidence": {"page": 1, "snippet": "afastamento por 7 dias", "bbox": [74, 288, 260, 308]}
+      }
+    ],
+    "review_items": [
+      {
+        "field": "afastamento_fim_estimado",
+        "value": "2024-11-09",
+        "review_state": "review_recommended",
+        "provenance_status": "estimated"
+      }
+    ],
+    "warnings": []
+  }
+}

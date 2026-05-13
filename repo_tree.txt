@@ -4,19 +4,15 @@
 ├── .uploads
 │   ├── 02ea791ec9a21a3a990190e570f6b39d779b1c3ffebe6621eb01b180d3d2e2f8_IMG_7367.JPG
 │   ├── 07d4aac740753e66b6be4c7009026ea1bc46b075b362672837549a512f84e40e_IMG_7245.MOV
+│   ├── 07d4aac740753e66b6be4c7009026ea1bc46b075b362672837549a512f84e40e_IMG_7245.frame_ocr.jpg
 │   ├── 08ce661342732b9d88c6dbfe003a9b28a5b9d0356f297c6014322d84f36f09fc_Gravando.m4a
 │   ├── 146914e63ad3f4dd1da879d0df45cb3b41e58d42c8c35c9f3b679b97dee2db92_test.txt
 │   ├── 30f0d76a3e5f7aa4427c837b5641723355817652c446473512540812f8d2759c_Recibo do bilhete eletrônico, 03 Junho para DIOGO SILVA.pdf
 │   ├── 30f0d76a3e5f7aa4427c837b5641723355817652c446473512540812f8d2759c_simple.pdf
-│   ├── 41f57612b7434ba7eaaa5b1e3925a4239e993e926722f240a3eba840b82bdb4c_IMG_7599.HEIC
 │   ├── 4d62b61fb766b4b4c6d46e3a5ff8284b71bb4392ed607a71f93a1bbee23476e8_image_exif.jpg
-│   ├── 4e7eb38e784b0649b67a57663e04463bb193a516c7f653238f896d2c8c3e2964_extrato.pdf
 │   ├── 6101da06c040e44de4ce7859392019f68dff7d04e3dd9d137bc373c224119a7b_audio.wav
 │   ├── 78873b48ab234002030f7fbb3ef7eb580ac01263a400293bf3541a9cd802416c_teste_exif.jpg
-│   ├── 8810c947ede090da1c3b8b882a013dc9132e88528461fdcd53f57e6ce62c86b5_IMG_0770.HEIC
-│   ├── bc29e1b3a2e031362a11ef6853abc8903cfdd60c59b7f3d4a2da0e61894b4043_extrato (1).pdf
 │   ├── c23286008430ee9298ffee64aa11f63c5d49c14a0a0908cde43130464e1ac63b_IMG_0249.JPG
-│   ├── c23286008430ee9298ffee64aa11f63c5d49c14a0a0908cde43130464e1ac63b_image_exif.jpg
 │   ├── d4cfed12164193c49c18dc44913d3d53d4637b0208664de23af0147964210bc7_safe.jpg
 │   ├── d4cfed12164193c49c18dc44913d3d53d4637b0208664de23af0147964210bc7_teste.jpg
 │   ├── f78c98b6bf243f8c7f837994a99e08fd253583c854dd4d30c834924b1d1184d4_IMG_0297.JPG
@@ -39,6 +35,7 @@
 │   ├── core
 │   │   ├── __init__.py
 │   │   ├── basic_pipeline.py
+│   │   ├── basic_pipeline.py.bak.20260225180241
 │   │   ├── contracts
 │   │   │   ├── __init__.py
 │   │   │   ├── document_memory_contract.py
@@ -59,6 +56,8 @@
 │   │   │   ├── transcription.py
 │   │   │   └── types_basic.py
 │   │   ├── document_memory.schema.v0.1.0.json
+│   │   ├── governance
+│   │   │   └── events.py
 │   │   ├── inference
 │   │   │   └── basic_temporal.py
 │   │   ├── normalization.py
@@ -88,19 +87,20 @@
 │       │   └── nsfw.py
 │       ├── context_inference
 │       │   ├── basic.py
-│       │   └── document_taxonomy
-│       │       ├── __init__.py
-│       │       ├── apply.py
-│       │       ├── rules
-│       │       │   ├── __init__.py
-│       │       │   ├── base.py
-│       │       │   ├── documento_identidade.py
-│       │       │   ├── engine.py
-│       │       │   ├── nota_fiscal.py
-│       │       │   └── recibo.py
-│       │       ├── rules.py
-│       │       ├── signals.py
-│       │       └── types.py
+│       │   ├── document_taxonomy
+│       │   │   ├── __init__.py
+│       │   │   ├── apply.py
+│       │   │   ├── rules
+│       │   │   │   ├── __init__.py
+│       │   │   │   ├── base.py
+│       │   │   │   ├── documento_identidade.py
+│       │   │   │   ├── engine.py
+│       │   │   │   ├── nota_fiscal.py
+│       │   │   │   └── recibo.py
+│       │   │   ├── rules.py
+│       │   │   ├── signals.py
+│       │   │   └── types.py
+│       │   └── ner.py
 │       ├── correlation
 │       │   ├── layer4.py
 │       │   └── layer5.py
@@ -118,6 +118,7 @@
 │       ├── ingestion
 │       │   ├── __init__.py
 │       │   ├── api.py
+│       │   ├── api.py.bak.20260225180241
 │       │   └── service.py
 │       ├── ocr
 │       │   ├── __init__.py
@@ -254,28 +255,16 @@
 │   ├── c23286008430ee9298ffee64aa11f63c5d49c14a0a0908cde43130464e1ac63b_IMG_0249.JPG
 │   └── d4cfed12164193c49c18dc44913d3d53d4637b0208664de23af0147964210bc7_teste.jpg
 └── uploads_test_ui
-    ├── 01b85804-16f5-44be-8e71-07c0fa9c3560_orcamento.pdf
-    ├── 12a58317-dcac-486a-b8ea-fcc3a7858aaf_orcamento.pdf
-    ├── 14ed13ab-bccb-4bc1-bc9f-ac1a4b1a95fa_E4574938-657A-4711-AD26-CDA46BA210F6.JPG
-    ├── 1883ded2-873a-474e-b2c7-eede9a8e7c93_3db677fe-6af0-417f-b61d-f9e396169e74_WhatsApp Audio 2026-02-20 at 09.39.08.mp4
-    ├── 213bbfda-e939-402d-bd81-c76c524e677f_Unleash the power of the ReefDose 4 and experience simplified dosing!.mp4
-    ├── 2a7fe209-b458-4cc4-adc4-25a678719813_orcamento.pdf
-    ├── 3073a77f-2f09-4fe3-97dd-618653d6ca47_orcamento.pdf
-    ├── 3db677fe-6af0-417f-b61d-f9e396169e74_WhatsApp Audio 2026-02-20 at 09.39.08.mp4
-    ├── 56fa12d0-e277-43b5-a0c3-f94762dc633e_orcamento.pdf
-    ├── 60b50a44-8a29-4d40-a2a3-6676d6c8a78d_test_audio.wav
-    ├── 681e96b9-1224-46e5-9340-6f1dd8734ffb_RG - DIOGO DE MELO GOMES SILVA.pdf
-    ├── 6d6bfcb4-cf1b-4fa3-a049-25c555bda945_WhatsApp Audio 2026-02-20 at 09.39.08.mp4
-    ├── 718969a3-c50c-44b1-ae0f-852cb22c8a50_WhatsApp Audio 2026-02-20 at 09.39.08.mp4
-    ├── 7825f7b5-1f17-4c0e-9177-c2382d617f15_IMG_4420.JPG
-    ├── 8314bfbb-96d8-4555-9900-3a66374886ce_AQUARIOZ - BOLETO VENCIMENTO 16-02-2026 - R$ 1.740,10.pdf
-    ├── 9f087199-f1d1-4760-a98c-0f95dc60b607_orcamento.pdf
-    ├── cafcdd73-589f-457e-8a87-0a0135f31481_DSC00763.JPG
-    ├── db535ee8-0842-4040-a7c8-0ef6a54fa0af_RG - DIOGO DE MELO GOMES SILVA.pdf
-    ├── dbbf615c-7358-4843-8a4a-eadc23865369_orcamento.pdf
-    ├── e3cfcbbe-e82a-411e-910f-99ae9982e75a_orcamento.pdf
-    ├── e657caaa-443a-4c9c-84a0-9435f396f2c1_RG - DIOGO DE MELO GOMES SILVA.pdf
-    ├── e9e011ae-8ee7-47ea-b7fe-d5c493621b2e_RG - DIOGO DE MELO GOMES SILVA.pdf
-    └── eee5fe5d-e83c-410c-9b96-d140ef0a1903_ElevenLabs_2026-01-19T16_14_02_Bill+-+Wise,+Mature,+Balanced_pre_sp100_s50_sb75_m1.mp3.mp4
+    ├── 00563f3a-3a45-498e-86a1-9d02917873d6_IMG_7245.MOV
+    ├── 2700c032-80f3-4ef9-a76c-bd900fa9b9fc_IMG_7245.MOV
+    ├── 2d5a1ed3-83b4-49a7-9397-34f3826ef74d_AE49E8FE-689C-45C5-AF2F-C9F76C9A9D8C.JPG
+    ├── 3d108199-2ed3-4c0a-97b9-da2fc5af6ab3_DSC00584.JPG
+    ├── 413605d0-f9e3-4585-a0e8-4ea0e0dcb715_IMG_7245.MOV
+    ├── 49b9c846-87df-4b85-99a3-d57132edc507_test_audio.wav
+    ├── 4e38909e-156f-4b39-8eee-5eb0ecf1d92a_Unleash the power of the ReefDose 4 and experience simplified dosing!.frame_ocr.jpg
+    ├── 4e38909e-156f-4b39-8eee-5eb0ecf1d92a_Unleash the power of the ReefDose 4 and experience simplified dosing!.mp4
+    ├── 7443cd76-d6db-4897-bd94-a1fc456b629a_IMG_7245.MOV
+    ├── 7443cd76-d6db-4897-bd94-a1fc456b629a_IMG_7245.frame_ocr.jpg
+    └── 8b7bd72d-eb75-49e3-ae74-710a4f2d6587_CONTRATO DE PARCERIA COMERCIAL ENTRE EMPRESA E INFLUENCIADOR DIGITAL onda.pdf
 
-43 directories, 236 files
+44 directories, 224 files

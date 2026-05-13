@@ -1,0 +1,139 @@
+{
+  "id": "001_atestado_afastamento",
+  "title": "Atestado com internacao e afastamento estimado",
+  "expected": {
+    "entities": {
+      "patient": "ANA MARIA SOUZA",
+      "provider": "DRA. LUCIA PEREIRA",
+      "mother": "MARIA JOSE SOUZA",
+      "cids": ["M54.5"],
+      "document_date": "2024-02-10"
+    },
+    "events": [
+      {"event_type": "internacao_inicio", "date_iso": "2024-02-10"},
+      {"event_type": "afastamento_fim_estimado", "date_iso": "2024-02-17"}
+    ],
+    "forbidden_document_dates": ["1975-08-12"],
+    "legally_useful_event_types": [
+      "internacao_inicio",
+      "afastamento_inicio",
+      "afastamento_fim_estimado",
+      "document_issue_date"
+    ]
+  },
+  "actual": {
+    "document_type": "atestado_medico",
+    "entities": {
+      "patient": {
+        "value": "ANA MARIA SOUZA",
+        "provenance_status": "observed",
+        "confidence": 0.96,
+        "evidence": {
+          "source_path": "layer2.sinais_documentais.page_evidence_v1",
+          "page": 1,
+          "snippet": "Paciente: ANA MARIA SOUZA",
+          "bbox": [72, 130, 315, 148]
+        }
+      },
+      "provider": {
+        "value": "DRA. LUCIA PEREIRA",
+        "provenance_status": "observed",
+        "confidence": 0.94,
+        "evidence": {
+          "source_path": "layer2.sinais_documentais.page_evidence_v1",
+          "page": 1,
+          "snippet": "Dra. Lucia Pereira CRM 12345 SP",
+          "bbox": [70, 520, 365, 542]
+        }
+      },
+      "mother": {
+        "value": "MARIA JOSE SOUZA",
+        "provenance_status": "observed",
+        "confidence": 0.9,
+        "evidence": {
+          "source_path": "layer2.sinais_documentais.page_evidence_v1",
+          "page": 1,
+          "snippet": "Mae: MARIA JOSE SOUZA",
+          "bbox": [72, 156, 310, 174]
+        }
+      },
+      "cids": [
+        {
+          "value": "M54.5",
+          "provenance_status": "observed",
+          "confidence": 0.97,
+          "evidence": {
+            "source_path": "layer2.sinais_documentais.page_evidence_v1",
+            "page": 1,
+            "snippet": "CID M54.5",
+            "bbox": [72, 276, 150, 294]
+          }
+        }
+      ],
+      "document_date": {
+        "value": "2024-02-10",
+        "date_iso": "2024-02-10",
+        "provenance_status": "observed",
+        "confidence": 0.95,
+        "evidence": {
+          "source_path": "layer2.sinais_documentais.page_evidence_v1",
+          "page": 1,
+          "snippet": "Sao Paulo, 10/02/2024",
+          "bbox": [355, 486, 510, 506]
+        }
+      }
+    },
+    "events": [
+      {
+        "event_type": "internacao_inicio",
+        "title": "Inicio da internacao",
+        "description": "Internacao de ANA MARIA SOUZA indicada no atestado em 2024-02-10.",
+        "date_iso": "2024-02-10",
+        "provenance_status": "observed",
+        "review_state": "auto_confirmed",
+        "confidence": 0.95,
+        "entities": {
+          "patient": "ANA MARIA SOUZA",
+          "provider": "DRA. LUCIA PEREIRA",
+          "cids": ["M54.5"]
+        },
+        "evidence": {
+          "source_path": "layer2.sinais_documentais.timeline_seed_v2",
+          "page": 1,
+          "snippet": "internacao em 10/02/2024",
+          "bbox": [72, 220, 330, 240]
+        }
+      },
+      {
+        "event_type": "afastamento_fim_estimado",
+        "title": "Fim estimado do afastamento",
+        "description": "Fim calculado a partir de afastamento por 7 dias; exige revisao se contestado.",
+        "date_iso": "2024-02-17",
+        "provenance_status": "estimated",
+        "review_state": "review_recommended",
+        "confidence": 0.82,
+        "entities": {
+          "patient": "ANA MARIA SOUZA",
+          "provider": "DRA. LUCIA PEREIRA",
+          "cids": ["M54.5"],
+          "duration_days": 7
+        },
+        "evidence": {
+          "source_path": "layer2.sinais_documentais.timeline_seed_v2",
+          "page": 1,
+          "snippet": "afastamento por 7 dias",
+          "bbox": [72, 300, 262, 320]
+        }
+      }
+    ],
+    "review_items": [
+      {
+        "field": "afastamento_fim_estimado",
+        "value": "2024-02-17",
+        "review_state": "review_recommended",
+        "provenance_status": "estimated"
+      }
+    ],
+    "warnings": []
+  }
+}

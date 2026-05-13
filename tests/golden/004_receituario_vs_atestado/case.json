@@ -1,0 +1,63 @@
+{
+  "id": "004_receituario_vs_atestado",
+  "title": "Receituario nao pode ser promovido a atestado medico",
+  "expected": {
+    "document_type": "receituario",
+    "entities": {
+      "patient": "MARIA APARECIDA LOPES",
+      "provider": "DR. FABIO MOURA",
+      "cids": ["J45.0"],
+      "document_date": "2024-04-02"
+    },
+    "events": [
+      {"event_type": "document_issue_date", "date_iso": "2024-04-02"}
+    ],
+    "legally_useful_event_types": ["document_issue_date"]
+  },
+  "actual": {
+    "document_type": "atestado_medico",
+    "entities": {
+      "patient": {
+        "value": "MARIA APARECIDA LOPES",
+        "provenance_status": "observed",
+        "confidence": 0.95,
+        "evidence": {"page": 1, "snippet": "Paciente: MARIA APARECIDA LOPES", "bbox": [70, 120, 320, 142]}
+      },
+      "provider": {
+        "value": "DR. FABIO MOURA",
+        "provenance_status": "observed",
+        "confidence": 0.93,
+        "evidence": {"page": 1, "snippet": "Dr. Fabio Moura CRM 23456 SP", "bbox": [72, 520, 360, 544]}
+      },
+      "cids": [
+        {
+          "value": "J45.0",
+          "provenance_status": "observed",
+          "confidence": 0.91,
+          "evidence": {"page": 1, "snippet": "CID J45.0", "bbox": [74, 250, 148, 270]}
+        }
+      ],
+      "document_date": {
+        "value": "2024-04-02",
+        "date_iso": "2024-04-02",
+        "provenance_status": "observed",
+        "confidence": 0.94,
+        "evidence": {"page": 1, "snippet": "São Paulo, 02/04/2024", "bbox": [330, 580, 510, 602]}
+      }
+    },
+    "events": [
+      {
+        "event_type": "document_issue_date",
+        "title": "Emissao do documento",
+        "description": "Receituario emitido em 2024-04-02.",
+        "date_iso": "2024-04-02",
+        "provenance_status": "observed",
+        "review_state": "auto_confirmed",
+        "confidence": 0.94,
+        "entities": {"patient": "MARIA APARECIDA LOPES", "provider": "DR. FABIO MOURA", "cids": ["J45.0"]},
+        "evidence": {"page": 1, "snippet": "São Paulo, 02/04/2024", "bbox": [330, 580, 510, 602]}
+      }
+    ],
+    "warnings": []
+  }
+}

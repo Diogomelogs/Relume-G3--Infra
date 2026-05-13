@@ -1,0 +1,118 @@
+{
+  "id": "003_regressao_data_nascimento",
+  "title": "Sentinela: data de nascimento nao pode virar data documental",
+  "expected": {
+    "entities": {
+      "patient": "MARCOS ANTONIO REIS",
+      "provider": "DRA. CARLA MENDES",
+      "mother": "ELIANE REIS",
+      "cids": ["S83.2"],
+      "document_date": "2024-03-05"
+    },
+    "events": [
+      {"event_type": "document_issue_date", "date_iso": "2024-03-05"}
+    ],
+    "forbidden_events": [
+      {"event_type": "document_issue_date", "date_iso": "1980-01-20"}
+    ],
+    "forbidden_document_dates": ["1980-01-20"],
+    "legally_useful_event_types": [
+      "document_issue_date",
+      "registro_condicao_clinica"
+    ]
+  },
+  "actual": {
+    "document_type": "laudo_medico",
+    "entities": {
+      "patient": {
+        "value": "MARCOS ANTONIO REIS",
+        "provenance_status": "observed",
+        "confidence": 0.94,
+        "evidence": {
+          "source_path": "layer2.sinais_documentais.page_evidence_v1",
+          "page": 1,
+          "snippet": "Paciente: MARCOS ANTONIO REIS",
+          "bbox": [70, 122, 330, 142]
+        }
+      },
+      "provider": {
+        "value": "DRA. CARLA MENDES",
+        "provenance_status": "observed",
+        "confidence": 0.9,
+        "evidence": {
+          "source_path": "layer2.sinais_documentais.page_evidence_v1",
+          "page": 1,
+          "snippet": "Dra. Carla Mendes CRM 23456 MG",
+          "bbox": [70, 610, 360, 634]
+        }
+      },
+      "mother": {
+        "value": "ELIANE REIS",
+        "provenance_status": "observed",
+        "confidence": 0.84,
+        "evidence": {
+          "source_path": "layer2.sinais_documentais.page_evidence_v1",
+          "page": 1,
+          "snippet": "Mae: ELIANE REIS",
+          "bbox": [70, 148, 240, 168]
+        }
+      },
+      "cids": [
+        {
+          "value": "S83.2",
+          "provenance_status": "observed",
+          "confidence": 0.91,
+          "evidence": {
+            "source_path": "layer2.sinais_documentais.page_evidence_v1",
+            "page": 1,
+            "snippet": "CID S83.2",
+            "bbox": [70, 280, 150, 300]
+          }
+        }
+      ],
+      "document_date": {
+        "value": "1980-01-20",
+        "date_iso": "1980-01-20",
+        "provenance_status": "inferred",
+        "confidence": 0.62,
+        "evidence": {
+          "source_path": "layer2.sinais_documentais.page_evidence_v1",
+          "page": 1,
+          "snippet": "Data de nascimento: 20/01/1980",
+          "bbox": [70, 174, 286, 194]
+        }
+      }
+    },
+    "events": [
+      {
+        "event_type": "document_issue_date",
+        "title": "Data de emissao",
+        "description": "",
+        "date_iso": "1980-01-20",
+        "provenance_status": "inferred",
+        "review_state": "needs_review",
+        "confidence": 0.62,
+        "entities": {
+          "patient": "MARCOS ANTONIO REIS",
+          "provider": "DRA. CARLA MENDES",
+          "cids": ["S83.2"]
+        },
+        "evidence": {
+          "source_path": "layer2.sinais_documentais.timeline_seed_v2",
+          "page": 1,
+          "snippet": "Data de nascimento: 20/01/1980",
+          "bbox": [70, 174, 286, 194]
+        }
+      }
+    ],
+    "review_items": [
+      {
+        "field": "document_date",
+        "value": "1980-01-20",
+        "review_state": "needs_review",
+        "provenance_status": "inferred"
+      }
+    ],
+    "warnings": ["document_date_looks_like_birth_date"]
+  }
+}

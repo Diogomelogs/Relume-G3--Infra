@@ -1,0 +1,80 @@
+{
+  "id": "008_cid_espurio",
+  "title": "CID espurio deve ser penalizado explicitamente",
+  "expected": {
+    "document_type": "parecer_medico",
+    "entities": {
+      "patient": "RAFAEL COSTA",
+      "provider": "DR. PAULO MENEZES",
+      "cids": ["M54.5"],
+      "document_date": "2024-08-14"
+    },
+    "forbidden_entities": {
+      "cids": ["ABC12"]
+    },
+    "events": [
+      {"event_type": "parecer_emitido", "date_iso": "2024-08-14"}
+    ],
+    "legally_useful_event_types": ["parecer_emitido"]
+  },
+  "actual": {
+    "document_type": "parecer_medico",
+    "entities": {
+      "patient": {
+        "value": "RAFAEL COSTA",
+        "provenance_status": "observed",
+        "confidence": 0.95,
+        "evidence": {"page": 1, "snippet": "Paciente: RAFAEL COSTA", "bbox": [70, 118, 244, 138]}
+      },
+      "provider": {
+        "value": "DR. PAULO MENEZES",
+        "provenance_status": "observed",
+        "confidence": 0.93,
+        "evidence": {"page": 1, "snippet": "Dr. Paulo Menezes CRM 88771 MG", "bbox": [70, 610, 360, 634]}
+      },
+      "cids": [
+        {
+          "value": "M54.5",
+          "provenance_status": "observed",
+          "confidence": 0.92,
+          "evidence": {"page": 1, "snippet": "CID M54.5", "bbox": [74, 280, 150, 300]}
+        },
+        {
+          "value": "ABC12",
+          "provenance_status": "inferred",
+          "confidence": 0.44,
+          "evidence": {"page": 1, "snippet": "ABC12", "bbox": null}
+        }
+      ],
+      "document_date": {
+        "value": "2024-08-14",
+        "date_iso": "2024-08-14",
+        "provenance_status": "observed",
+        "confidence": 0.9,
+        "evidence": {"page": 1, "snippet": "Belo Horizonte, 14/08/2024", "bbox": [302, 578, 510, 600]}
+      }
+    },
+    "events": [
+      {
+        "event_type": "parecer_emitido",
+        "title": "Emissao de parecer medico",
+        "description": "Parecer emitido em 2024-08-14.",
+        "date_iso": "2024-08-14",
+        "provenance_status": "observed",
+        "review_state": "auto_confirmed",
+        "confidence": 0.9,
+        "entities": {"patient": "RAFAEL COSTA", "provider": "DR. PAULO MENEZES", "cids": ["M54.5", "ABC12"]},
+        "evidence": {"page": 1, "snippet": "Belo Horizonte, 14/08/2024", "bbox": [302, 578, 510, 600]}
+      }
+    ],
+    "review_items": [
+      {
+        "field": "cid",
+        "value": "ABC12",
+        "review_state": "needs_review",
+        "provenance_status": "inferred"
+      }
+    ],
+    "warnings": []
+  }
+}

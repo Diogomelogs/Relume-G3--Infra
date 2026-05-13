@@ -13,6 +13,11 @@ router = APIRouter(prefix="/read-model", tags=["read-model"])
 @router.get("/documents")
 async def list_documents(
     q: Optional[str] = Query(None, description="Busca por texto (OCR, narrativa, etc.)"),
+    patient: Optional[str] = Query(None, description="Filtro por paciente"),
+    provider: Optional[str] = Query(None, description="Filtro por prestador"),
+    cid: Optional[str] = Query(None, description="Filtro por CID"),
+    date: Optional[str] = Query(None, description="Data canônica exata em ISO"),
+    doc_type: Optional[str] = Query(None, description="Tipo documental canônico"),
     start_date: Optional[str] = Query(None, description="Data inicial ISO ex: 1958-01-01"),
     end_date: Optional[str] = Query(None, description="Data final ISO ex: 1958-12-31"),
     tipo_evento: Optional[str] = Query(None, description="Tipo de evento/categoria da Layer3"),
@@ -24,6 +29,11 @@ async def list_documents(
 
     return await store.search(
         q=q,
+        patient=patient,
+        provider=provider,
+        cid=cid,
+        date=date,
+        doc_type=doc_type,
         start_date=start_date,
         end_date=end_date,
         tipo_evento=tipo_evento,
@@ -36,6 +46,11 @@ async def list_documents(
 @router.get("/search")
 async def search_documents(
     q: Optional[str] = Query(None, description="Texto livre"),
+    patient: Optional[str] = Query(None, description="Filtro por paciente"),
+    provider: Optional[str] = Query(None, description="Filtro por prestador"),
+    cid: Optional[str] = Query(None, description="Filtro por CID"),
+    date: Optional[str] = Query(None, description="Data canônica exata em ISO"),
+    doc_type: Optional[str] = Query(None, description="Tipo documental canônico"),
     start_date: Optional[str] = Query(None, description="Data inicial ISO"),
     end_date: Optional[str] = Query(None, description="Data final ISO"),
     tipo_evento: Optional[str] = Query(None, description="Tipo de evento da Layer3"),
@@ -47,6 +62,11 @@ async def search_documents(
 
     return await store.search(
         q=q,
+        patient=patient,
+        provider=provider,
+        cid=cid,
+        date=date,
+        doc_type=doc_type,
         start_date=start_date,
         end_date=end_date,
         tipo_evento=tipo_evento,

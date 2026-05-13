@@ -16,3 +16,9 @@ def test_read_model_search_http_works_basic():
     # sem usar q (evita $text e índice obrigatório)
     r = client.get("/read-model/documents", params={"limit": 10})
     assert r.status_code == 200
+
+    r = client.get(
+        "/read-model/search",
+        params={"patient": "maria", "tipo_evento": "document_issue_date", "limit": 10},
+    )
+    assert r.status_code == 200

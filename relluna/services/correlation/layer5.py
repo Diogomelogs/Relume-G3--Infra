@@ -1,100 +1,64 @@
 from __future__ import annotations
 
-from datetime import datetime
-from uuid import uuid4
-
-from relluna.core.document_memory import (
-    DocumentMemory,
-    MediaType,
+from relluna.core.document_memory import DocumentMemory, MediaType
+from relluna.core.contracts.document_memory_contract import (
     Layer5Derivatives,
-    ImagemDerivada,
-    VideoDerivado,
-    AudioDerivado,
-    DocumentoDerivado,
+    Derivado,
 )
 
-
-def _new_id() -> str:
-    return str(uuid4())
+_PLACEHOLDER_PERSISTENCE_STATE = "placeholder_not_persisted"
 
 
 def apply_layer5(dm: DocumentMemory) -> DocumentMemory:
     """
-    Gera derivados mínimos para cumprir o contrato dos testes:
-    - Cada derivado precisa de id, tipo e uri.
-    - Tipos esperados nos testes:
-        * imagem: thumbnail
-        * video: frame_chave
-        * audio: waveform
-        * documento: preview
-    - Também marca persistência como "stored" e preenche storage_uris (fake),
-      para o teste de persistência.
+    Gera derivados mínimos só para cumprir o contrato atual:
+
+    - Cada derivado precisa de tipo e uri.
+    - Tipos esperados:
+      * imagem: thumbnail
+      * video: frame_chave
+      * audio: waveform
+      * documento: preview
+    - Mantém derivados como placeholders explícitos.
+    - Não afirma persistência real enquanto não houver backend de storage.
     """
-    if dm.layer1 is None:
-        return dm
+    # layer5 pode vir como dict (DocumentMemory v0.2.0), então sempre sobrescreve
+    if dm.layer5 is None or not isinstance(dm.layer5, Layer5Derivatives):
+        dm.layer5 = Layer5Derivatives()
 
-    midia = dm.layer1.midia
+    midia = dm.layer1.midia if dm.layer1 else None
 
-    if dm.layer5 is None:
-        dm.layer5 = Layer5Derivatives(
-            imagens_derivadas=[],
-            videos_derivados=[],
-            audios_derivados=[],
-            documentos_derivados=[],
-            persistence_state=None,
-            storage_uris=[],
-        )
-
-    # limpa e recria (derivados são determinísticos neste stub)
+    # limpa derivados para ser determinístico
     dm.layer5.imagens_derivadas = []
     dm.layer5.videos_derivados = []
     dm.layer5.audios_derivados = []
     dm.layer5.documentos_derivados = []
 
-    now = datetime.utcnow()
-
+    # ---------------- IMAGEM ----------------
     if midia == MediaType.imagem:
         dm.layer5.imagens_derivadas.append(
-            ImagemDerivada(
-                id=_new_id(),
-                tipo="thumbnail",
-                uri="generated://thumbnail.jpg",
-                created_at=now,
-            )
-        )
-    elif midia == MediaType.video:
-        dm.layer5.videos_derivados.append(
-            VideoDerivado(
-                id=_new_id(),
-                tipo="frame_chave",
-                uri="generated://frame_chave.jpg",
-                created_at=now,
-            )
-        )
-    elif midia == MediaType.audio:
-        dm.layer5.audios_derivados.append(
-            AudioDerivado(
-                id=_new_id(),
-                tipo="waveform",
-                uri="generated://waveform.png",
-                created_at=now,
-            )
-        )
-    else:
-        dm.layer5.documentos_derivados.append(
-            DocumentoDerivado(
-                id=_new_id(),
-                tipo="preview",
-                uri="generated://preview.png",
-                created_at=now,
-            )
+            Derivado(tipo="thumbnail", uri="generated://thumbnail.jpg")
         )
 
-    # Persistência fake (contrato do teste)
-    dm.layer5.persistence_state = "stored"
-    if dm.layer0 is not None:
-        dm.layer5.storage_uris = [f"https://relluna.fakeblob/{dm.layer0.documentid}/layer5"]
-    else:
-        dm.layer5.storage_uris = ["https://relluna.fakeblob/unknown/layer5"]
+    # ---------------- VÍDEO ----------------
+    elif midia == MediaType.video:
+        dm.layer5.videos_derivados.append(
+            Derivado(tipo="frame_chave", uri="generated://frame.jpg")
+        )
+
+    # ---------------- ÁUDIO ----------------
+    elif midia == MediaType.audio:
+        dm.layer5.audios_derivados.append(
+            Derivado(tipo="waveform", uri="generated://waveform.png")
+        )
+
+    # ---------------- DOCUMENTO ----------------
+    elif midia == MediaType.documento:
+        dm.layer5.documentos_derivados.append(
+            Derivado(tipo="preview", uri="generated://preview.pdf")
+        )
+
+    dm.layer5.storage_uris = []
+    dm.layer5.persistence_state = _PLACEHOLDER_PERSISTENCE_STATE
 
     return dm

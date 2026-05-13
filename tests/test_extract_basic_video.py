@@ -1,5 +1,5 @@
 from pathlib import Path
-from datetime import datetime
+from datetime import datetime, timezone
 
 import pytest
 
@@ -18,8 +18,8 @@ from relluna.services.deterministic_extractors import basic
 def _build_minimal_video_dm(video_path: Path) -> DocumentMemory:
     layer0 = Layer0Custodia(
         documentid="test-video-docid",
-        contentfingerprint="dummy-hash-video",
-        ingestiontimestamp=datetime.utcnow(),
+        contentfingerprint="7" * 64,
+        ingestiontimestamp=datetime.now(timezone.utc),
         ingestionagent="test_ingest_video",
     )
 

@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timezone
 
 from relluna.core.document_memory import (
     DocumentMemory,
@@ -20,8 +20,8 @@ def test_layer3_sets_tipo_documento_with_lastro():
         version="v0.1.0",
         layer0=Layer0Custodia(
             documentid="doc",
-            contentfingerprint="hash",
-            ingestiontimestamp=datetime.utcnow(),
+            contentfingerprint="8" * 64,
+            ingestiontimestamp=datetime.now(timezone.utc),
             ingestionagent="test",
         ),
         layer1=Layer1Artefatos(
@@ -62,14 +62,22 @@ def test_layer3_does_not_mutate_other_layers():
         version="v0.1.0",
         layer0=Layer0Custodia(
             documentid="doc",
-            contentfingerprint="hash",
-            ingestiontimestamp=datetime.utcnow(),
+            contentfingerprint="9" * 64,
+            ingestiontimestamp=datetime.now(timezone.utc),
             ingestionagent="test",
         ),
         layer1=Layer1Artefatos(
             midia=MediaType.documento,
             origem=OriginType.digital_nativo,
-            artefatos=[],
+            artefatos=[
+                ArtefatoBruto(
+                    id="a",
+                    tipo="original",
+                    uri="/tmp/x.pdf",
+                    metadados_nativos={},
+                    logs_ingestao=[],
+                )
+            ],
         ),
         layer2=Layer2EvidenceBaseModel(),
     )

@@ -1,77 +1,46 @@
-from fastapi import APIRouter, Request, UploadFile, File
-from fastapi.responses import HTMLResponse
-from fastapi.templating import Jinja2Templates
-from hashlib import sha256
 from pathlib import Path
-import shutil
-import uuid
-from datetime import datetime
+import mimetypes
 
-from relluna.core.document_memory import DocumentMemory, MediaType, OriginType, ArtefatoBruto
-from relluna.core.basic_pipeline import run_basic_pipeline
-from relluna.services.context_inference.basic import infer_layer3
-from relluna.services.correlation.layer4 import apply_layer4
-from relluna.services.context_inference.basic import infer_layer3
-from relluna.services.correlation.layer4 import apply_layer4
-from relluna.core.document_memory import Layer0Custodia as Layer0
-from relluna.core.document_memory.layer1 import Layer1
+from fastapi import APIRouter, HTTPException, Request
+from fastapi.responses import HTMLResponse, Response
+from fastapi.templating import Jinja2Templates
 
 router = APIRouter()
-templates = Jinja2Templates(directory="relluna/services/test_ui/templates")
 
-UPLOAD_DIR = Path("uploads_test_ui")
-UPLOAD_DIR.mkdir(exist_ok=True)
+FRONTEND_DIR = Path(__file__).resolve().parents[3] / "frontend"
+FRONTEND_INDEX = FRONTEND_DIR / "index.html"
+LEGACY_TEMPLATE_DIR = Path(__file__).resolve().parent / "templates"
+templates = Jinja2Templates(directory=str(LEGACY_TEMPLATE_DIR))
 
-@router.get("/test-ui", response_class=HTMLResponse)
-async def test_ui(request: Request):
+
+@router.get("/test-ui-lab", response_class=HTMLResponse)
+async def test_ui_lab(request: Request):
+    template_path = LEGACY_TEMPLATE_DIR / "index.html"
+    if not template_path.exists():
+        raise HTTPException(status_code=404, detail="Legacy test UI template not found")
     return templates.TemplateResponse("index.html", {"request": request})
 
-@router.post("/test-ui/upload", response_class=HTMLResponse)
-async def upload_file(request: Request, file: UploadFile = File(...)):
-    file_id = str(uuid.uuid4())
-    file_path = UPLOAD_DIR / f"{file_id}_{file.filename}"
 
-    with open(file_path, "wb") as buffer:
-        shutil.copyfileobj(file.file, buffer)
+@router.get("/demo")
+async def demo_index():
+    if not FRONTEND_INDEX.exists():
+        raise HTTPException(status_code=404, detail="Demo frontend not found")
+    return Response(content=FRONTEND_INDEX.read_bytes(), media_type="text/html; charset=utf-8")
 
-    # Define media type
-    media_type = MediaType.documento
-    if file.filename.lower().endswith((".jpg", ".jpeg", ".png")):
-        media_type = MediaType.imagem
-    elif file.filename.lower().endswith((".mp4", ".mov")):
-        media_type = MediaType.video
-    elif file.filename.lower().endswith((".mp3", ".wav", ".m4a")):
-        media_type = MediaType.audio
 
-    # Criar DocumentMemory
-    dm = DocumentMemory(
-        layer0=Layer0(
-            documentid=file_id,
-            contentfingerprint=sha256(file_id.encode()).hexdigest()[:16],
-            ingestiontimestamp=datetime.utcnow(),
-            ingestionagent="test-ui",
-        ),
-        layer1=Layer1(
-            midia=media_type,
-            origem=OriginType.digitalizado,
-            artefatos=[
-                ArtefatoBruto(
-                    uri=str(file_path),
-                    nome=file.filename,
-                )
-            ],
-        ),
-    )
+@router.get("/demo/{asset_path:path}")
+async def demo_asset(asset_path: str):
+    asset = (FRONTEND_DIR / asset_path).resolve()
+    try:
+        asset.relative_to(FRONTEND_DIR.resolve())
+    except ValueError as exc:
+        raise HTTPException(status_code=404, detail="Asset not found") from exc
 
-    # Rodar pipeline
-    dm = run_basic_pipeline(dm)
-    dm = infer_layer3(dm)
-    dm = apply_layer4(dm)
+    if not asset.exists() or not asset.is_file():
+        raise HTTPException(status_code=404, detail="Asset not found")
 
-    return templates.TemplateResponse(
-        "index.html",
-        {
-            "request": request,
-            "result": dm,
-        },
+    media_type, _ = mimetypes.guess_type(asset.name)
+    return Response(
+        content=asset.read_bytes(),
+        media_type=media_type or "application/octet-stream",
     )
