@@ -1,0 +1,9 @@
+title = "Relluna gitleaks config"
+
+[extend]
+useDefault = true
+
+[allowlist]
+paths = [
+  '''^\.secrets\.baseline$'''
+]

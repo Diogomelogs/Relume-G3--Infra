@@ -8,10 +8,10 @@ from typing import Any
 from relluna.infra.secrets import get_secret
 
 def chat_json(*, system: str, user_json: dict[str, Any], json_schema: dict[str, Any]) -> dict[str, Any]:
-    endpoint = get_secret("AZURE_OPENAI_ENDPOINT")
+    endpoint = get_secret("AZURE_OPENAI_ENDPOINT").rstrip("/")
     key = get_secret("AZURE_OPENAI_API_KEY")
     deployment = get_secret("AZURE_OPENAI_CHAT_DEPLOYMENT")
-    api_version = get_secret("AZURE_OPENAI_API_VERSION", default="2024-02-15-preview")
+    api_version = get_secret("AZURE_OPENAI_API_VERSION", default="2024-05-01-preview")
 
     url = f"{endpoint}/openai/deployments/{deployment}/chat/completions?api-version={api_version}"
     headers = {"api-key": key, "content-type": "application/json"}
@@ -38,10 +38,10 @@ def chat_json(*, system: str, user_json: dict[str, Any], json_schema: dict[str, 
     return out
 
 def embed_text(text: str) -> list[float]:
-    endpoint = get_secret("AZURE_OPENAI_ENDPOINT")
+    endpoint = get_secret("AZURE_OPENAI_ENDPOINT").rstrip("/")
     key = get_secret("AZURE_OPENAI_API_KEY")
     deployment = get_secret("AZURE_OPENAI_EMBED_DEPLOYMENT")
-    api_version = get_secret("AZURE_OPENAI_API_VERSION", default="2024-02-15-preview")
+    api_version = get_secret("AZURE_OPENAI_API_VERSION", default="2024-05-01-preview")
 
     url = f"{endpoint}/openai/deployments/{deployment}/embeddings?api-version={api_version}"
     headers = {"api-key": key, "content-type": "application/json"}
