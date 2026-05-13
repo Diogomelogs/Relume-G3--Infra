@@ -1,4 +1,3 @@
-import os
 from typing import Optional
 
 from motor.motor_asyncio import AsyncIOMotorClient
@@ -16,7 +15,7 @@ _db = None
 
 
 def _mongo_enabled() -> bool:
-    return bool(os.getenv("MONGO_URI") or os.getenv("MONGODB_URI"))
+    return bool(get_secret("MONGO_URI", default="") or get_secret("MONGODB_URI", default=""))
 
 
 def get_mongo_client():

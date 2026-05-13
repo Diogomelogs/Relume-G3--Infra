@@ -2,6 +2,8 @@ from pathlib import Path
 from hashlib import sha256
 from datetime import datetime, UTC
 
+import pytest
+
 from relluna.core.basic_pipeline import run_basic_pipeline
 from relluna.core.document_memory import (
     DocumentMemory,
@@ -14,6 +16,9 @@ from relluna.core.document_memory import (
 
 # Caminho da imagem
 p = Path("uploads_test_ui/6fd749b8-e23e-42b2-b9f0-17e865423edb_2B1605D6-1075-4537-AD00-41499B0A7880.JPG")
+
+if not p.exists():
+    pytest.skip("fixture não disponível (documento real removido por conformidade LGPD)", allow_module_level=True)
 
 content = p.read_bytes()
 digest = sha256(content).hexdigest()

@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "relluna"
-version = "0.1.0"
+version = "0.2.0"
 description = "Relluna - Infraestrutura de memória"
 requires-python = ">=3.11"
 
@@ -24,6 +24,9 @@ dependencies = [
     "pytesseract>=0.3.10",
     "pymupdf>=1.23.0",
     "jinja2>=3.1.0",
+    "jsonschema>=4.0.0",
+    "numpy>=1.26.0",
+    "opencv-python>=4.8.0",
     "azure-storage-blob>=12.19.0",
     "azure-identity>=1.15.0",
     "azure-keyvault-secrets>=4.7.0"
@@ -32,6 +35,7 @@ dependencies = [
 [project.optional-dependencies]
 dev = [
     "pytest",
+    "pytest-asyncio",
     "ruff>=0.6.9",
 ]
 asr = [
