@@ -1,5 +1,4 @@
 from pathlib import Path
-from tests.utils.schema_validator import validate_dm
 
 BASE = Path("tests")
 E2E = BASE / "e2e"

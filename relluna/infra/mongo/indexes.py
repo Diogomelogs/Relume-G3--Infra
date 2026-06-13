@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-from pymongo.database import Database
 
 
 # Índices principais da coleção de DocumentMemory

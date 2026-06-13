@@ -29,36 +29,29 @@ def test_layer5_image_derivative(client):
     validate_dm(dm)
 
     assert dm["layer5"] is not None
-    imgs = dm["layer5"]["imagens_derivadas"]
-    assert len(imgs) == 1
-    assert imgs[0]["tipo"] == "thumbnail"
+    # Derivados binários ainda não são gerados; contrato honesto é lista vazia.
+    assert dm["layer5"]["imagens_derivadas"] == []
 
 
 def test_layer5_video_derivative(client):
     dm = _ingest_and_extract(client, FILES["video"])
     validate_dm(dm)
 
-    vids = dm["layer5"]["videos_derivados"]
-    assert len(vids) == 1
-    assert vids[0]["tipo"] == "frame_chave"
+    assert dm["layer5"]["videos_derivados"] == []
 
 
 def test_layer5_audio_derivative(client):
     dm = _ingest_and_extract(client, FILES["audio"])
     validate_dm(dm)
 
-    auds = dm["layer5"]["audios_derivados"]
-    assert len(auds) == 1
-    assert auds[0]["tipo"] == "waveform"
+    assert dm["layer5"]["audios_derivados"] == []
 
 
 def test_layer5_document_derivative(client):
     dm = _ingest_and_extract(client, FILES["documento"])
     validate_dm(dm)
 
-    docs = dm["layer5"]["documentos_derivados"]
-    assert len(docs) == 1
-    assert docs[0]["tipo"] == "preview"
+    assert dm["layer5"]["documentos_derivados"] == []
 
 
 def test_layer5_not_created_without_layer1(client):

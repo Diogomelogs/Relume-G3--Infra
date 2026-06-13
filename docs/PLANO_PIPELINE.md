@@ -2,7 +2,7 @@
 
 Data: 2026-04-07
 
-Escopo: plano operacional baseado em `DIAGNOSTICO_PIPELINE.md`. Este documento nao altera codigo; organiza a execucao para aumentar confiabilidade, reduzir regressao semantica e preparar evolucao do produto.
+Escopo: plano operacional baseado em `docs/DIAGNOSTICO_PIPELINE.md`. Este documento nao altera codigo; organiza a execucao para aumentar confiabilidade, reduzir regressao semantica e preparar evolucao do produto.
 
 ## Fase 1: quick wins de baixo risco
 
@@ -13,7 +13,7 @@ Reduzir riscos imediatos de manutencao, seguranca e confiabilidade sem mudar o c
 ### Arquivos afetados
 
 - `.gitignore`
-- `DIAGNOSTICO_PIPELINE.md`
+- `docs/DIAGNOSTICO_PIPELINE.md`
 - `PLANO_PIPELINE.md`
 - `relluna/services/context_inference/document_taxonomy/rules.py`
 - `relluna/services/derivatives/layer5.py`
@@ -32,7 +32,7 @@ Baixo, se a fase for limitada a documentacao, higiene de repositorio, testes e p
 
 ### Criterio de sucesso
 
-- `DIAGNOSTICO_PIPELINE.md` e `PLANO_PIPELINE.md` existem e refletem o fluxo real.
+- `docs/DIAGNOSTICO_PIPELINE.md` e `PLANO_PIPELINE.md` existem e refletem o fluxo real.
 - Existe uma decisao documentada sobre `.env`, `.venv`, uploads, caches e artefatos sensiveis no versionamento.
 - O arquivo legado/quebrado `relluna/services/context_inference/document_taxonomy/rules.py` esta marcado como legado, corrigido ou coberto por teste de import.
 - `Layer5` deixa claro quando usa placeholders ou possui teste que impede expor URI fake como persistencia real.

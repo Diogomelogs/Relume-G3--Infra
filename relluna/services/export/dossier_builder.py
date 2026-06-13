@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from pathlib import Path
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List
 
 from relluna.core.document_memory import DocumentMemory
 from relluna.services.derivatives.layer5 import apply_layer5

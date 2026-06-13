@@ -111,7 +111,7 @@ def _infer_provider_name_fallback(text: str) -> Optional[str]:
         if candidate:
             return candidate
 
-    lines = [l.strip() for l in text.splitlines() if l.strip()]
+    lines = [ln.strip() for ln in text.splitlines() if ln.strip()]
 
     for idx, line in enumerate(lines):
         if not RE_CRM_LINE.search(line):

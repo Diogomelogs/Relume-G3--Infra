@@ -27,8 +27,8 @@ sys.path.insert(0, str(ROOT))
 # FAKE mongo_store (ANTES de importar a app)
 # ------------------------------------------------------------------
 
-import relluna.infra.mongo_store as real_mongo
-from tests.fakes import fake_mongo_store
+import relluna.infra.mongo_store as real_mongo  # noqa: E402
+from tests.fakes import fake_mongo_store  # noqa: E402
 
 real_mongo.init = fake_mongo_store.init
 real_mongo.close = fake_mongo_store.close
@@ -41,7 +41,6 @@ real_mongo.count_all = fake_mongo_store.count_all
 # IMPORT DA APP (DEPOIS DE CONFIGURAR O AMBIENTE)
 # ------------------------------------------------------------------
 
-from relluna.services.ingestion.api import app
 
 
 @pytest.fixture(autouse=True)

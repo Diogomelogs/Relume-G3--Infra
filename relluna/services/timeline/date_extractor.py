@@ -8,7 +8,6 @@ Mantido temporariamente para evitar remoção abrupta sem documentação.
 """
 
 import re
-from datetime import datetime
 
 MESES = {
 "janeiro":"01",

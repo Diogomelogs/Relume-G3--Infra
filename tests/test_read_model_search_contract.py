@@ -1,7 +1,6 @@
 import pytest
 
 from relluna.services.read_model.store import ReadModelStore
-from relluna.services.read_model.models import DocumentReadModel
 from datetime import datetime, timezone
 
 

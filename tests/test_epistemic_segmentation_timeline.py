@@ -102,7 +102,7 @@ def _page(
             "provider_review_state": "review_recommended" if provider else "needs_review",
         },
         "administrative_entities": {
-            "crm": [f"CRM 12345 SP"] if provider else [],
+            "crm": ["CRM 12345 SP"] if provider else [],
         },
         "date_candidates": (
             [{"literal": date_literal, "date_iso": date_iso}] if date_iso and date_literal else []

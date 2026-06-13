@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import re
-from typing import List, Dict, Any
+from typing import List, Any
 from relluna.domain.legal_fields import CanonicalExtraction, CanonicalField, EvidenceAnchor
 from relluna.domain.legal_taxonomy import DocType
 

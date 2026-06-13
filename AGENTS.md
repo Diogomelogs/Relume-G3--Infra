@@ -14,10 +14,10 @@ O objetivo central é transformar documentos médicos em eventos probatórios au
 
 ## Estado atual do projeto
 Leia antes de começar qualquer tarefa:
-- DIAGNOSTICO_PIPELINE.md
-- PLANO_PIPELINE.md
+- docs/DIAGNOSTICO_PIPELINE.md
+- docs/PLANO_PIPELINE.md
 - BENCHMARK_MEDICO_JURIDICO.md
-- ARQUITETURA_RELLUNA.md, quando existir no checkout
+- docs/ARQUITETURA_RELLUNA.md
 
 ## Prioridade atual
 Estamos na Fase 1:

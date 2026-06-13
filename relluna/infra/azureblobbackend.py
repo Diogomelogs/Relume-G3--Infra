@@ -1,4 +1,3 @@
-import os
 from typing import Optional
 
 from relluna.infra.blob.client import get_blob_settings
