@@ -4,7 +4,7 @@ import asyncio
 import importlib
 from datetime import datetime, timezone
 
-from relluna.core.document_memory import ArtefatoBruto, DocumentMemory, Layer0, Layer1, MediaType, OriginType
+from relluna.core.document_memory import ArtefatoBruto, DocumentMemory, MediaType, OriginType
 from relluna.core.document_memory.layer1 import ArtefatoTipo
 from relluna.core.document_memory.layer0 import IntegrityProof
 from relluna.infra.blob.client import get_blob_settings

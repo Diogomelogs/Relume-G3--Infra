@@ -9,7 +9,6 @@ from .layer0 import Layer0Custodia
 from .layer1 import Layer1, ArtefatoBruto, MediaType, OriginType
 from .layer2 import Layer2Evidence
 from .layer3 import Layer3Evidence
-from .layer3 import SemanticEntity
 from .layer4_canonical import Layer4SemanticNormalization
 from relluna.core.contracts.document_memory_contract import Layer5Derivatives
 from .layer6 import Layer6Optimization
@@ -58,7 +57,7 @@ class DocumentMemory(BaseModel):
     layer6: Optional[Layer6Optimization] = None
 
 
-from .models_v0_2_0 import DocumentMemoryCanonical, DocumentMemory_v0_2_0
+from .models_v0_2_0 import DocumentMemoryCanonical, DocumentMemory_v0_2_0  # noqa: E402
 
 
 __all__ = [
@@ -93,6 +92,8 @@ __all__ = [
     "EvidenceNumber",
     "ConfidenceState",
     "EvidenceRef",
+    "SemanticEntity",
+    "TemporalReference",
     "InferenceMeta",
     "GpsExif",
     "QualidadeSinal",

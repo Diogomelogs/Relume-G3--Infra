@@ -44,7 +44,6 @@ class AzureBlobArtefactStore:
         return blob_path
 
     def download(self, artefact_id: str, dest: Path) -> None:
-        blob_path = self.blob_path_for(artefact_id)
         dest.write_bytes(self.download_bytes(artefact_id))
 
     def download_bytes(self, artefact_id: str) -> bytes:

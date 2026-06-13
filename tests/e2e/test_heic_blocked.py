@@ -1,5 +1,4 @@
 import os
-import pytest
 
 HEICS = [
     "IMG_0770.HEIC",

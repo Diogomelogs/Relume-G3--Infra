@@ -45,7 +45,7 @@ def _preprocess_image_for_ocr(img):
     - Aumenta contraste
     - Aplica nitidez
     """
-    from PIL import ImageEnhance, ImageFilter
+    from PIL import Image, ImageEnhance, ImageFilter
     
     # Converter para RGB se necessário
     if img.mode in ('RGBA', 'P'):

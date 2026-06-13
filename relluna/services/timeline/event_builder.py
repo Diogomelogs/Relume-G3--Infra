@@ -1,4 +1,3 @@
-from __future__ import annotations
 """
 STATUS: wrapper compatível legado
 
@@ -10,6 +9,8 @@ Hoje a superfície oficial converge para:
 Mantemos este builder apenas como compatibilidade do caminho paralelo
 `relluna/services/timeline/*`.
 """
+
+from __future__ import annotations
 
 import hashlib
 from typing import Any, Dict, List

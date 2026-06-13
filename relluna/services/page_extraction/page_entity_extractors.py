@@ -166,7 +166,7 @@ def _infer_named_person_candidates(text: str) -> List[str]:
 
 
 def _infer_mother_name_fallback(text: str, patient_name: Optional[str]) -> Optional[str]:
-    lines = [l.strip() for l in (text or "").splitlines() if l.strip()]
+    lines = [ln.strip() for ln in (text or "").splitlines() if ln.strip()]
     patient_norm = (patient_name or "").lower().strip()
 
     for idx, line in enumerate(lines):

@@ -3,7 +3,7 @@ from __future__ import annotations
 import json
 import re
 from dataclasses import dataclass
-from typing import Any, Dict, List, Optional, Tuple
+from typing import Any, Dict, List, Optional
 
 from relluna.core.document_memory import DocumentMemory
 from relluna.core.document_memory.types_basic import ProvenancedString, EvidenceAnchor

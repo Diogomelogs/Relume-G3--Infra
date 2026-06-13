@@ -1,7 +1,6 @@
 from pathlib import Path
 from datetime import datetime, timezone
 
-import pytest
 
 from relluna.core.document_memory import (
     DocumentMemory,

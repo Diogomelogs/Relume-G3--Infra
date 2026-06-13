@@ -1,4 +1,3 @@
-from pathlib import Path
 from relluna.services.content_safety.nsfw import check_image_nsfw
 
 

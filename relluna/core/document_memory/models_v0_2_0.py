@@ -4,18 +4,6 @@ from typing import Optional, TypeAlias
 
 from pydantic import BaseModel, ConfigDict, Field
 
-from .types_basic import (
-    InferredString,
-    InferredDatetime,
-    ProvenancedString,
-    ProvenancedNumber,
-    ProvenancedDatetime,
-    ProvenancedDate,
-    EvidenceNumber,
-    ConfidenceState,
-    EvidenceRef,
-    InferenceMeta,
-)
 
 from .layer0 import (
     Layer0Custodia,

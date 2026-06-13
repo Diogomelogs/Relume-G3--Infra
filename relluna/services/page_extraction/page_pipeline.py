@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import json
 import re
 from time import perf_counter
 from typing import Any, Dict, List, Optional
@@ -488,7 +487,7 @@ def _entity_review_state(conf: float) -> str:
 def _infer_patient_name(page_text: str, basic: Dict[str, Any]) -> Optional[str]:
     existing = _normalize_person_name(basic.get("patient_name"))
     text = page_text or ""
-    lines = [l.strip() for l in text.splitlines() if l.strip()]
+    lines = [ln.strip() for ln in text.splitlines() if ln.strip()]
 
     candidates: List[str] = []
     if existing:
@@ -536,7 +535,7 @@ def _infer_patient_name(page_text: str, basic: Dict[str, Any]) -> Optional[str]:
 def _infer_provider_name(page_text: str, clinical: Dict[str, Any]) -> Optional[str]:
     existing = _normalize_person_name(clinical.get("provider_name"))
     text = page_text or ""
-    lines = [l.strip() for l in text.splitlines() if l.strip()]
+    lines = [ln.strip() for ln in text.splitlines() if ln.strip()]
     candidates: List[str] = []
 
     if existing:
@@ -588,7 +587,7 @@ def _infer_provider_name(page_text: str, clinical: Dict[str, Any]) -> Optional[s
 def _infer_mother_name(page_text: str, basic: Dict[str, Any], patient_name: Optional[str]) -> Optional[str]:
     existing = _normalize_person_name(basic.get("mother_name"))
     text = page_text or ""
-    lines = [l.strip() for l in text.splitlines() if l.strip()]
+    lines = [ln.strip() for ln in text.splitlines() if ln.strip()]
     candidates: List[str] = []
 
     if existing:
@@ -631,19 +630,19 @@ def _resolve_people(
 
     patient_conf = 0.0
     if patient:
-        lines = [l.strip() for l in (page_text or "").splitlines() if l.strip()]
+        lines = [ln.strip() for ln in (page_text or "").splitlines() if ln.strip()]
         raw_score = _score_patient_candidate(patient, lines, page_text or "")
         patient_conf = 0.98 if raw_score >= 12 else 0.90 if raw_score >= 8 else 0.80 if raw_score >= 4 else 0.68
 
     mother_conf = 0.0
     if mother:
-        lines = [l.strip() for l in (page_text or "").splitlines() if l.strip()]
+        lines = [ln.strip() for ln in (page_text or "").splitlines() if ln.strip()]
         raw_score = _score_mother_candidate(mother, lines, page_text or "")
         mother_conf = 0.94 if raw_score >= 10 else 0.86 if raw_score >= 6 else 0.72
 
     provider_conf = 0.0
     if provider:
-        lines = [l.strip() for l in (page_text or "").splitlines() if l.strip()]
+        lines = [ln.strip() for ln in (page_text or "").splitlines() if ln.strip()]
         raw_score = _score_provider_candidate(provider, lines, page_text or "")
         provider_conf = 0.94 if raw_score >= 10 else 0.84 if raw_score >= 6 else 0.70
 

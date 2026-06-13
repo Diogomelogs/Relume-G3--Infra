@@ -16,7 +16,6 @@ def generate_factual_narrative(dm: DocumentMemory) -> str:
     Não persiste nada, não altera o DM.
     """
 
-    layer0 = _safe_get(dm, "layer0")
     layer1 = _safe_get(dm, "layer1")
     layer3 = _safe_get(dm, "layer3")
     layer4 = _safe_get(dm, "layer4")

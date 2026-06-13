@@ -259,7 +259,6 @@ def extract_hard_entities_v2(dm: DocumentMemory) -> DocumentMemory:
 
     # page-derived dates with roles
     for page in page_evidence:
-        people = page.get("people") or {}
         admin = page.get("administrative_entities") or {}
         clinical = page.get("clinical_entities") or {}
         date_candidates = page.get("date_candidates") or []

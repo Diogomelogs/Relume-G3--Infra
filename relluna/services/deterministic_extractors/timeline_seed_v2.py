@@ -267,7 +267,6 @@ def _build_from_entities_canonical(
 
     # PRIORIDADE MÁXIMA: atestado médico deve virar eventos clínicos reais
     if document_type == "atestado_medico":
-        internacao = canonical.get("internacao") or {}
         afastamento = canonical.get("afastamento") or {}
 
         for event_hint, block_name, key_name, conf_default in [

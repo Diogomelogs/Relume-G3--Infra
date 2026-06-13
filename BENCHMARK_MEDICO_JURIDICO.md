@@ -1,6 +1,6 @@
 # Benchmark medico-juridico auditavel
 
-Gerado em: `2026-06-13T00:29:55.916490+00:00`
+Gerado em: `2026-06-13T00:33:53.827424+00:00`
 Casos avaliados: **11**
 Score geral: **93.03/100**
 
