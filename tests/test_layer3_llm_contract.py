@@ -20,7 +20,6 @@ from relluna.core.document_memory.types_basic import (
     InferenceMeta,
     InferredDatetime,
 )
-from relluna.core.inference_pipeline import run_inference_pipeline
 
 
 # ---------------------------------------------------------------------
@@ -99,7 +98,8 @@ def test_layer3_llm_requires_lastro_and_meta(monkeypatch):
     )
 
     dm = _dm_com_layer2()
-    out = run_inference_pipeline(dm)
+    dm.layer3 = llm_context.infer_layer3_from_layer2(dm)
+    out = dm
 
     # -----------------------------------------------------------------
     # Validações
