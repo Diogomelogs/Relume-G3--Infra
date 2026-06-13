@@ -4,10 +4,9 @@ import json
 from datetime import datetime, timezone
 from typing import Any, Dict, List, Optional
 
-from relluna.core.document_memory import DocumentMemory, MediaType
+from relluna.core.document_memory import DocumentMemory
 from relluna.core.contracts.document_memory_contract import (
     Layer5Derivatives,
-    Derivado,
     StorageURI,
 )
 from relluna.services.entities.document_date_resolver import DocumentDateResolver
@@ -665,29 +664,13 @@ def apply_layer5(dm: DocumentMemory) -> DocumentMemory:
     elif not isinstance(dm.layer5, Layer5Derivatives):
         dm.layer5 = Layer5Derivatives()
 
-    midia = dm.layer1.midia if dm.layer1 else None
-
+    # Derivados binários (thumbnail, frame, waveform, preview) ainda não são
+    # gerados; as listas ficam vazias até existir geração real, em vez de
+    # registrar URIs placeholder como se fossem artefatos persistidos.
     dm.layer5.imagens_derivadas = []
     dm.layer5.videos_derivados = []
     dm.layer5.audios_derivados = []
     dm.layer5.documentos_derivados = []
-
-    if midia == MediaType.imagem:
-        dm.layer5.imagens_derivadas.append(
-            Derivado(tipo="thumbnail", uri="generated://thumbnail.jpg")
-        )
-    elif midia == MediaType.video:
-        dm.layer5.videos_derivados.append(
-            Derivado(tipo="frame_chave", uri="generated://frame.jpg")
-        )
-    elif midia == MediaType.audio:
-        dm.layer5.audios_derivados.append(
-            Derivado(tipo="waveform", uri="generated://waveform.png")
-        )
-    elif midia == MediaType.documento:
-        dm.layer5.documentos_derivados.append(
-            Derivado(tipo="preview", uri="generated://preview.pdf")
-        )
 
     dm.layer5.read_models = {
         "timeline_v1": _build_timeline_v1(dm),
