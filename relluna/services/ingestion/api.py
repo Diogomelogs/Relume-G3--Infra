@@ -28,6 +28,7 @@ from relluna.infra.blob import AzureBlobArtefactStore
 from relluna.infra import mongo_store
 from relluna.infra.azureblobbackend import AzureBlobBackend
 from relluna.infra.mongo.client import get_db
+from relluna.services.causal.engine import infer_causal_links, persist_causal_links_to_layer2
 from relluna.services.content_safety.nsfw import check_image_nsfw
 from relluna.services.context_inference.basic import infer_layer3
 from relluna.services.correlation.layer4 import apply_layer4
@@ -432,6 +433,15 @@ async def _run_infer_pipeline(dm: DocumentMemory) -> DocumentMemory:
 
     dm = await _run_stage(dm, "timeline_seed_v2", "deterministic_extractors.timeline_seed_v2", lambda: seed_timeline_v2(dm))
     dm = await _run_stage(dm, "infer_layer3", "taxonomy_rules", lambda: infer_layer3(dm))
+
+    # Motor de Kausal: gera hipóteses de nexo causal entre eventos
+    dm = await _run_stage(
+        dm,
+        "kausal_engine",
+        "services.causal.engine",
+        lambda: persist_causal_links_to_layer2(dm, infer_causal_links(dm))
+    )
+
     dm = await _run_stage(dm, "apply_layer4", "normalization", lambda: apply_layer4(dm))
     if dm.layer4 is None:
         dm.layer4 = Layer4SemanticNormalization()
