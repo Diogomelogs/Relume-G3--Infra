@@ -7,7 +7,6 @@ Teste de nexo causal previdenciário: acidente → lesão → agravamento → pe
 
 from __future__ import annotations
 
-import uuid
 from datetime import datetime, UTC
 
 import pytest
@@ -21,7 +20,6 @@ from relluna.core.document_memory import (
     Layer3Evidence,
     MediaType,
     OriginType,
-    ProvenancedString,
 )
 from relluna.core.document_memory.layer3 import ProbatoryEvent
 from relluna.services.causal.engine import infer_causal_links, persist_causal_links_to_layer2
@@ -118,7 +116,7 @@ def test_kausal_presuncao_ntep_eletricista(dm_eletricista_golden):
 
     # Deve haver ligação entre evt_001 (acidente) e evt_002 (lesão)
     presuncao_link = next(
-        (l for l in links if l.event_a_id == "evt_001" and l.event_b_id == "evt_002"),
+        (lnk for lnk in links if lnk.event_a_id == "evt_001" and lnk.event_b_id == "evt_002"),
         None,
     )
 
@@ -137,7 +135,7 @@ def test_kausal_progressao_anatomica_eletricista(dm_eletricista_golden):
 
     # Deve haver ligação entre evt_002 (lesão inicial) e evt_003 (agravamento)
     progressao_link = next(
-        (l for l in links if l.event_a_id == "evt_002" and l.event_b_id == "evt_003"),
+        (lnk for lnk in links if lnk.event_a_id == "evt_002" and lnk.event_b_id == "evt_003"),
         None,
     )
 
@@ -155,8 +153,8 @@ def test_kausal_pericia_confirma(dm_eletricista_golden):
     # Deve haver ligação entre evt_001 (acidente) e evt_004 (perícia que confirma)
     # evt_004 tem CID T20.0 que corresponde a evt_001, não evt_002
     pericia_link = next(
-        (l for l in links if l.event_a_id == "evt_001" and l.event_b_id == "evt_004"
-         and "pericia" in l.rule_id.lower()),
+        (lnk for lnk in links if lnk.event_a_id == "evt_001" and lnk.event_b_id == "evt_004"
+         and "pericia" in lnk.rule_id.lower()),
         None,
     )
 
@@ -178,11 +176,11 @@ def test_kausal_grafo_completo_eletricista(dm_eletricista_golden):
     assert len(links) >= 3, f"Esperado ≥3 ligações, obteve {len(links)}"
 
     # Nenhuma ligação deve ser conflito
-    conflitos = [l for l in links if l.is_conflict]
+    conflitos = [lnk for lnk in links if lnk.is_conflict]
     assert len(conflitos) == 0, f"Não deve haver conflitos neste caso, encontrou {len(conflitos)}"
 
     # Todas as ligações devem ter confiança > 0.5
-    assert all(l.confidence > 0.5 for l in links), "Todas as ligações devem ter confiança > 0.5"
+    assert all(lnk.confidence > 0.5 for lnk in links), "Todas as ligações devem ter confiança > 0.5"
 
 
 def test_kausal_persistencia_em_layer2(dm_eletricista_golden):
@@ -201,7 +199,7 @@ def test_kausal_persistencia_em_layer2(dm_eletricista_golden):
 
     links_json = json.loads(sinal.valor)
     assert len(links_json) == len(links), "JSON deve manter o mesmo número de ligações"
-    assert all("event_a_id" in l for l in links_json), "Cada ligação deve ter event_a_id"
+    assert all("event_a_id" in lnk for lnk in links_json), "Cada ligação deve ter event_a_id"
 
 
 def test_kausal_visual_metadata_cores(dm_eletricista_golden):

@@ -8,10 +8,10 @@ O sistema NUNCA inventa nexo; propõe baseado em legislação e jurisprudência.
 from __future__ import annotations
 
 from dataclasses import dataclass
-from datetime import datetime, timedelta
-from typing import Any, Callable, Dict, List, Optional
+from datetime import datetime
+from typing import Any, Callable, Dict, List
 
-from relluna.core.document_memory import EvidenceRef, ProbatoryEvent
+from relluna.core.document_memory import ProbatoryEvent
 
 
 @dataclass

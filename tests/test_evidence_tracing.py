@@ -172,7 +172,7 @@ def test_causal_links_include_citations():
 
     # Check that link has citations
     evt_001_to_002_links = [
-        l for l in links if l.event_a_id == "evt_001" and l.event_b_id == "evt_002"
+        lnk for lnk in links if lnk.event_a_id == "evt_001" and lnk.event_b_id == "evt_002"
     ]
     assert len(evt_001_to_002_links) > 0
 
