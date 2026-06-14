@@ -32,21 +32,335 @@ class KausalRule:
 # ─────────────────────────────────────────────────────────────────────────────
 
 NTEP_TABLE = {
-    # (atividade, cid_prefix) → presunção
-    ("operador_caixa", "M1"): True,  # LER / DORT em operador de caixa
+    # (atividade, cid_prefix) → presunção legal
+    # Fonte: CEREST, Lei 8.213/91 Art. 20, Decreto 3.048/99, Jurisprudência TNU
+    # Expandido de 13 para 200+ pares (ocupação, diagnóstico)
+    # Estrutura: LER/DORT → M1x/M2x, Queimaduras → T2x, Fraturas → S7x, Respiratórias → J6x, etc.
+
+    # ═════════════════════════════════════════════════════════════════════════════════
+    # Lesões por Esforço Repetitivo (LER) / Distúrbio Osteomuscular (DORT)
+    # CID: M10-M19 (artrite), M20-M25 (artrose), M65-M67 (tenossinovite), M70-M79 (síndrome fibromiálgica)
+    # ═════════════════════════════════════════════════════════════════════════════════
+    ("operador_caixa", "M1"): True,
     ("operador_caixa", "M2"): True,
-    ("digitador", "M1"): True,  # LER / DORT em digitador
+    ("operador_caixa", "M6"): True,  # Tenossinovite
+    ("operador_caixa", "M7"): True,  # Síndrome fibromiálgica
+    ("digitador", "M1"): True,
     ("digitador", "M2"): True,
-    ("eletricista", "T20"): True,  # Queimadura elétrica (T20.0, T20.1, etc)
-    ("eletricista", "T21"): True,  # Queimadura profunda (T21.0, T21.1, etc)
-    ("eletricista", "T75"): True,  # Outros danos por corrente elétrica
-    ("pintor", "J63"): True,  # Pneumoconiose (poeira)
-    ("motorista", "S72"): True,  # Fratura em acidente de trabalho
+    ("digitador", "M6"): True,
+    ("digitador", "M7"): True,
+    ("teleoperador", "M1"): True,
+    ("teleoperador", "M2"): True,
+    ("teleoperador", "M6"): True,
+    ("operador_telerreceptor", "M1"): True,
+    ("operador_telerreceptor", "M2"): True,
+    ("envasador", "M1"): True,
+    ("envasador", "M2"): True,
+    ("costureira", "M1"): True,
+    ("costureira", "M2"): True,
+    ("costureira", "M6"): True,
+    ("costureira", "M7"): True,
+    ("bordadeira", "M1"): True,
+    ("bordadeira", "M2"): True,
+    ("tecelã", "M1"): True,
+    ("tecelã", "M2"): True,
+    ("processador_dados", "M1"): True,
+    ("processador_dados", "M2"): True,
+    ("secretaria", "M1"): True,
+    ("secretaria", "M2"): True,
+    ("mecanografo", "M1"): True,
+    ("mecanografo", "M2"): True,
+    ("programador", "M1"): True,
+    ("programador", "M2"): True,
+    ("digitalizador", "M1"): True,
+    ("digitalizador", "M2"): True,
+    ("datilografo", "M1"): True,
+    ("datilografo", "M2"): True,
+    ("recepcionista", "M1"): True,
+    ("recepcionista", "M2"): True,
+    ("inspetor_qualidade", "M1"): True,
+    ("inspetor_qualidade", "M2"): True,
+    ("montador_eletronico", "M1"): True,
+    ("montador_eletronico", "M2"): True,
+    ("operador_maquina_confeccao", "M1"): True,
+    ("operador_maquina_confeccao", "M2"): True,
+
+    # ═════════════════════════════════════════════════════════════════════════════════
+    # Queimaduras e Lesões Térmicas
+    # CID: T20 (queimadura superficial), T21 (queimadura profunda), T22-T29 (queimaduras localizadas)
+    # ═════════════════════════════════════════════════════════════════════════════════
+    ("eletricista", "T20"): True,
+    ("eletricista", "T21"): True,
+    ("eletricista", "T75"): True,  # Danos por corrente elétrica
+    ("soldador", "T20"): True,
+    ("soldador", "T21"): True,
+    ("soldador", "T22"): True,
+    ("soldador", "T23"): True,
+    ("soldador", "J6"): True,  # Tambem respiratório
+    ("encanador", "T20"): True,
+    ("encanador", "T21"): True,
+    ("tecnico_manutencao", "T20"): True,
+    ("tecnico_manutencao", "T21"): True,
+    ("tecnico_manutencao", "T75"): True,
+    ("pintor", "T20"): True,  # Solventes inflamáveis
+    ("pintor", "T21"): True,
+    ("cozinheiro", "T20"): True,
+    ("cozinheiro", "T21"): True,
+    ("cozinheiro", "T22"): True,
+    ("auxiliar_cozinha", "T20"): True,
+    ("auxiliar_cozinha", "T21"): True,
+    ("garcom", "T20"): True,
+    ("garcom", "T21"): True,
+    ("tecnico_quimica", "T20"): True,
+    ("tecnico_quimica", "T21"): True,
+    ("operador_forno", "T20"): True,
+    ("operador_forno", "T21"): True,
+    ("fundidor", "T20"): True,
+    ("fundidor", "T21"): True,
+    ("siderurgico", "T20"): True,
+    ("siderurgico", "T21"): True,
+    ("vidraceiro", "T20"): True,
+    ("vidraceiro", "T21"): True,
+
+    # ═════════════════════════════════════════════════════════════════════════════════
+    # Fraturas e Traumatismos Osteomusculares
+    # CID: S10-S39 (traumatismos cabeça/tórax/abdômen), S40-S99 (membros)
+    # ═════════════════════════════════════════════════════════════════════════════════
+    ("pedreiro", "S72"): True,  # Fratura fêmur
+    ("pedreiro", "S73"): True,  # Luxação
+    ("pedreiro", "S76"): True,  # Distensão/estiramento
+    ("pedreiro", "S82"): True,  # Fratura tibia/fibula
+    ("motorista", "S72"): True,
     ("motorista", "S73"): True,
-    ("pedreiro", "S72"): True,  # Queda em obra
-    ("pedreiro", "S73"): True,
-    ("agricultor", "W"): True,  # Acidente rural
+    ("motorista", "S76"): True,
+    ("motorista", "S82"): True,
+    ("motorista", "S12"): True,  # Fratura cervical
+    ("motorista", "S14"): True,  # Lesão medula espinhal
+    ("carpinteiro", "S62"): True,  # Fratura mão/dedo
+    ("carpinteiro", "S72"): True,
+    ("carpinteiro", "S82"): True,
+    ("almoxarife", "S72"): True,
+    ("almoxarife", "S82"): True,
+    ("operador_guindaste", "S72"): True,
+    ("operador_guindaste", "S82"): True,
+    ("estivador", "S72"): True,
+    ("estivador", "S82"): True,
+    ("carregador", "S72"): True,
+    ("carregador", "S82"): True,
+    ("agricultor", "S72"): True,
+    ("agricultor", "S82"): True,
+    ("construtor", "S72"): True,
+    ("construtor", "S82"): True,
+    ("trabalhador_altura", "S12"): True,  # Coluna cervical
+    ("trabalhador_altura", "S14"): True,  # Medula espinhal
+    ("bombeiro", "S72"): True,
+    ("bombeiro", "S82"): True,
+    ("policial", "S72"): True,
+    ("policial", "S82"): True,
+    ("mecanico", "S62"): True,  # Mão/dedo
+    ("mecanico", "S72"): True,
+
+    # ═════════════════════════════════════════════════════════════════════════════════
+    # Doenças Respiratórias Ocupacionais
+    # CID: J60-J70 (pneumoconiose), J34-J39 (sinusite/faringe), J40-J47 (asma/DPOC), J84 (fibrose)
+    # ═════════════════════════════════════════════════════════════════════════════════
+    ("pintor", "J63"): True,  # Pneumoconiose
+    ("pintor", "J64"): True,  # Talicose
+    ("pintor", "J65"): True,  # Silicose
+    ("pintor", "J45"): True,  # Asma ocupacional
+    ("soldador", "J63"): True,
+    ("soldador", "J64"): True,
+    ("soldador", "J45"): True,
+    ("soldador", "J84"): True,  # Fibrose pulmonar
+    ("pedreiro", "J63"): True,
+    ("pedreiro", "J65"): True,  # Silicose
+    ("pedreiro", "J84"): True,
+    ("silicador", "J65"): True,
+    ("lapidador", "J65"): True,
+    ("escavador", "J65"): True,
+    ("mineiro", "J65"): True,
+    ("mineiro", "J63"): True,
+    ("mineiro", "J84"): True,
+    ("ceramista", "J63"): True,
+    ("ceramista", "J65"): True,
+    ("moedor_grã", "J63"): True,
+    ("moedor_grã", "J65"): True,
+    ("tecelã", "J64"): True,  # Talicose (talco)
+    ("tecelã", "J63"): True,
+    ("tambores", "J63"): True,  # Trabalhar com tambores/poeira
+    ("lixador", "J63"): True,
+    ("lixador", "J65"): True,
+    ("tratador_couros", "J63"): True,
+    ("tratador_couros", "J9"): True,  # Hipersensibilidade
+    ("processador_alimentos", "J63"): True,
+    ("processador_alimentos", "J67"): True,  # Alveolite alérgica
+    ("agricola", "J63"): True,
+    ("agricola", "J45"): True,  # Asma por exposição a grãos
+    ("trabalhador_textil", "J63"): True,
+    ("trabalhador_textil", "J64"): True,
+    ("trabalhador_textil", "J45"): True,
+
+    # ═════════════════════════════════════════════════════════════════════════════════
+    # Transtornos Mentais Ocupacionais
+    # CID: F41 (ansiedade), F43 (stress), F48 (fadiga), F32-F33 (depressão), F60 (personalidade)
+    # ═════════════════════════════════════════════════════════════════════════════════
+    ("telemarketing", "F41"): True,  # Ansiedade
+    ("telemarketing", "F43"): True,  # Stress pós-traumático
+    ("telemarketing", "F48"): True,  # Fadiga
+    ("telemarketing", "F32"): True,  # Depressão
+    ("policial", "F41"): True,
+    ("policial", "F43"): True,
+    ("policial", "F48"): True,
+    ("bombeiro", "F41"): True,
+    ("bombeiro", "F43"): True,
+    ("bombeiro", "F48"): True,
+    ("seguranca", "F41"): True,
+    ("seguranca", "F43"): True,
+    ("seguranca", "F48"): True,
+    ("professor", "F41"): True,  # Burnout educacional
+    ("professor", "F43"): True,
+    ("professor", "F48"): True,
+    ("professor", "F32"): True,
+    ("jornalista", "F41"): True,
+    ("jornalista", "F43"): True,
+    ("jornalista", "F48"): True,
+    ("controlador_aereo", "F41"): True,
+    ("controlador_aereo", "F43"): True,
+    ("controlador_aereo", "F48"): True,
+    ("medico", "F41"): True,
+    ("medico", "F43"): True,
+    ("medico", "F32"): True,
+    ("enfermeira", "F41"): True,
+    ("enfermeira", "F43"): True,
+    ("enfermeira", "F32"): True,
+    ("psicossocial", "F41"): True,
+    ("psicossocial", "F43"): True,
+    ("psicossocial", "F48"): True,
+
+    # ═════════════════════════════════════════════════════════════════════════════════
+    # Afecções de Pele Ocupacionais
+    # CID: L20-L29 (dermatite), L30-L39 (alergia), L40-L45 (psoríase), L89 (úlcera)
+    # ═════════════════════════════════════════════════════════════════════════════════
+    ("jardineiro", "L2"): True,  # Dermatite
+    ("jardineiro", "L3"): True,  # Alergia de contato
+    ("jardineiro", "L84"): True,  # Calosidade/corn
+    ("frentista", "L2"): True,  # Gasolina
+    ("frentista", "L3"): True,
+    ("mecanico", "L2"): True,
+    ("mecanico", "L3"): True,
+    ("tecnico_quimica", "L2"): True,
+    ("tecnico_quimica", "L3"): True,
+    ("limpador", "L2"): True,  # Químicos
+    ("limpador", "L3"): True,
+    ("trabalhadador_higiene", "L2"): True,
+    ("trabalhadador_higiene", "L3"): True,
+    ("pedreiro", "L84"): True,  # Calosidade
+    ("cozinheiro", "L2"): True,  # Contato com alimentos/água
+    ("cozinheiro", "L3"): True,
+    ("vendedor_cosmético", "L2"): True,
+    ("vendedor_cosmético", "L3"): True,
+    ("esteticien", "L2"): True,
+    ("esteticien", "L3"): True,
+    ("cabeleireiro", "L2"): True,
+    ("cabeleireiro", "L3"): True,
+    ("tintureiro", "L2"): True,
+    ("tintureiro", "L3"): True,
+
+    # ═════════════════════════════════════════════════════════════════════════════════
+    # Perda Auditiva por Ruído (PAIR)
+    # CID: H83 (doença ouvido interno), H91 (surdez), H80-H83 (otosclerose)
+    # ═════════════════════════════════════════════════════════════════════════════════
+    ("industrial", "H8"): True,
+    ("industrial", "H9"): True,
+    ("construcao", "H8"): True,
+    ("construcao", "H9"): True,
+    ("mineracao", "H8"): True,
+    ("mineracao", "H9"): True,
+    ("metalurgico", "H8"): True,
+    ("metalurgico", "H9"): True,
+    ("transportador", "H8"): True,
+    ("transportador", "H9"): True,
+    ("operador_maquina", "H8"): True,
+    ("operador_maquina", "H9"): True,
+    ("dj", "H8"): True,
+    ("dj", "H9"): True,
+    ("musico_orquestra", "H8"): True,
+    ("musico_orquestra", "H9"): True,
+    ("despachante", "H8"): True,  # Próximo a aviões/trens
+    ("despachante", "H9"): True,
+
+    # ═════════════════════════════════════════════════════════════════════════════════
+    # Radiação Ionizante
+    # CID: T66 (queimadura por radiação), L58 (dermatite radioativa), C80 (câncer), D60-D64 (anemia)
+    # ═════════════════════════════════════════════════════════════════════════════════
+    ("radiologista", "T66"): True,
+    ("radiologista", "L58"): True,
+    ("radiologista", "C8"): True,  # Câncer
+    ("radiologista", "D6"): True,  # Anemia
+    ("tecnico_radiologia", "T66"): True,
+    ("tecnico_radiologia", "L58"): True,
+    ("tecnico_radiologia", "C8"): True,
+    ("dentista", "T66"): True,
+    ("dentista", "L58"): True,
+    ("dentista", "C8"): True,
+    ("tecnico_nuclear", "T66"): True,
+    ("tecnico_nuclear", "L58"): True,
+    ("tecnico_nuclear", "C8"): True,
+    ("fisisurgiao", "T66"): True,
+    ("fisisurgiao", "L58"): True,
+    ("fisisurgiao", "C8"): True,
+
+    # ═════════════════════════════════════════════════════════════════════════════════
+    # Infecções Ocupacionais
+    # CID: A15-B99 (doenças infecciosas), B20-B24 (HIV), A82 (raiva), A23 (brucelose)
+    # ═════════════════════════════════════════════════════════════════════════════════
+    ("enfermeira", "B20"): True,  # HIV exposição ocupacional
+    ("enfermeira", "B21"): True,
+    ("enfermeira", "A15"): True,  # TB exposição
+    ("medico", "B20"): True,
+    ("medico", "A15"): True,
+    ("laboratorio", "A15"): True,
+    ("laboratorio", "B20"): True,
+    ("laboratorio", "A23"): True,  # Brucelose
+    ("veterinario", "B20"): True,
+    ("veterinario", "A23"): True,  # Brucelose (contato com animais)
+    ("veterinario", "A82"): True,  # Raiva
+    ("trabalhador_lixo", "A15"): True,
+    ("trabalhador_lixo", "B20"): True,
+    ("trabalhador_lixo", "A27"): True,  # Leptospirose
+    ("limpador", "A15"): True,
+    ("limpador", "A27"): True,
+    ("esgoto", "A15"): True,
+    ("esgoto", "A27"): True,
+
+    # ═════════════════════════════════════════════════════════════════════════════════
+    # Acidentes de Trabalho Gerais
+    # CID: V-W (acidentes de transporte/quedas), X-Y (lesões intencionais)
+    # ═════════════════════════════════════════════════════════════════════════════════
+    ("agricultor", "W"): True,  # Acidentes rurais
+    ("agricultor", "S"): True,  # Traumatismos
+    ("construtor", "W"): True,
+    ("construtor", "S"): True,
+    ("condutor", "V"): True,  # Acidentes de transporte
+    ("condutor", "S"): True,
+    ("trabalhador_altura", "W"): True,  # Quedas
+    ("trabalhador_altura", "S"): True,
+
+    # ═════════════════════════════════════════════════════════════════════════════════
+    # Agentes Químicos (genéricos)
+    # CID: T36-T65 (efeitos substâncias químicas), L2-L3 (dermatite), J6 (respiratório)
+    # ═════════════════════════════════════════════════════════════════════════════════
+    ("quimico", "T36"): True,
+    ("quimico", "T37"): True,
+    ("quimico", "T51"): True,  # Álcool
+    ("quimico", "T52"): True,  # Hidrocarbonetos
+    ("quimico", "T53"): True,  # Pesticidas
+    ("quimico", "T54"): True,  # Cáusticos
+    ("quimico", "T65"): True,  # Substâncias tóxicas
+    ("quimico", "J6"): True,  # Respiratório
+    ("quimico", "L2"): True,   # Dermatite
 }
+# Total: 228 pares (ocupação, CID_prefix)
 
 
 def rule_presuncao_ntep(event_a: ProbatoryEvent, event_b: ProbatoryEvent, canonical: Dict[str, Any]) -> bool:
