@@ -7,7 +7,6 @@ ready for frontend consumption, with event details from Layer3.
 
 from __future__ import annotations
 
-from dataclasses import asdict
 from datetime import datetime
 from typing import Any, Dict, List, Optional
 
