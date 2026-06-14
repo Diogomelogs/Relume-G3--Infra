@@ -1,10 +1,14 @@
 from typing import Optional, List
 
-from fastapi import APIRouter, Query
+from fastapi import APIRouter, Query, HTTPException
+from pydantic import ValidationError
 
 from .store import ReadModelStore
+from .causal_timeline_model import build_causal_timeline_from_dm, CausalTimeline
 from relluna.services.read_model.text_search import search_read_models_text
 from relluna.services.read_model import store as read_model_store
+from relluna.infra import mongo_store
+from relluna.core.document_memory import DocumentMemory
 
 # Prefixo separado para não conflitar com /documents da API principal
 router = APIRouter(prefix="/read-model", tags=["read-model"])
@@ -107,3 +111,48 @@ def search_text(
             for h in hits
         ],
     }
+
+
+@router.get("/documents/{document_id}/causal_timeline", response_model=CausalTimeline)
+async def get_causal_timeline(document_id: str) -> CausalTimeline:
+    """
+    Retrieve causal timeline graph for a document.
+
+    Returns events (Layer3) and causal links (Layer2.causal_link_v1) for visualization.
+    Each link includes visual metadata (color, thickness) for frontend rendering.
+
+    Args:
+        document_id: Document ID to fetch timeline for
+
+    Returns:
+        CausalTimeline with eventos and grafo (causal links)
+
+    Raises:
+        HTTPException 404: Document not found
+        HTTPException 422: Document lacks Layer2 or Layer3 evidence
+    """
+    try:
+        dm_dict = await mongo_store.get(document_id)
+        if not dm_dict:
+            raise HTTPException(status_code=404, detail=f"Document {document_id} not found")
+
+        dm = DocumentMemory.model_validate(dm_dict)
+    except ValidationError as e:
+        raise HTTPException(
+            status_code=400,
+            detail=f"Invalid document format: {str(e)[:100]}",
+        )
+    except Exception as e:
+        raise HTTPException(
+            status_code=500,
+            detail=f"Failed to load document: {str(e)[:100]}",
+        )
+
+    timeline = build_causal_timeline_from_dm(document_id, dm)
+    if not timeline:
+        raise HTTPException(
+            status_code=422,
+            detail="Document lacks Layer2 (evidence signals) or Layer3 (probatory events)",
+        )
+
+    return timeline
