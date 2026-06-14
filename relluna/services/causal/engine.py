@@ -23,11 +23,12 @@ def infer_causal_links(dm: DocumentMemory) -> List[CausalLink]:
     Aplica regras KAUSAL aos eventos de Layer3 para gerar hipóteses de nexo causal.
 
     Fluxo:
-    1. Carrega eventos probatórios de Layer3
-    2. Para cada par (evento_a, evento_b) em cronologia:
+    1. Enriquece eventos com citations se não tiverem (rastreabilidade)
+    2. Carrega eventos probatórios de Layer3
+    3. Para cada par (evento_a, evento_b) em cronologia:
        - Aplica 6 regras determinísticas
-       - Se confiança > 0.5 → cria CausalLink com lastro
-    3. Retorna lista de CausalLinks com review_state="auto"
+       - Se confiança > 0.5 → cria CausalLink com lastro (citations)
+    4. Retorna lista de CausalLinks com review_state="auto"
 
     Args:
         dm: DocumentMemory com Layer3 já preenchida
@@ -37,6 +38,9 @@ def infer_causal_links(dm: DocumentMemory) -> List[CausalLink]:
     """
     if not dm.layer3 or not dm.layer3.eventos_probatorios:
         return []
+
+    # Enriquece eventos com citations (rastreabilidade)
+    dm = enrich_events_with_citations(dm)
 
     events = dm.layer3.eventos_probatorios
     canonical = _load_entities_canonical(dm)
@@ -94,6 +98,12 @@ def persist_causal_links_to_layer2(dm: DocumentMemory, links: List[CausalLink]) 
     """
     Persiste CausalLinks no sinal versionado Layer2.sinais_documentais["causal_link_v1"].
 
+    Inclui:
+    - Metadados básicos (event_a_id, event_b_id, confidence, rule_id)
+    - Explicação jurídica (rule_explanation)
+    - Metadata visual (visual_color, visual_thickness)
+    - Rastreabilidade (citations apontando para eventos originais)
+
     Args:
         dm: DocumentMemory
         links: Lista de CausalLink gerada
@@ -104,7 +114,7 @@ def persist_causal_links_to_layer2(dm: DocumentMemory, links: List[CausalLink]) 
     if not dm.layer2:
         return dm
 
-    # Serializar CausalLinks para JSON
+    # Serializar CausalLinks para JSON (com citations)
     links_json = json.dumps(
         [
             {
@@ -119,6 +129,18 @@ def persist_causal_links_to_layer2(dm: DocumentMemory, links: List[CausalLink]) 
                 "review_state": link.review_state,
                 "visual_color": link.visual_color,
                 "visual_thickness": link.visual_thickness,
+                "citations": [
+                    {
+                        "kind": c.kind,
+                        "uri": c.uri,
+                        "page": c.page,
+                        "snippet": c.snippet[:100] if c.snippet else None,  # Truncate for storage
+                        "source_path": c.source_path,
+                        "confidence": c.confidence,
+                        "provenance_status": c.provenance_status,
+                    }
+                    for c in (link.citations or [])
+                ],
             }
             for link in links
         ],
@@ -192,17 +214,89 @@ def _render_explanation(
         return "Nexo identificado por análise causal determinística"
 
 
+def enrich_events_with_citations(dm: DocumentMemory) -> DocumentMemory:
+    """
+    Enriquece eventos de Layer3 com EvidenceRef (citations) se não tiverem.
+
+    Necessário para rastreabilidade: cada evento deve apontar para documento original.
+    Se não tiver citations, gera placeholder baseado em event_id.
+
+    Args:
+        dm: DocumentMemory com Layer3
+
+    Returns:
+        dm com eventos enriquecidos
+    """
+    if not dm.layer3 or not dm.layer3.eventos_probatorios:
+        return dm
+
+    doc_id = dm.layer0.documentid if dm.layer0 else "unknown"
+
+    for event in dm.layer3.eventos_probatorios:
+        # Se evento já tem citations, skip
+        if event.citations:
+            continue
+
+        # Gera EvidenceRef placeholder
+        # Em produção, isso seria preenchido pelo extrator durante ingestão
+        placeholder_ref = EvidenceRef(
+            kind="probatory_event",
+            uri=f"document://{doc_id}",
+            page=1,  # Default: primeira página (será enriquecido depois)
+            snippet=event.description or event.title or "",
+            source_path=f"layer3.eventos_probatorios[{event.event_id}]",
+            confidence=event.confidence or 0.0,
+            provenance_status="inferred",
+            note="Evidence citation to be enriched from source document"
+        )
+
+        event.citations = [placeholder_ref]
+
+    return dm
+
+
 def _build_citations(event_a: Any, event_b: Any, dm: DocumentMemory) -> List[EvidenceRef]:
-    """Cria EvidenceRef apontando para os dois eventos nos documentos."""
+    """
+    Cria EvidenceRef para CausalLink apontando para os dois eventos.
+
+    Agregação: pega primeira citação de cada evento, sintetiza em 2 refs.
+    """
     refs = []
 
     # Referência ao evento A
-    if event_a.citations:
-        refs.extend(event_a.citations[:1])  # Primeira citação de A
+    if event_a.citations and len(event_a.citations) > 0:
+        ref_a = event_a.citations[0]
+        # Enriquece com tipo de link
+        enriched_a = EvidenceRef(
+            kind="source_event",
+            uri=ref_a.uri,
+            page=ref_a.page,
+            span=ref_a.span,
+            bbox=ref_a.bbox,
+            snippet=ref_a.snippet or event_a.description or "",
+            source_path=ref_a.source_path,
+            confidence=event_a.confidence,
+            provenance_status="event_source",
+            note=f"Source for causal link: {event_a.event_type}"
+        )
+        refs.append(enriched_a)
 
     # Referência ao evento B
-    if event_b.citations:
-        refs.extend(event_b.citations[:1])  # Primeira citação de B
+    if event_b.citations and len(event_b.citations) > 0:
+        ref_b = event_b.citations[0]
+        enriched_b = EvidenceRef(
+            kind="target_event",
+            uri=ref_b.uri,
+            page=ref_b.page,
+            span=ref_b.span,
+            bbox=ref_b.bbox,
+            snippet=ref_b.snippet or event_b.description or "",
+            source_path=ref_b.source_path,
+            confidence=event_b.confidence,
+            provenance_status="event_target",
+            note=f"Target for causal link: {event_b.event_type}"
+        )
+        refs.append(enriched_b)
 
     return refs
 
