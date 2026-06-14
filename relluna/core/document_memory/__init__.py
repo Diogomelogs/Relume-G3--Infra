@@ -8,7 +8,7 @@ from pydantic import BaseModel, ConfigDict
 from .layer0 import Layer0Custodia
 from .layer1 import Layer1, ArtefatoBruto, MediaType, OriginType
 from .layer2 import Layer2Evidence
-from .layer3 import Layer3Evidence
+from .layer3 import Layer3Evidence, ProbatoryEvent
 from .layer4_canonical import Layer4SemanticNormalization
 from relluna.core.contracts.document_memory_contract import Layer5Derivatives
 from .layer6 import Layer6Optimization
@@ -69,6 +69,7 @@ __all__ = [
     "Layer1",
     "Layer2Evidence",
     "Layer3Evidence",
+    "ProbatoryEvent",
     "Layer4SemanticNormalization",
     "Layer5Derivatives",
     "Layer6Optimization",
