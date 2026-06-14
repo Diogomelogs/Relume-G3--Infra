@@ -13,6 +13,7 @@ from typing import Any, Dict, List, Optional
 
 from relluna.core.document_memory import DocumentMemory, EvidenceRef
 from relluna.services.causal.rules_previdenciario import KAUSAL_RULES
+from relluna.services.causal.anti_nexo import apply_anti_nexo
 from relluna.services.causal.types import CausalLink
 from relluna.services.evidence.signals import load_critical_signal_json
 
@@ -88,6 +89,9 @@ def infer_causal_links(dm: DocumentMemory) -> List[CausalLink]:
                         message=f"Erro ao aplicar {rule.rule_id}: {str(e)}",
                     )
 
+    # Aplicar regras anti-nexo (fatores que enfraquecem a tese)
+    links = apply_anti_nexo(links, events)
+
     # Ordenar por data do evento A
     links.sort(key=lambda x: x.event_a_date)
     return links
@@ -128,12 +132,13 @@ def persist_causal_links_to_layer2(dm: DocumentMemory, links: List[CausalLink]) 
                 "review_state": link.review_state,
                 "visual_color": link.visual_color,
                 "visual_thickness": link.visual_thickness,
+                "weakening_factors": link.weakening_factors,
                 "citations": [
                     {
                         "kind": c.kind,
                         "uri": c.uri,
                         "page": c.page,
-                        "snippet": c.snippet[:100] if c.snippet else None,  # Truncate for storage
+                        "snippet": c.snippet[:100] if c.snippet else None,
                         "source_path": c.source_path,
                         "confidence": c.confidence,
                         "provenance_status": c.provenance_status,
