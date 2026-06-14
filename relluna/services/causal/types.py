@@ -35,6 +35,9 @@ class CausalLink:
     # Lastro: onde nos docs vieram os dados
     citations: List[EvidenceRef] = field(default_factory=list)
 
+    # Anti-nexo: fatores que enfraquecem a tese causal
+    weakening_factors: List[str] = field(default_factory=list)
+
     # Revisão humana
     review_state: str = "auto"  # "auto" | "needs_review" | "human_confirmed"
     review_note: Optional[str] = None
