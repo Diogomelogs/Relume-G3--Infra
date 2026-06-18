@@ -8,7 +8,7 @@ mas sinaliza fatores que exigem revisão humana.
 from __future__ import annotations
 
 from datetime import datetime
-from typing import Any, Dict, List
+from typing import Any, List
 
 from relluna.services.causal.types import CausalLink
 
